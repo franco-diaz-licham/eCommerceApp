@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+		<PackageReference Include="CloudinaryDotNet" Version="1.27.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.18" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+		<PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Src\Domain\Events\" />
+		<Folder Include="Src\Infrastructure\Identity\" />
+		<Folder Include="Logs\" />
+		<Folder Include="Src\Infrastructure\Persistence\Migrations\" />
+		<Folder Include="_info\" />
+	</ItemGroup>
+
+</Project>
