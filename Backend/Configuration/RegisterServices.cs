@@ -31,7 +31,7 @@ public static class RegisterServices
             });
         });
 
-        // model validation API response.
+        // Model validation API response.
         builder.Services.Configure<ApiBehaviorOptions>(opt =>
         {
             opt.InvalidModelStateResponseFactory = actionContext =>

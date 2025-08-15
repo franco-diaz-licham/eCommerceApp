@@ -39,6 +39,18 @@ public class AutoMapperProfiles : Profile
 
         // Open-generic PagedList mapping (DTO -> Response)
         CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
+
+        // Basket
+        CreateMap<BasketItemEntity, BasketItemCreateDTO>();
+        CreateMap<BasketItemEntity, BasketItemDTO>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal()));
+        CreateMap<BasketEntity, BasketDTO>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal()));
+        CreateMap<BasketCouponRequest, BasketCouponDTO>();
+
+        // Order
+        CreateMap<OrderEntity, OrderDTO>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.GetTotal()));
+        CreateMap<CouponEntity, CouponDTO>();
+        CreateMap<AddressEntity, AddressDTO>();
+
     }
 
     /// <summary>

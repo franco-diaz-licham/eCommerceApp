@@ -13,4 +13,5 @@ public class PhotoEntity : BaseEntity
     public string FileName { get; set; } = default!;
     public string PublicUrl { get; set; } = default!;
     public string PublicId { get; set; } = default!;
+    public DateTime CreatedOn { get; set; }
 }

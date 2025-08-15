@@ -37,7 +37,9 @@ global using Backend.Src.Api.Middleware;
 global using Expression = System.Linq.Expressions.Expression;
 global using Backend.Src.Application.Queries.Providers;
 global using Backend.Src.Application.Queries.Strategies;
-
-
+global using Stripe;
+global using ProductService = Backend.Src.Infrastructure.Services.ProductService;
+global using Backend.Src.Application.Models;
+global using File = System.IO.File;
 
 

@@ -31,4 +31,22 @@ public class ApiResponse
             _ => null
         };
     }
+
+    public static int GetHTTPCode(ResultTypeEnum type)
+    {
+        return type switch
+        {
+            ResultTypeEnum.Success => 200,
+            ResultTypeEnum.Accepted => 202,
+            ResultTypeEnum.Created => 201,
+            ResultTypeEnum.NotFound => 404,
+            ResultTypeEnum.Invalid => 400,
+            ResultTypeEnum.Unauthorized => 401,
+            ResultTypeEnum.Forbidden => 403,
+            ResultTypeEnum.Conflict => 409,
+            ResultTypeEnum.Unprocessable => 422,
+            ResultTypeEnum.InvalidState => 409,
+            _ => 500
+        };
+    }
 }

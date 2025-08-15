@@ -12,5 +12,7 @@ public static class AppServices
         builder.Services.AddScoped<IBrandService, BrandService>();
         builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
         builder.Services.AddScoped<IOrderStatusService, OrderStatusService>();
+        builder.Services.AddScoped<IPaymentService, StripeService>();
+        builder.Services.AddScoped<IBasketService, BasketService>();
     }
 }

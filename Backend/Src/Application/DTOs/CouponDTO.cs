@@ -1,6 +1,6 @@
 namespace Backend.Src.Application.DTOs;
 
-public class AppCouponDTO
+public class CouponDTO
 {
     public required string Name { get; set; }
     public long? AmountOff { get; set; }

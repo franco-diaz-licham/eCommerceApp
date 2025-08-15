@@ -13,6 +13,9 @@ public class DataContext : IdentityDbContext<UserEntity>
     public required DbSet<BrandEntity> Brands { get; set; }
     public required DbSet<ProductTypeEntity> ProductTypes { get; set; }
     public required DbSet<PhotoEntity> Photos { get; set; }
+    public required DbSet<BasketEntity> Baskets { get; set; }
+    public required DbSet<BasketEntity> BasketItems { get; set; }
+    public required DbSet<CouponEntity> Coupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
