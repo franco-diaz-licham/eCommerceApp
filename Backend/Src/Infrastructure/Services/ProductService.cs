@@ -59,7 +59,7 @@ public class ProductService : IProductService
             if (dto.Photo is not null)
             {
                 newPhoto = await _photoService.CreateImageAsync(dto.Photo);
-                model.PhotoId = newPhoto.Id;
+                model.SetPhoto(newPhoto.Id);
             }
 
             _db.Products.Add(model);
@@ -94,7 +94,7 @@ public class ProductService : IProductService
             if (dto.Photo is not null)
             {
                 newPhoto = await _photoService.CreateImageAsync(dto.Photo);
-                product.PhotoId = newPhoto.Id;
+                product.SetPhoto(newPhoto.Id);
             }
 
             await _db.SaveChangesAsync();

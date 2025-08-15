@@ -42,12 +42,12 @@ public class AutoMapperProfiles : Profile
 
         // Basket
         CreateMap<BasketItemEntity, BasketItemCreateDTO>();
-        CreateMap<BasketItemEntity, BasketItemDTO>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal()));
-        CreateMap<BasketEntity, BasketDTO>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal()));
+        CreateMap<BasketItemEntity, BasketItemDTO>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal));
+        CreateMap<BasketEntity, BasketDTO>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal));
         CreateMap<BasketCouponRequest, BasketCouponDTO>();
 
         // Order
-        CreateMap<OrderEntity, OrderDTO>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.GetTotal()));
+        CreateMap<OrderEntity, OrderDTO>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.Total));
         CreateMap<CouponEntity, CouponDTO>();
         CreateMap<AddressEntity, AddressDTO>();
 

@@ -2,16 +2,49 @@
 
 public class PhotoEntity : BaseEntity
 {
-    public PhotoEntity() { }
+    protected PhotoEntity() { }
     public PhotoEntity(string fileName, string publicId, string publicUrl)
     {
-        FileName = fileName;
-        PublicId = publicId;
-        PublicUrl = publicUrl;
+        SetFileName(fileName);
+        ReplaceRemote(publicId, publicUrl);
+        CreatedOn = DateTime.UtcNow;
     }
 
-    public string FileName { get; set; } = default!;
-    public string PublicUrl { get; set; } = default!;
-    public string PublicId { get; set; } = default!;
-    public DateTime CreatedOn { get; set; }
+    #region Properties
+    public string FileName { get; private set; } = default!;
+    public string PublicId { get; private set; } = default!;
+    public string PublicUrl { get; private set; } = default!;
+    public DateTime CreatedOn { get; private set; }
+    public DateTime? UpdatedOn { get; private set; }
+    #endregion
+
+    #region Business Logic
+    public void SetFileName(string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException("Name is required.");
+        var collapsed = CollapseSpaces(fileName.Trim());
+        if (collapsed.Length > 128) throw new ArgumentException("Name too long (max 64).");
+
+        FileName = collapsed;
+        Touch();
+    }
+
+    public void ReplaceRemote(string newPublicId, string newPublicUrl)
+    {
+        // Validate public Id
+        if (string.IsNullOrWhiteSpace(newPublicId)) throw new ArgumentException($"Public Id is required.");
+        var publicId = CollapseSpaces(newPublicId.Trim());
+
+        // Validate url
+        if (!Uri.TryCreate(newPublicUrl, UriKind.Absolute, out var uri)) throw new ArgumentException("PublicUrl must be an absolute URL.");
+        if (uri.Scheme != Uri.UriSchemeHttps) throw new ArgumentException("PublicUrl must use HTTPS.");
+
+        PublicId = publicId;
+        PublicUrl = newPublicUrl;
+        Touch();
+    }
+
+    private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
+    private void Touch() => UpdatedOn = DateTime.UtcNow;
+    #endregion
 }

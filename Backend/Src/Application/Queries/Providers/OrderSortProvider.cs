@@ -4,8 +4,8 @@ public class OrderSortProvider : ISortEvaluatorProvider<OrderEntity>
 {
     private readonly Dictionary<string, SortExpression<OrderEntity>> _map = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "totalAsc", new (p => p.GetTotal(), false) },
-        { "totalDesc", new (p => p.GetTotal(), true)  },
+        { "totalAsc", new (p => p.Total, false) },
+        { "totalDesc", new (p => p.Total, true)  },
         { "createdAsc", new (p => p.CreatedOn, false) },
         { "createdDesc",new (p => p.CreatedOn, true)  }
     };

@@ -4,7 +4,7 @@ namespace Backend.Src.Domain.ValueObjects;
 public class PaymentSummary
 {
     public int Last4 { get; set; }
-    public required string Brand { get; set; }
+    public string Brand { get; set; } = string.Empty;
 
     [JsonPropertyName("exp_month")]
     public int ExpMonth { get; set; }

@@ -46,7 +46,6 @@ Core use cases include browsing products with rich filtering, managing a basket,
 <hr />
 
 <h2>📦 Project Architecture</h2>
-<p><em>Clean Architecture layout</em></p>
 
 <h3>🖥️ Frontend</h3>
 <pre>

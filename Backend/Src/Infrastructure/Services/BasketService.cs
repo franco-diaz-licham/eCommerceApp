@@ -35,7 +35,7 @@ public class BasketService : IBasketService
         var product = await _db.Products.FindAsync(dto.ProductId);
         if (product is null || basket is null) return default;
 
-        basket.AddItem(dto.ProductId, product.Price, dto.Quantity);
+        basket.AddItem(dto.ProductId, product.UnitPrice, dto.Quantity);
         await _db.SaveChangesAsync();
         return _mapper.Map<BasketDTO>(basket);
     }
@@ -49,7 +49,6 @@ public class BasketService : IBasketService
         return _mapper.Map<BasketDTO>(basket);
     }
 
-
     public async Task<Result<BasketDTO>> AddCouponAsync(BasketCouponDTO dto)
     {
         // validate.
@@ -61,7 +60,7 @@ public class BasketService : IBasketService
         if (coupon == null) return Result<BasketDTO>.Fail("Coupon.Fail", "Invalid coupon....", ResultTypeEnum.Invalid);
 
         // update basket.
-        basket.Coupon = _mapper.Map<CouponEntity>(coupon);
+        basket.AddCoupon(coupon.CouponId, _mapper.Map<CouponEntity>(coupon));
         var intent = await _paymentService.CreateOrUpdatePaymentIntent(_mapper.Map<BasketDTO>(basket));
         if (intent == null) return Result<BasketDTO>.Fail("Coupon.Fail", "Problem applying coupon to basket...", ResultTypeEnum.Invalid);
 
@@ -81,7 +80,7 @@ public class BasketService : IBasketService
         if (intent == null) return Result<BasketDTO>.Fail("Coupon.Fail", "Problem removing coupon from basket...", ResultTypeEnum.Invalid);
 
         // update database
-        basket.Coupon = null;
+        basket.RemoveCoupon();
         await _db.SaveChangesAsync();
         return Result<BasketDTO>.Success(_mapper.Map<BasketDTO>(basket), ResultTypeEnum.Accepted);
     }

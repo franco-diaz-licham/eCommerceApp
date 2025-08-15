@@ -6,8 +6,8 @@ public class ProductSortProvider : ISortEvaluatorProvider<ProductEntity>
     {
         { "nameAsc", new (p => p.Name, false) },
         { "nameDesc", new (p => p.Name, true)  },
-        { "priceAsc", new (p => p.Price, false) },
-        { "priceDesc",new (p => p.Price, true)  }
+        { "priceAsc", new (p => p.UnitPrice, false) },
+        { "priceDesc",new (p => p.UnitPrice, true)  }
     };
 
     public bool GetSorter(string? orderBy, out SortExpression<ProductEntity>? sort) => _map.TryGetValue(orderBy ?? "", out sort);

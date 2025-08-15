@@ -3,7 +3,9 @@
 public enum OrderStatusEnum
 {
     Pending = 1,
-    PaymentReceived = 2,
+    Paid = 2,
     PaymentFailed = 3,
-    PaymentMismatch = 4
+    Cancelled = 5,
+    Shipped = 6,
+    Completed = 7
 }

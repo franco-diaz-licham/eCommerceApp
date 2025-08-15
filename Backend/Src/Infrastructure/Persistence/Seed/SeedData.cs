@@ -83,9 +83,8 @@ public static class SeedData
             byte[] bytes = await File.ReadAllBytesAsync(imageFiles[i]);
             var transform = new Transformation().Height(800).Width(500).Crop("fill");
             ImageUploadResult result = await imageStoreService.UploadPhotoAsync(bytes, fileName, transform);
-            models[i].FileName = fileName;
-            models[i].PublicUrl = result.SecureUrl.ToString();
-            models[i].PublicId = result.PublicId.ToString();
+            models[i].SetFileName(fileName);
+            models[i].ReplaceRemote(result.PublicId.ToString(), result.SecureUrl.ToString());
         }
 
         await db.Photos.AddRangeAsync(models);

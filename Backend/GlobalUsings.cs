@@ -41,5 +41,7 @@ global using Stripe;
 global using ProductService = Backend.Src.Infrastructure.Services.ProductService;
 global using Backend.Src.Application.Models;
 global using File = System.IO.File;
+global using System.Text.RegularExpressions;
+global using System.ComponentModel.DataAnnotations.Schema;
 
 

@@ -25,49 +25,28 @@ public class OrderService
         return output;
     }
 
-    public async Task<OrderDTO?> GetAsync(int id, string userEmail)
+    public async Task<OrderDTO?> GetAsync(int id, int userId)
     {
-        var output = await _db.Orders
-                            .AsNoTracking()
-                            .Where(p => p.BuyerEmail == userEmail && p.Id == id)
-                            .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
-                            .SingleOrDefaultAsync();
+        var output = await _db.Orders.AsNoTracking().Where(p => p.UserId == userId && p.Id == id).ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         return output;
     }
 
-    public async Task<Result<OrderDTO>> CreateOrderAsync(OrderCreateDTO dto)
-    {
-        var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.Items).ThenInclude(i => i.Product).AsNoTracking().FirstOrDefaultAsync();
-        if (basket == null || basket.Items.Count == 0 || string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDTO>.Fail("Coupon.Fail", "Coupon code is required...", ResultTypeEnum.Invalid);
+    //public async Task<Result<OrderDTO>> CreateOrderAsync(OrderCreateDTO dto)
+    //{
+    //    var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.Items).ThenInclude(i => i.Product).AsNoTracking().FirstOrDefaultAsync();
+    //    if (basket == null || basket.Items.Count == 0 || string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDTO>.Fail("Coupon.Fail", "Coupon code is required...", ResultTypeEnum.Invalid);
 
+    //    var shipping = new ShippingAddress(dto.ShippingAddress.Line1, dto.ShippingAddress.Line2, dto.ShippingAddress.City, dto.ShippingAddress.State, dto.ShippingAddress.PostalCode, dto.ShippingAddress.Country);
 
-        foreach (var item in basket.Items)
-        {
-            if (item.Product is null || item.Product.QuantityInStock < item.Quantity)  return null;
+    //    var order = new OrderEntity(dto.BuyerEmail, shipping, dto.PaymentIntentId);
+    //    order.SetDeliveryFee(dto.DeliveryFee);
+    //    if (dto.Discount > 0) order.ApplyDiscount(dto.Discount);
 
-            var orderItem = new OrderItemEntity
-            {
-                ItemOrdered = new ProductItemOrdered
-                {
-                    ProductId = item.ProductId,
-                    PictureUrl = item.Product.PictureUrl,
-                    Name = item.Product.Name
-                },
-                Price = item.Product.Price,
-                Quantity = item.Quantity
-            };
-            orderItems.Add(orderItem);
+    //    foreach (var it in dto.Items)
+    //        order.AddItem(it.ProductId, it.Name, it.UnitPrice, it.Quantity);
 
-            item.Product.QuantityInStock -= item.Quantity;
-        }
+    //    _db.Orders.Add(order);
+    //    await _db.SaveChangesAsync();
 
-        return orderItems;
-
-
-
-        var items = CreateOrderItems(basket.Items);
-
-        if (items == null) return BadRequest("Some items out of stock");
-
-    }
+    //}
 }
