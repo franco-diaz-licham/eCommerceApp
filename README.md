@@ -48,6 +48,24 @@ Core use cases include browsing products with rich filtering, managing a basket,
 <h2>📦 Project Architecture</h2>
 <p><em>Clean Architecture layout</em></p>
 
+<h3>🖥️ Frontend</h3>
+<pre>
+src/
+├── app/
+│   ├── main.tsx         # App entry
+│   ├── App.tsx
+│   ├── routes/          # Route definitions
+│   ├── providers/       # RTK Query base API, global providers
+│   └── store/           # Redux store & hooks
+├── components/          # Layout, UI primitives
+├── entities/            # Brand, ProductType, OrderStatus models
+├── features/            # Product & Error modules (pages, components, services)
+├── hooks/               # Reusable hooks
+├── lib/                 # Utilities (photo, etc.)
+├── assets/              # Static assets
+└── styles/              # Global CSS
+</pre>
+
 <h3>🧠 Backend</h3>
 <pre>
 Src/
@@ -67,27 +85,7 @@ Src/
     └── Seed/
 </pre>
 
-<h3>🖥️ Frontend</h3>
-<pre>
-src/
-├── app/
-│   ├── main.tsx         # App entry
-│   ├── App.tsx
-│   ├── routes/          # Route definitions
-│   ├── providers/       # RTK Query base API, global providers
-│   └── store/           # Redux store & hooks
-├── components/          # Layout, UI primitives
-├── entities/            # Brand, ProductType, OrderStatus models
-├── features/            # Product & Error modules (pages, components, services)
-├── hooks/               # Reusable hooks
-├── lib/                 # Utilities (photo, etc.)
-├── assets/              # Static assets
-└── styles/              # Global CSS
-</pre>
-
-<hr />
-
-<h2>🗄️ Database</h2>
+<h3>🗄️ Database</h3>
 
 <p align="center">
   <img src="docs/db-diagram.PNG" alt="ERD diagram" />
