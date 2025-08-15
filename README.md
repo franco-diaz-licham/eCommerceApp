@@ -31,7 +31,7 @@ Core use cases include browsing products with rich filtering, managing a basket,
   <li><strong>AutoMapper</strong> – DTO mapping.</li>
   <li><strong>Stripe .NET</strong> – PaymentIntent & promotion code lookups.</li>
   <li><strong>Cloudinary</strong> – Image storage for products.</li>
-  <li><strong>xUnit (planned)</strong> – Unit tests for services and controllers.</li>
+  <li><strong>xUnit</strong> – Unit tests for services and controllers.</li>
 </ul>
 
 <h3>🌐 Frontend – React + Vite + TypeScript</h3>
@@ -90,7 +90,7 @@ src/
 <h2>🗄️ Database</h2>
 
 <p align="center">
-  <img src="docs/db-diagram.png" alt="ERD diagram" />
+  <img src="docs/db-diagram.PNG" alt="ERD diagram" />
 </p>
 
 <ul>
@@ -100,25 +100,6 @@ src/
   <li><strong>ProductItem</strong> captures a snapshot (price/qty) of a product at purchase time to preserve historical correctness.</li>
   <li><strong>Photos</strong> are stored separately and linked to products.</li>
 </ul>
-
-<hr />
-
-<h2>🔌 API Endpoints (at a glance)</h2>
-<pre>
-GET    /api/products
-GET    /api/products/{id}
-
-GET    /api/brands
-GET    /api/producttypes
-GET    /api/orderstatuses
-
-POST   /api/basket                 # Create a new basket
-GET    /api/basket/{id}            # Get current basket
-POST   /api/basket/add-item        # Add or increment item
-DELETE /api/basket/remove-item     # Remove or decrement item
-POST   /api/basket/add-coupon/{code}
-DELETE /api/basket/remove-coupon
-</pre>
 
 <hr />
 
@@ -198,4 +179,4 @@ VITE_API_URL=https://localhost:5001/api
 <hr />
 
 <h2>📜 License</h2>
-<p>MIT (or your preferred license)</p>
+<p>MIT</p>
