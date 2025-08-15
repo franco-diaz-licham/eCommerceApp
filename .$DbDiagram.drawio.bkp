@@ -1,0 +1,79 @@
+<mxfile host="Electron" modified="2025-06-28T10:21:44.374Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.0.2 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="nfUdbfbM-Isyre4iieiU" version="23.0.2" type="device">
+  <diagram name="Page-1" id="2ca16b54-16f6-2749-3443-fa8db7711227">
+    <mxGraphModel dx="1429" dy="824" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vtryRvpRrof2TpccbrPI-15" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;u&gt;&lt;b&gt;MovieActor&lt;/b&gt;&lt;br&gt;&lt;/u&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;PK&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;MovieId&lt;br&gt;ActorId&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" parent="1" vertex="1">
+          <mxGeometry x="630" y="169" width="98" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-1" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;b&gt;&lt;u&gt;Genre&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;Id&lt;br&gt;Name&lt;br&gt;Description&lt;br&gt;CreatedOn&lt;br&gt;UpdatedOn&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="1069" y="247" width="108" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-2" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;b&gt;&lt;u&gt;Movie&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;Id&lt;br&gt;Title&lt;br&gt;InTheatresFlag&lt;br&gt;UpComingFlag&lt;br&gt;CreatedOn&lt;br&gt;UpdatedOn&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="817" y="243" width="126" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-3" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;b&gt;&lt;u&gt;Theatre&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;Id&lt;br&gt;Name&lt;br&gt;Address&lt;br&gt;Longitude&lt;br&gt;Latitude&lt;br&gt;CreatedOn&lt;br&gt;UpdatedOn&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="442" y="357" width="108" height="143" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-4" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;u&gt;&lt;b&gt;Actor&lt;/b&gt;&lt;br&gt;&lt;/u&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;Id&lt;br&gt;Name&lt;br&gt;Dob&lt;br&gt;ImageUrl&lt;br&gt;Biography&lt;br&gt;CreatedOn&lt;br&gt;UpdatedOn&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="441" y="131" width="110" height="141" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-5" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;b&gt;&lt;u&gt;MovieTheatre&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;PK&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;MovieId&lt;br&gt;TheatreId&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="633" y="394" width="108" height="69" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-6" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; padding: 2px;&quot;&gt;&lt;b&gt;&lt;u&gt;MovieGenre&lt;/u&gt;&lt;/b&gt;&lt;table style=&quot;font-size: 1em; width: 100%;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;br&gt;PK&lt;/td&gt;&lt;td&gt;MovieId&lt;br&gt;GenreId&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;rounded=0;shadow=1;comic=0;labelBackgroundColor=default;strokeWidth=1;fontFamily=Verdana;fontSize=12;labelBorderColor=default;" vertex="1" parent="1">
+          <mxGeometry x="947" y="427" width="112" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-10" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;elbow=vertical;" edge="1" parent="1" source="zMzXejcNQfmOnHdcIRxO-3" target="zMzXejcNQfmOnHdcIRxO-5">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="462" y="507" as="sourcePoint" />
+            <mxPoint x="562" y="407" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="623" y="429" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-11" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="zMzXejcNQfmOnHdcIRxO-5" target="zMzXejcNQfmOnHdcIRxO-2">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="824" y="552" as="sourcePoint" />
+            <mxPoint x="995" y="471" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-13" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="zMzXejcNQfmOnHdcIRxO-4" target="vtryRvpRrof2TpccbrPI-15">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="493.0000000000002" y="89.99999999999977" as="sourcePoint" />
+            <mxPoint x="616" y="89.99999999999977" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-14" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;elbow=vertical;" edge="1" parent="1" source="zMzXejcNQfmOnHdcIRxO-6" target="zMzXejcNQfmOnHdcIRxO-2">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="432" y="597" as="sourcePoint" />
+            <mxPoint x="603" y="516" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="937" y="459" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-15" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="zMzXejcNQfmOnHdcIRxO-6" target="zMzXejcNQfmOnHdcIRxO-1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="1164" y="556" as="sourcePoint" />
+            <mxPoint x="1335" y="475" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1123" y="407" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zMzXejcNQfmOnHdcIRxO-16" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERoneToMany;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="vtryRvpRrof2TpccbrPI-15" target="zMzXejcNQfmOnHdcIRxO-2">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="857" y="290" as="sourcePoint" />
+            <mxPoint x="923" y="228" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="880" y="226" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
