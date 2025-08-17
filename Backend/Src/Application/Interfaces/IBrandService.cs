@@ -3,5 +3,5 @@
 public interface IBrandService
 {
     IQueryable<BrandDTO> GetAllAsync(BaseQuerySpecs specs);
-    Task<BrandDTO?> GetAsync(int id);
+    Task<Result<BrandDTO>> GetAsync(int id);
 }

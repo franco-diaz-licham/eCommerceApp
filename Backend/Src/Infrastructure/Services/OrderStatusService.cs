@@ -11,32 +11,21 @@ public class OrderStatusService : IOrderStatusService
         _mapper = mapper;
     }
 
-    /// <summary>
-    /// Method which gets all OrderStatuss.
-    /// </summary>
     public IQueryable<OrderStatusDTO> GetAllAsync(BaseQuerySpecs specs)
     {
-        var baseQuery = _db.OrderStatuses.AsNoTracking();
+        var query = _db.OrderStatuses.AsNoTracking();
         var queryContext = new QueryStrategyContext<OrderStatusEntity>(
             new SearchEvaluatorStrategy<OrderStatusEntity>(specs.SearchTerm, new OrderStatusSearchProvider()),
             new SortEvaluatorStrategy<OrderStatusEntity>(specs.OrderBy, new OrderStatusSortProvider())
         );
 
-        var query = queryContext.Execute(baseQuery);
-        var output = query.ProjectTo<OrderStatusDTO>(_mapper.ConfigurationProvider);
-        return output;
+        return queryContext.ApplyQuery(query).ProjectTo<OrderStatusDTO>(_mapper.ConfigurationProvider);
     }
 
-    /// <summary>
-    /// Method which gets a OrderStatus.
-    /// </summary>
-    public async Task<OrderStatusDTO?> GetAsync(int id)
+    public async Task<Result<OrderStatusDTO>> GetAsync(int id)
     {
-        var output = await _db.OrderStatuses
-                            .AsNoTracking()
-                            .Where(p => p.Id == id)
-                            .ProjectTo<OrderStatusDTO>(_mapper.ConfigurationProvider)
-                            .SingleOrDefaultAsync();
-        return output;
+        var dto = await _db.OrderStatuses.AsNoTracking().Where(p => p.Id == id).ProjectTo<OrderStatusDTO>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        if (dto is null) return Result<OrderStatusDTO>.Fail("Order Status not found...", ResultTypeEnum.NotFound);
+        return Result<OrderStatusDTO>.Success(dto, ResultTypeEnum.Success);
     }
 }

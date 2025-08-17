@@ -8,5 +8,5 @@ public class BasketDTO
     public decimal Subtotal { get; set; }
     public int CouponId { get; set; }
     public CouponDTO? Coupon { get; set; }
-    public List<BasketItemCreateDTO> Items { get; set; } = [];
+    public List<BasketItemDTO> BasketItems { get; set; } = [];
 }

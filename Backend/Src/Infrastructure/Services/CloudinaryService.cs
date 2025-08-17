@@ -1,6 +1,4 @@
-﻿using Account = CloudinaryDotNet.Account;
-
-namespace Backend.Src.Infrastructure.Services;
+﻿namespace Backend.Src.Infrastructure.Services;
 
 public class CloudinaryService : IImageStorageService
 {

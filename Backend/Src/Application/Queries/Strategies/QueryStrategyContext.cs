@@ -8,7 +8,7 @@ public sealed class QueryStrategyContext<T>
         _steps = steps;
     }
 
-    public IQueryable<T> Execute(IQueryable<T> query)
+    public IQueryable<T> ApplyQuery(IQueryable<T> query)
     {
         foreach (var step in _steps) query = step.Apply(query);
         return query;

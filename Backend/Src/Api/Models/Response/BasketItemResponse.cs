@@ -7,5 +7,4 @@ public class BasketItemResponse
     public int Quantity { get; set; }
     public int ProductId { get; set; }
     public decimal LineTotal { get; set; }
-    public ProductResponse? Product { get; set; }
 }

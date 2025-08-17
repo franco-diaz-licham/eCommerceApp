@@ -2,13 +2,13 @@ namespace Backend.Src.Domain.Entities;
 
 public sealed class ProductEntity : BaseEntity
 {
-    public ProductEntity() { }
-    public ProductEntity(string name, string description, decimal price, int initialStock, int productTypeId, int brandId, int? photoId = null)
+    private ProductEntity() { }
+    public ProductEntity(string name, string description, decimal unitPrice, int quantityInStock, int productTypeId, int brandId, int? photoId = null)
     {
         SetName(name);
         SetDescription(description);
-        ChangeUnitPrice(price);
-        IncreaseStock(initialStock);
+        ChangeUnitPrice(unitPrice);
+        IncreaseStock(quantityInStock);
         ProductTypeId = productTypeId;
         BrandId = brandId;
         PhotoId = photoId ?? 0;

@@ -26,10 +26,9 @@ public static class HttpExtensions
 
             return code switch
             {
-                200 => new OkObjectResult(response),
-                201 => locationUrl is null ? new ObjectResult(response) { StatusCode = 201 } : new CreatedResult(locationUrl, response),
-                202 => new AcceptedResult(locationUrl, response),
-                204 => new NoContentResult(),
+                StatusCodes.Status200OK => new OkObjectResult(response),
+                StatusCodes.Status201Created => locationUrl is null ? new ObjectResult(response) { StatusCode = 201 } : new CreatedResult(locationUrl, response),
+                StatusCodes.Status202Accepted => new AcceptedResult(locationUrl, response),
                 _ => new ObjectResult(response) { StatusCode = code }
             };
         }
@@ -39,12 +38,12 @@ public static class HttpExtensions
 
         return code switch
         {
-            400 => new BadRequestObjectResult(error),
-            401 => new UnauthorizedObjectResult(error),
-            403 => new ObjectResult(error) { StatusCode = 403 },
-            404 => new NotFoundObjectResult(error),
-            409 => new ConflictObjectResult(error),
-            422 => new UnprocessableEntityObjectResult(error),
+            StatusCodes.Status400BadRequest => new BadRequestObjectResult(error),
+            StatusCodes.Status401Unauthorized => new UnauthorizedObjectResult(error),
+            StatusCodes.Status403Forbidden => new ObjectResult(error) { StatusCode = 403 },
+            StatusCodes.Status404NotFound => new NotFoundObjectResult(error),
+            StatusCodes.Status409Conflict => new ConflictObjectResult(error),
+            StatusCodes.Status422UnprocessableEntity => new UnprocessableEntityObjectResult(error),
             _ => new ObjectResult(error) { StatusCode = code }
         };
     }

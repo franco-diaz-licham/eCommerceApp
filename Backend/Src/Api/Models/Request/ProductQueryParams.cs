@@ -5,6 +5,6 @@
 /// </summary>
 public class ProductQueryParams : BaseQueryParams
 {
-    public List<int>? Brands { get; set; }
-    public List<int>? ProductTypes { get; set; }
+    public List<int>? BrandIds { get; set; }
+    public List<int>? ProductTypeIds { get; set; }
 }

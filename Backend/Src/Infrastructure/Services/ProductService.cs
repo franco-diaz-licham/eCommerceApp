@@ -27,7 +27,7 @@ public class ProductService : IProductService
             new SortEvaluatorStrategy<ProductEntity>(specs.OrderBy, new ProductSortProvider())
         );
 
-        var query = queryContext.Execute(baseQuery);
+        var query = queryContext.ApplyQuery(baseQuery);
         var output = query.ProjectTo<ProductDTO>(_mapper.ConfigurationProvider);
         return output;
     }

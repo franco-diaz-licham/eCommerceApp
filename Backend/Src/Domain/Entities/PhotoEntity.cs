@@ -2,7 +2,7 @@
 
 public class PhotoEntity : BaseEntity
 {
-    protected PhotoEntity() { }
+    private PhotoEntity() { }
     public PhotoEntity(string fileName, string publicId, string publicUrl)
     {
         SetFileName(fileName);

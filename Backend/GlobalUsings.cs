@@ -43,5 +43,7 @@ global using Backend.Src.Application.Models;
 global using File = System.IO.File;
 global using System.Text.RegularExpressions;
 global using System.ComponentModel.DataAnnotations.Schema;
-
-
+global using IConfigurationProvider = AutoMapper.IConfigurationProvider;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Backend.Src.Infrastructure.Persistence.DbConfigProfiles;
+global using Account = CloudinaryDotNet.Account;

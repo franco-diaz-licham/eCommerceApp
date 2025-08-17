@@ -3,7 +3,7 @@
 public class CouponEntity : BaseEntity
 {
     private CouponEntity() { }
-    private CouponEntity(string name, string code)
+    private CouponEntity(string name, string remoteId, string code)
     {
         SetName(name);
         SetPromotionCode(code);
@@ -11,23 +11,23 @@ public class CouponEntity : BaseEntity
         CreatedOn = DateTime.UtcNow;
     }
 
-    public static CouponEntity CreateAmountOff(string name, string code, decimal amountOff)
+    public static CouponEntity CreateAmountOff(string name, string remoteId, string code, decimal amountOff)
     {
-        var c = new CouponEntity(name, code);
+        var c = new CouponEntity(name, remoteId, code);
         c.SetAmountOff(amountOff);
         return c;
     }
 
-    public static CouponEntity CreatePercentOff(string name, string code, decimal percentOff)
+    public static CouponEntity CreatePercentOff(string name, string remoteId, string code, decimal percentOff)
     {
-        var c = new CouponEntity(name, code);
+        var c = new CouponEntity(name, remoteId, code);
         c.SetPercentOff(percentOff);
         return c;
     }
 
     #region Properties
     public string Name { get; private set; } = default!;
-    public string? CouponId { get; private set; }
+    public string? RemoteId { get; private set; }
     public string NameNormalized { get; private set; } = default!;
     public decimal? AmountOff { get; private set; }
     public decimal? PercentOff { get; private set; }
@@ -58,6 +58,13 @@ public class CouponEntity : BaseEntity
 
         PromotionCode = collapsed;
         PromotionCodeNormalized = collapsed.ToUpperInvariant();
+        Touch();
+    }
+
+    public void SetRemoteId(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException("Remote id is required.");
+        RemoteId = id.Trim();
         Touch();
     }
 

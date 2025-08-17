@@ -3,7 +3,7 @@
 public class OrderCreateDTO
 {
     public int BasketId { get; set; }
-    public int UserId { get; set; }
-    public required AddressDTO ShippingAddress { get; set; }
-    public required PaymentSummaryDTO PaymentSummary { get; set; }
+    public string UserEmail { get; set; } = null!;
+    public AddressDTO ShippingAddress { get; set; } = null!;
+    public PaymentSummaryDTO PaymentSummary { get; set; } = null!;
 }

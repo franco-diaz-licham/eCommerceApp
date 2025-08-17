@@ -5,8 +5,9 @@ public class BasketItemEntity
     private BasketItemEntity() { }
     public BasketItemEntity(int productId, decimal unitPrice, int quantity, ProductEntity? product = null)
     {
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-        if (unitPrice < 0) throw new ArgumentOutOfRangeException(nameof(unitPrice));
+        if (productId <= 0) throw new ArgumentException("Invalid product.");
+        if (unitPrice < 0m) throw new ArgumentException("Unit price cannot be negative.");
+        if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
 
         ProductId = productId;
         UnitPrice = unitPrice;
@@ -15,39 +16,39 @@ public class BasketItemEntity
     }
 
     #region Properties
-    public int BasketId { get; set; }
-    public BasketEntity? Basket { get; set; }
-    public int ProductId { get; set; }
-    public ProductEntity? Product { get; set; }
-    public decimal UnitPrice { get; set; }
-    public int Quantity { get; set; }
+    public int BasketId { get; private set; }
+    public BasketEntity? Basket { get; private set; }
+    public int ProductId { get; private set; }
+    public ProductEntity? Product { get; private set; }
+    public decimal UnitPrice { get; private set; }
+    public int Quantity { get; private set; }
     [NotMapped] public decimal LineTotal => UnitPrice * Quantity;
     #endregion
 
     #region Business logic
-    public void IncreaseQuantity(int qty)
+    public void IncreaseQuantity(int quantity)
     {
-        if (qty <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
-        checked { Quantity += qty; }
+        if (quantity <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
+        checked { Quantity += quantity; }
     }
 
-    public void DecreaseQuantity(int qty)
+    public void DecreaseQuantity(int quantity)
     {
-        if (qty <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
-        if (qty > Quantity) throw new ArgumentOutOfRangeException("Cannot reduce below zero.");
-        Quantity -= qty;
+        if (quantity <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
+        if (quantity > Quantity) throw new ArgumentOutOfRangeException("Cannot reduce below zero.");
+        Quantity -= quantity;
     }
 
-    public void ReplaceQuantity(int newQty)
+    public void ReplaceQuantity(int quantity)
     {
-        if (newQty <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
-        Quantity = newQty;
+        if (quantity <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.");
+        Quantity = quantity;
     }
 
-    public void SetUnitPrice(decimal newPrice)
+    public void SetUnitPrice(decimal price)
     {
-        if (newPrice < 0m) throw new ArgumentOutOfRangeException("Unit price cannot be negative.");
-        UnitPrice = newPrice;
+        if (price < 0m) throw new ArgumentOutOfRangeException("Unit price cannot be negative.");
+        UnitPrice = price;
     }
     #endregion
 }

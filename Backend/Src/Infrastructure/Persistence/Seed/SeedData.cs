@@ -99,9 +99,31 @@ public static class SeedData
         if (await db.Products.AnyAsync()) return;
         var data = await File.ReadAllTextAsync(PRODUCTS);
         var opt = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var models = JsonSerializer.Deserialize<List<ProductEntity>>(data, opt);
-        if (models is null) return;
-        await db.Products.AddRangeAsync(models);
+        var items = JsonSerializer.Deserialize<List<ProductSeed>>(data, opt) ?? [];
+        var entities = items.Select(p =>
+            new ProductEntity(
+                p.Name,
+                p.Description,
+                p.UnitPrice,
+                p.QuantityInStock,
+                p.ProductTypeId,
+                p.BrandId,
+                p.PhotoId
+            )
+        ).ToList();
+
+        await db.Products.AddRangeAsync(entities);
         await db.SaveChangesAsync();
     }
 }
+
+
+file sealed record ProductSeed(
+    string Name,
+    string Description,
+    decimal UnitPrice,
+    int BrandId,
+    int ProductTypeId,
+    int? PhotoId,
+    int QuantityInStock
+);

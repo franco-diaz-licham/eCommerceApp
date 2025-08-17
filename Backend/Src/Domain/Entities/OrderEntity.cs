@@ -3,20 +3,23 @@
 public class OrderEntity : BaseEntity
 {
     private OrderEntity() { }
-
-    public OrderEntity(int userId, ShippingAddress shipping, string paymentIntentId)
+    public OrderEntity(string userEmail, ShippingAddress shipping, string paymentIntentId, decimal deliveryFee, decimal subtotal, decimal discount, PaymentSummary summary, List<OrderItemEntity> items)
     {
-        SetUser(userId);
+        SetUserEmail(userEmail);
+        SetDeliveryFee(deliveryFee);
+        SetSubtotal(subtotal);
+        ApplyDiscount(discount);
         SetShippingAddress(shipping);
         SetPaymentIntent(paymentIntentId);
+        PaymentSummary = summary;
+        _orderItems = items;
         OrderDate = DateTime.UtcNow;
         OrderStatusId = (int)OrderStatusEnum.Pending;
         CreatedOn = DateTime.UtcNow;
     }
 
     #region Core data 
-    public int UserId { get; private set; }
-    public UserEntity? User { get; set; }
+    public string UserEmail { get; private set; } = null!;
     public DateTime OrderDate { get; private set; } = DateTime.UtcNow;
     public decimal Subtotal { get; private set; } 
     public decimal DeliveryFee { get; private set; }
@@ -33,23 +36,30 @@ public class OrderEntity : BaseEntity
     public PaymentSummary PaymentSummary { get; private set; } = new();
 
     // Related
-    private readonly List<OrderItemEntity> _productItems = new();
-    public IReadOnlyCollection<OrderItemEntity> ProductItems => _productItems.AsReadOnly();
-    [NotMapped] public decimal Total => Subtotal + DeliveryFee - Discount;
+    private readonly List<OrderItemEntity> _orderItems = [];
+    public IReadOnlyCollection<OrderItemEntity> OrderItems => _orderItems.AsReadOnly();
+    public decimal Total => Subtotal + DeliveryFee - Discount;
     #endregion
 
     #region Business Logic
-    public void SetUser(int userId, UserEntity? user = null)
+    public void SetUserEmail(string userEmail)
     {
-        if (userId <= 0) throw new ArgumentException("Invalid photo id.");
-        UserId = userId;
-        User = user;
+        if (string.IsNullOrEmpty(userEmail)) throw new ArgumentException("Invalid photo id.");
+        var email = userEmail.ToLower().Trim();
+        if (email.Length > 64) throw new ArgumentException("Coupon name too long (max 64).");
+        UserEmail = email.Trim();
         Touch();
     }
 
     public void SetShippingAddress(ShippingAddress address)
     {
         ShippingAddress = address ?? throw new ArgumentException("Shipping address is required.");
+        Touch();
+    }
+
+    public void SetPaymentSummary(PaymentSummary address)
+    {
+        PaymentSummary = address ?? throw new ArgumentException("Shipping address is required.");
         Touch();
     }
 
@@ -65,8 +75,8 @@ public class OrderEntity : BaseEntity
         if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
         if (unitPrice < 0m) throw new ArgumentException("Unit price cannot be negative.");
 
-        var existing = _productItems.FirstOrDefault(i => i.ProductId == productId);
-        if (existing is null) _productItems.Add(new OrderItemEntity(productId, name, unitPrice, quantity));
+        var existing = _orderItems.FirstOrDefault(i => i.ProductId == productId);
+        if (existing is null) _orderItems.Add(new OrderItemEntity(productId, name, unitPrice, quantity));
         else existing.IncreaseQuantity(quantity);
 
         RecalculateSubtotal();
@@ -76,20 +86,34 @@ public class OrderEntity : BaseEntity
     public void RemoveItem(int productId, int quantity)
     {
         if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
-        var item = _productItems.FirstOrDefault(i => i.ProductId == productId);
+        var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
         if(item is null) throw new ArgumentException("Item not found.");
 
         item.DecreaseQuantity(quantity);
-        if (item.Quantity == 0) _productItems.Remove(item);
+        if (item.Quantity == 0) _orderItems.Remove(item);
 
         RecalculateSubtotal();
         Touch();
     }
 
-    public void SetDeliveryFee(decimal fee)
+    public void UpdateCharges(decimal deliveryFee, decimal subtotal, decimal discount)
     {
-        if (fee < 0m) throw new ArgumentException("Delivery fee cannot be negative.");
-        DeliveryFee = fee;
+        SetDeliveryFee(deliveryFee);
+        SetSubtotal(subtotal);
+        ApplyDiscount(discount);
+    }
+
+    public void SetDeliveryFee(decimal amount)
+    {
+        if (amount < 0m) throw new ArgumentException("Delivery fee cannot be negative.");
+        DeliveryFee = amount;
+        Touch();
+    }
+
+    public void SetSubtotal(decimal amount)
+    {
+        if (amount < 0m) throw new ArgumentException("Subtotal cannot be negative.");
+        Subtotal = amount;
         Touch();
     }
 
@@ -152,7 +176,7 @@ public class OrderEntity : BaseEntity
 
     private void RecalculateSubtotal()
     {
-        Subtotal = _productItems.Sum(i => i.UnitPrice * i.Quantity);
+        Subtotal = _orderItems.Sum(i => i.UnitPrice * i.Quantity);
         if (Discount > Subtotal + DeliveryFee) Discount = Subtotal + DeliveryFee; 
     }
 

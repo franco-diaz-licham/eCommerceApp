@@ -13,14 +13,24 @@ public class DataContext : IdentityDbContext<UserEntity>
     public required DbSet<ProductTypeEntity> ProductTypes { get; set; }
     public required DbSet<PhotoEntity> Photos { get; set; }
     public required DbSet<BasketEntity> Baskets { get; set; }
-    public required DbSet<BasketEntity> BasketItems { get; set; }
+    public required DbSet<BasketItemEntity> BasketItems { get; set; }
     public required DbSet<CouponEntity> Coupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         // Configure relations
         base.OnModelCreating(builder);
-
+        builder.ApplyConfiguration(new AddressEntityConfig());
+        builder.ApplyConfiguration(new BasketEntityConfig());
+        builder.ApplyConfiguration(new BasketItemEntityConfig());
+        builder.ApplyConfiguration(new BrandEntityConfig());
+        builder.ApplyConfiguration(new CouponEntityConfig());
+        builder.ApplyConfiguration(new OrderEntityConfig());
+        builder.ApplyConfiguration(new OrderItemEntityConfig());
+        builder.ApplyConfiguration(new OrderStatusEntityConfig());
+        builder.ApplyConfiguration(new PhotoEntityConfig());
+        builder.ApplyConfiguration(new ProductEntityConfig());
+        builder.ApplyConfiguration(new ProductTypeEntityConfig());
 
         // Configure all datetimes to be UTC, Before saving to DB and After reading from DB
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));

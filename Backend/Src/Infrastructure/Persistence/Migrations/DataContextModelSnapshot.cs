@@ -33,41 +33,43 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)")
                         .HasColumnName("city");
 
                     b.Property<string>("Country")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(56)
+                        .HasColumnType("character varying(56)")
                         .HasColumnName("country");
 
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<string>("Line1")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
                         .HasColumnName("line1");
 
                     b.Property<string>("Line2")
-                        .HasColumnType("text")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
                         .HasColumnName("line2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("postal_code")
-                        .HasAnnotation("Relational:JsonPropertyName", "postal_code");
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)")
+                        .HasColumnName("postal_code");
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)")
                         .HasColumnName("state");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -80,6 +82,83 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.ToTable("addresses", (string)null);
                 });
 
+            modelBuilder.Entity("Backend.Src.Domain.Entities.BasketEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClientSecret")
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("client_secret");
+
+                    b.Property<int?>("CouponId")
+                        .HasColumnType("integer")
+                        .HasColumnName("coupon_id");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("discount");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("payment_intent_id");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on");
+
+                    b.HasKey("Id")
+                        .HasName("pk_baskets");
+
+                    b.HasIndex("CouponId")
+                        .HasDatabaseName("ix_baskets_coupon_id");
+
+                    b.ToTable("baskets", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Src.Domain.Entities.BasketItemEntity", b =>
+                {
+                    b.Property<int>("BasketId")
+                        .HasColumnType("integer")
+                        .HasColumnName("basket_id");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("BasketId", "ProductId")
+                        .HasName("pk_basket_items");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_basket_items_product_id");
+
+                    b.ToTable("basket_items", (string)null);
+                });
+
             modelBuilder.Entity("Backend.Src.Domain.Entities.BrandEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -90,13 +169,28 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name_normalized");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -108,6 +202,76 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.ToTable("brands", (string)null);
                 });
 
+            modelBuilder.Entity("Backend.Src.Domain.Entities.CouponEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AmountOff")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount_off");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name_normalized");
+
+                    b.Property<decimal?>("PercentOff")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("percent_off");
+
+                    b.Property<string>("PromotionCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("promotion_code");
+
+                    b.Property<string>("PromotionCodeNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("promotion_code_normalized");
+
+                    b.Property<string>("RemoteId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("remote_id");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on");
+
+                    b.HasKey("Id")
+                        .HasName("pk_coupons");
+
+                    b.ToTable("coupons", (string)null);
+                });
+
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -117,43 +281,58 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BuyerEmail")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("buyer_email");
-
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<long>("DeliveryFee")
-                        .HasColumnType("bigint")
+                    b.Property<decimal>("DeliveryFee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
                         .HasColumnName("delivery_fee");
 
-                    b.Property<long>("Discount")
-                        .HasColumnType("bigint")
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
                         .HasColumnName("discount");
 
+                    b.Property<string>("LastProcessedStripeEventId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("last_processed_stripe_event_id");
+
                     b.Property<DateTime>("OrderDate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("order_date");
+                        .HasColumnName("order_date")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<int>("OrderStatusId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(1)
                         .HasColumnName("order_status_id");
 
                     b.Property<string>("PaymentIntentId")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("payment_intent_id");
 
-                    b.Property<long>("Subtotal")
-                        .HasColumnType("bigint")
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
                         .HasColumnName("subtotal");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_email");
 
                     b.HasKey("Id")
                         .HasName("pk_orders");
@@ -166,19 +345,54 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderItemEntity", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer")
                         .HasColumnName("order_id");
 
-                    b.Property<int>("ProductItemId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("integer")
-                        .HasColumnName("product_item_id");
+                        .HasColumnName("product_id");
 
-                    b.HasKey("OrderId", "ProductItemId")
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unit_price");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on");
+
+                    b.HasKey("Id")
                         .HasName("pk_orders_items");
 
-                    b.HasIndex("ProductItemId")
-                        .HasDatabaseName("ix_orders_items_product_item_id");
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("ix_orders_items_order_id");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_orders_items_product_id");
 
                     b.ToTable("orders_items", (string)null);
                 });
@@ -193,13 +407,28 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name_normalized");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -220,20 +449,32 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
                     b.Property<string>("FileName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
                         .HasColumnName("file_name");
 
                     b.Property<string>("PublicId")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
                         .HasColumnName("public_id");
 
                     b.Property<string>("PublicUrl")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("public_url");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on");
 
                     b.HasKey("Id")
                         .HasName("pk_photos");
@@ -255,8 +496,10 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                         .HasColumnName("brand_id");
 
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -265,16 +508,19 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name_normalized");
 
                     b.Property<int>("PhotoId")
                         .HasColumnType("integer")
                         .HasColumnName("photo_id");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
-                        .HasColumnName("price");
 
                     b.Property<int>("ProductTypeId")
                         .HasColumnType("integer")
@@ -283,6 +529,11 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("integer")
                         .HasColumnName("quantity_in_stock");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unit_price");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -303,36 +554,6 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.Src.Domain.Entities.ProductItemEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<long>("Price")
-                        .HasColumnType("bigint")
-                        .HasColumnName("price");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer")
-                        .HasColumnName("product_id");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
-
-                    b.HasKey("Id")
-                        .HasName("pk_product_items");
-
-                    b.HasIndex("ProductId")
-                        .HasDatabaseName("ix_product_items_product_id");
-
-                    b.ToTable("product_items", (string)null);
-                });
-
             modelBuilder.Entity("Backend.Src.Domain.Entities.ProductTypeEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -343,13 +564,28 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
+                        .HasColumnName("created_on")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name_normalized");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -426,6 +662,10 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -612,12 +852,44 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Backend.Src.Domain.Entities.BasketEntity", b =>
+                {
+                    b.HasOne("Backend.Src.Domain.Entities.CouponEntity", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_baskets_coupons_coupon_id");
+
+                    b.Navigation("Coupon");
+                });
+
+            modelBuilder.Entity("Backend.Src.Domain.Entities.BasketItemEntity", b =>
+                {
+                    b.HasOne("Backend.Src.Domain.Entities.BasketEntity", "Basket")
+                        .WithMany("BasketItems")
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_basket_items_baskets_basket_id");
+
+                    b.HasOne("Backend.Src.Domain.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_basket_items_products_product_id");
+
+                    b.Navigation("Basket");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderEntity", b =>
                 {
                     b.HasOne("Backend.Src.Domain.Entities.OrderStatusEntity", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_orders_order_statuses_order_status_id");
 
@@ -629,7 +901,8 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                             b1.Property<string>("Brand")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)")
                                 .HasColumnName("payment_summary_brand");
 
                             b1.Property<int>("ExpMonth")
@@ -663,37 +936,37 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(12)
+                                .HasColumnType("character varying(12)")
                                 .HasColumnName("shipping_address_city");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(56)
+                                .HasColumnType("character varying(56)")
                                 .HasColumnName("shipping_address_country");
 
                             b1.Property<string>("Line1")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(128)
+                                .HasColumnType("character varying(128)")
                                 .HasColumnName("shipping_address_line1");
 
                             b1.Property<string>("Line2")
-                                .HasColumnType("text")
+                                .HasMaxLength(128)
+                                .HasColumnType("character varying(128)")
                                 .HasColumnName("shipping_address_line2");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("shipping_address_name");
 
                             b1.Property<string>("PostalCode")
                                 .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("shipping_address_postal_code")
-                                .HasAnnotation("Relational:JsonPropertyName", "postal_code");
+                                .HasMaxLength(4)
+                                .HasColumnType("character varying(4)")
+                                .HasColumnName("shipping_address_postal_code");
 
                             b1.Property<string>("State")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(12)
+                                .HasColumnType("character varying(12)")
                                 .HasColumnName("shipping_address_state");
 
                             b1.HasKey("OrderEntityId");
@@ -717,22 +990,22 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderItemEntity", b =>
                 {
                     b.HasOne("Backend.Src.Domain.Entities.OrderEntity", "Order")
-                        .WithMany()
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_orders_items_orders_order_id");
 
-                    b.HasOne("Backend.Src.Domain.Entities.ProductItemEntity", "ProductItem")
+                    b.HasOne("Backend.Src.Domain.Entities.ProductEntity", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductItemId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_orders_items_product_items_product_item_id");
+                        .HasConstraintName("fk_orders_items_products_product_id");
 
                     b.Navigation("Order");
 
-                    b.Navigation("ProductItem");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Backend.Src.Domain.Entities.ProductEntity", b =>
@@ -740,21 +1013,21 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.HasOne("Backend.Src.Domain.Entities.BrandEntity", "Brand")
                         .WithMany()
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_products_brands_brand_id");
 
                     b.HasOne("Backend.Src.Domain.Entities.PhotoEntity", "Photo")
                         .WithMany()
                         .HasForeignKey("PhotoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired()
                         .HasConstraintName("fk_products_photos_photo_id");
 
                     b.HasOne("Backend.Src.Domain.Entities.ProductTypeEntity", "ProductType")
                         .WithMany()
                         .HasForeignKey("ProductTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_products_product_types_product_type_id");
 
@@ -763,18 +1036,6 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Navigation("Photo");
 
                     b.Navigation("ProductType");
-                });
-
-            modelBuilder.Entity("Backend.Src.Domain.Entities.ProductItemEntity", b =>
-                {
-                    b.HasOne("Backend.Src.Domain.Entities.ProductEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_product_items_products_product_id");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Backend.Src.Domain.Entities.UserEntity", b =>
@@ -842,6 +1103,16 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("Backend.Src.Domain.Entities.BasketEntity", b =>
+                {
+                    b.Navigation("BasketItems");
+                });
+
+            modelBuilder.Entity("Backend.Src.Domain.Entities.OrderEntity", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

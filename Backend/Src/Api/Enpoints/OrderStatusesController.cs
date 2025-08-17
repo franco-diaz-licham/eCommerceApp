@@ -29,9 +29,7 @@ public class OrderStatusesController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderStatusResponse>> GetOrderStatusAsync(int id)
     {
-        var OrderStatus = await _OrderStatusService.GetAsync(id);
-        if (OrderStatus == null) return NotFound();
-        var output = _mapper.Map<OrderStatusResponse>(OrderStatus);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var result = await _OrderStatusService.GetAsync(id);
+        return _mapper.Map<Result<OrderStatusResponse>>(result).ToActionResult();
     }
 }

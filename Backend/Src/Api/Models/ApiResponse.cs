@@ -23,11 +23,11 @@ public class ApiResponse
     {
         return statusCode switch
         {
-            400 => "That was a bad request...",
-            401 => "Unauthorized...",
-            404 => "Resource was not found...",
-            500 => "There was an internal error...",
-            200 => "Response okay...",
+            StatusCodes.Status400BadRequest => "That was a bad request...",
+            StatusCodes.Status402PaymentRequired => "Unauthorized...",
+            StatusCodes.Status404NotFound => "Resource was not found...",
+            StatusCodes.Status500InternalServerError => "There was an internal error...",
+            StatusCodes.Status200OK => "Response okay...",
             _ => null
         };
     }
@@ -36,17 +36,17 @@ public class ApiResponse
     {
         return type switch
         {
-            ResultTypeEnum.Success => 200,
-            ResultTypeEnum.Accepted => 202,
-            ResultTypeEnum.Created => 201,
-            ResultTypeEnum.NotFound => 404,
-            ResultTypeEnum.Invalid => 400,
-            ResultTypeEnum.Unauthorized => 401,
-            ResultTypeEnum.Forbidden => 403,
-            ResultTypeEnum.Conflict => 409,
-            ResultTypeEnum.Unprocessable => 422,
-            ResultTypeEnum.InvalidState => 409,
-            _ => 500
+            ResultTypeEnum.Success => StatusCodes.Status200OK,
+            ResultTypeEnum.Accepted => StatusCodes.Status202Accepted,
+            ResultTypeEnum.Created => StatusCodes.Status201Created,
+            ResultTypeEnum.NotFound => StatusCodes.Status404NotFound,
+            ResultTypeEnum.Invalid => StatusCodes.Status400BadRequest,
+            ResultTypeEnum.Unauthorized => StatusCodes.Status401Unauthorized,
+            ResultTypeEnum.Forbidden => StatusCodes.Status403Forbidden,
+            ResultTypeEnum.Conflict => StatusCodes.Status409Conflict,
+            ResultTypeEnum.Unprocessable => StatusCodes.Status422UnprocessableEntity,
+            ResultTypeEnum.InvalidState => StatusCodes.Status409Conflict,
+            _ => StatusCodes.Status500InternalServerError
         };
     }
 }

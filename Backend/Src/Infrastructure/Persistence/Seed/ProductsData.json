@@ -2,241 +2,217 @@
   {
     "name": "Classic White T-Shirt",
     "description": "Soft cotton crew neck t-shirt, perfect for everyday wear.",
-    "price": 29.99,
+    "unitPrice": 29.99,
     "brandId": 5,
     "productTypeId": 2,
-    "photoId": 20,
-    "quantityInStock": 150,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 24,
+    "quantityInStock": 150
   },
   {
     "name": "Black Slim Fit Jeans",
     "description": "Modern slim fit black jeans with stretch for comfort.",
-    "price": 59.5,
+    "unitPrice": 59.5,
     "brandId": 9,
     "productTypeId": 8,
     "photoId": 11,
-    "quantityInStock": 80,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 80
   },
   {
     "name": "Blue Denim Jacket",
     "description": "Classic medium wash denim jacket with button closure.",
-    "price": 89.99,
+    "unitPrice": 89.99,
     "brandId": 9,
     "productTypeId": 6,
     "photoId": 8,
-    "quantityInStock": 45,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 45
   },
   {
     "name": "Casual Grey Hoodie",
     "description": "Comfortable pullover hoodie with kangaroo pocket.",
-    "price": 49.99,
+    "unitPrice": 49.99,
     "brandId": 18,
     "productTypeId": 4,
     "photoId": 7,
-    "quantityInStock": 120,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 120
   },
   {
     "name": "Formal White Dress Shirt",
     "description": "Crisp long-sleeve dress shirt for formal occasions.",
-    "price": 65.0,
+    "unitPrice": 65.0,
     "brandId": 10,
     "productTypeId": 2,
     "photoId": 14,
-    "quantityInStock": 60,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 60
   },
   {
     "name": "Leather Biker Jacket",
     "description": "Premium black leather jacket with asymmetrical zipper.",
-    "price": 199.99,
+    "unitPrice": 199.99,
     "brandId": 7,
     "productTypeId": 6,
     "photoId": 9,
-    "quantityInStock": 25,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 25
   },
   {
     "name": "Navy Chinos",
     "description": "Slim fit navy chinos suitable for casual and smart wear.",
-    "price": 54.75,
+    "unitPrice": 54.75,
     "brandId": 8,
     "productTypeId": 9,
     "photoId": 4,
-    "quantityInStock": 90,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 90
   },
   {
     "name": "Black Pencil Skirt",
     "description": "Elegant high-waisted pencil skirt for work or evening wear.",
-    "price": 48.5,
+    "unitPrice": 48.5,
     "brandId": 7,
     "productTypeId": 12,
     "photoId": 16,
-    "quantityInStock": 70,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 70
   },
   {
     "name": "Floral Summer Dress",
     "description": "Lightweight sleeveless dress with vibrant floral pattern.",
-    "price": 74.99,
+    "unitPrice": 74.99,
     "brandId": 20,
     "productTypeId": 11,
     "photoId": 6,
-    "quantityInStock": 55,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 55
   },
   {
     "name": "Wool Blend Overcoat",
     "description": "Warm longline overcoat made from premium wool blend.",
-    "price": 149.99,
+    "unitPrice": 149.99,
     "brandId": 12,
     "productTypeId": 7,
     "photoId": 5,
-    "quantityInStock": 30,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 30
   },
   {
     "name": "Graphic Print T-Shirt",
     "description": "Casual t-shirt with unique graphic print on front.",
-    "price": 32.5,
+    "unitPrice": 32.5,
     "brandId": 6,
     "productTypeId": 2,
-    "photoId": 19,
-    "quantityInStock": 140,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 21,
+    "quantityInStock": 140
   },
   {
     "name": "Khaki Cargo Pants",
     "description": "Durable cargo pants with multiple utility pockets.",
-    "price": 59.99,
+    "unitPrice": 59.99,
     "brandId": 19,
     "productTypeId": 1,
     "photoId": 3,
-    "quantityInStock": 85,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 85
   },
   {
     "name": "Striped Polo Shirt",
     "description": "Classic short-sleeve polo with contrasting stripes.",
-    "price": 38.99,
+    "unitPrice": 38.99,
     "brandId": 12,
     "productTypeId": 3,
     "photoId": 13,
-    "quantityInStock": 100,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 100
   },
   {
     "name": "Running Sneakers",
     "description": "Lightweight breathable sneakers for everyday running.",
-    "price": 89.5,
+    "unitPrice": 89.5,
     "brandId": 1,
     "productTypeId": 17,
     "photoId": 17,
-    "quantityInStock": 65,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 65
   },
   {
     "name": "Chelsea Boots",
     "description": "Leather ankle boots with elastic side panels.",
-    "price": 129.99,
+    "unitPrice": 129.99,
     "brandId": 20,
     "productTypeId": 1,
     "photoId": 2,
-    "quantityInStock": 40,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 40
   },
   {
     "name": "Down Puffer Jacket",
     "description": "Insulated puffer jacket for extreme winter warmth.",
-    "price": 159.5,
+    "unitPrice": 159.5,
     "brandId": 14,
     "productTypeId": 6,
     "photoId": 10,
-    "quantityInStock": 35,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 35
   },
   {
     "name": "Sports Leggings",
     "description": "Stretch leggings designed for sports and active wear.",
-    "price": 44.99,
+    "unitPrice": 44.99,
     "brandId": 17,
     "productTypeId": 17,
     "photoId": 12,
-    "quantityInStock": 95,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 95
   },
   {
     "name": "Wool Beanie",
     "description": "Soft knitted wool beanie for cold weather.",
-    "price": 19.99,
+    "unitPrice": 19.99,
     "brandId": 19,
     "productTypeId": 16,
     "photoId": 1,
-    "quantityInStock": 110,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 110
   },
   {
     "name": "Plaid Flannel Shirt",
     "description": "Button-up flannel shirt with a red and black plaid pattern.",
-    "price": 46.25,
+    "unitPrice": 46.25,
     "brandId": 9,
     "productTypeId": 2,
     "photoId": 15,
-    "quantityInStock": 75,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 75
   },
   {
     "name": "Formal Black Suit",
     "description": "Two-piece tailored suit in classic black wool blend.",
-    "price": 299.99,
+    "unitPrice": 299.99,
     "brandId": 11,
     "productTypeId": 14,
     "photoId": 18,
-    "quantityInStock": 20,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "quantityInStock": 20
   },
   {
     "name": "Classic Black T-Shirt",
     "description": "Soft cotton crew neck t-shirt, perfect for everyday wear.",
-    "price": 29.99,
+    "unitPrice": 29.99,
     "brandId": 5,
     "productTypeId": 2,
-    "photoId": 21,
-    "quantityInStock": 150,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 19,
+    "quantityInStock": 150
   },
   {
     "name": "Classic Orange T-Shirt",
     "description": "Soft cotton crew neck t-shirt, perfect for everyday wear.",
-    "price": 29.99,
+    "unitPrice": 29.99,
     "brandId": 5,
     "productTypeId": 2,
-    "photoId": 22,
-    "quantityInStock": 150,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 23,
+    "quantityInStock": 150
   },
   {
     "name": "Classic Blue T-Shirt",
     "description": "Soft cotton crew neck t-shirt, perfect for everyday wear.",
-    "price": 29.99,
+    "unitPrice": 29.99,
     "brandId": 5,
     "productTypeId": 2,
-    "photoId": 23,
-    "quantityInStock": 150,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 20,
+    "quantityInStock": 150
   },
   {
     "name": "Classic Gray T-Shirt",
     "description": "Soft cotton crew neck t-shirt, perfect for everyday wear.",
-    "price": 29.99,
+    "unitPrice": 29.99,
     "brandId": 5,
     "productTypeId": 2,
-    "photoId": 24,
-    "quantityInStock": 150,
-    "createdOn": "2025-08-11T00:00:00.000Z"
+    "photoId": 22,
+    "quantityInStock": 150
   }
 ]

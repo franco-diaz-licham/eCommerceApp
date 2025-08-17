@@ -85,9 +85,7 @@ public sealed class AddressEntity : BaseEntity
     }
 
     private static string? ValidateOptional(string? s) => string.IsNullOrWhiteSpace(s) ? null : Validate(s, "Line2");
-
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
-
     private void Touch() => UpdatedOn = DateTime.UtcNow;
     #endregion
 }

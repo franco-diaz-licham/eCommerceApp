@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Domain.Entities;
 
-public class OrderItemEntity
+public class OrderItemEntity : BaseEntity
 {
     private OrderItemEntity() { }
     public OrderItemEntity(int productId, string productName, decimal unitPrice, int quantity)
@@ -11,9 +11,9 @@ public class OrderItemEntity
         if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
 
         ProductId = productId;
-        ProductName = productName.Trim();
         UnitPrice = unitPrice;
         Quantity = quantity;
+        ProductName = productName;
         CreatedOn = DateTime.UtcNow;
     }
 
@@ -27,29 +27,29 @@ public class OrderItemEntity
     public int Quantity { get; private set; }
     public DateTime CreatedOn { get; private set; }
     public DateTime? UpdatedOn { get; private set; }
-    [NotMapped] public decimal LineTotal => UnitPrice * Quantity;
+    public decimal LineTotal => UnitPrice * Quantity;
     #endregion
 
     #region Business logic
-    internal void IncreaseQuantity(int qty)
+    internal void IncreaseQuantity(int quantity)
     {
-        if (qty <= 0) throw new ArgumentException("Quantity must be positive.");
-        checked { Quantity += qty; }
+        if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
+        checked { Quantity += quantity; }
         Touch();
     }
 
-    internal void DecreaseQuantity(int qty)
+    internal void DecreaseQuantity(int quantity)
     {
-        if (qty <= 0) throw new ArgumentException("Quantity must be positive.");
-        if (qty > Quantity) throw new ArgumentException("Cannot reduce below zero.");
-        Quantity -= qty;
+        if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
+        if (quantity > Quantity) throw new ArgumentException("Cannot reduce below zero.");
+        Quantity -= quantity;
         Touch();
     }
 
-    internal void SetUnitPrice(decimal newPrice)
+    internal void SetUnitPrice(decimal price)
     {
-        if (newPrice < 0m) throw new ArgumentException("Unit price cannot be negative.");
-        UnitPrice = newPrice;
+        if (price < 0m) throw new ArgumentException("Unit price cannot be negative.");
+        UnitPrice = price;
         Touch();
     }
     

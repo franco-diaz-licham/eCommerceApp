@@ -36,9 +36,13 @@ public class PhotoService : IPhotoService
         if (imageResult.Error != null) throw new Exception("Unable to save photo to cloud...");
 
         // map and save
-        dto.PublicUrl = imageResult.SecureUrl.ToString();
-        dto.PublicId = imageResult.PublicId;
-        var model = _mapper.Map<PhotoEntity>(dto);
+        var newDto = new PhotoDTO
+        {
+            FileName = dto.Image.FileName,
+            PublicUrl = imageResult.SecureUrl.ToString(),
+            PublicId = imageResult.PublicId
+        };
+        var model = _mapper.Map<PhotoEntity>(newDto);
 
         // save and return
         _db.Photos.Add(model);

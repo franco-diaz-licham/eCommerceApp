@@ -16,42 +16,39 @@ public class BasketController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BasketResponse>> CreateBasket()
     {
-        var basket = await _basketService.CreateBasketAsync();
-        if (basket == null) return NoContent();
-        return _mapper.Map<BasketResponse>(basket);
+        var result = await _basketService.CreateBasketAsync();
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<BasketResponse>> GetBasket(int id)
     {
-        var basket = await _basketService.GetBasketAsync(id);
-        if (basket == null) return NoContent();
-        return _mapper.Map<BasketResponse>(basket);
+        var result = await _basketService.GetBasketAsync(id);
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 
     [HttpPost("add-item")]
     public async Task<ActionResult<BasketResponse>> AddBasketItemAsync(BasketItemAddRequest request)
     {
         var item = _mapper.Map<BasketItemCreateDTO>(request);
-        var output = await _basketService.AddItemAsync(item);
-        return Accepted(new ApiResponse(202));
+        var result = await _basketService.AddItemAsync(item);
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 
     [HttpDelete("remove-item")]
     public async Task<ActionResult> RemoveBasketItemAsync(BasketItemRemoveRequest request)
     {
         var item = _mapper.Map<BasketItemCreateDTO>(request);
-        var output = await _basketService.RemoveItemAsync(item);
-        return Accepted(new ApiResponse(202));
+        var result = await _basketService.RemoveItemAsync(item);
+        return result.ToActionResult();
     }
 
-    [HttpPost("add-coupon/{code}")]
+    [HttpPost("add-coupon")]
     public async Task<ActionResult<BasketResponse>> AddCouponCodeAsync(BasketCouponRequest request)
     {
         var coupon = _mapper.Map<BasketCouponDTO>(request);
         var result = await _basketService.AddCouponAsync(coupon);
-        var output = Result<BasketResponse>.Success(_mapper.Map<BasketResponse>(result.Value), ResultTypeEnum.Accepted);
-        return output.ToActionResult();
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 
     [HttpDelete("remove-coupon")]
@@ -59,7 +56,6 @@ public class BasketController : ControllerBase
     {
         var coupon = _mapper.Map<BasketCouponDTO>(request);
         var result = await _basketService.RemoveCouponAsync(coupon);
-        var output = Result<BasketResponse>.Success(_mapper.Map<BasketResponse>(result.Value), ResultTypeEnum.Accepted);
-        return output.ToActionResult();
+        return result.ToActionResult();
     }
 }

@@ -7,7 +7,7 @@ public static class SwaggerConfig
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(opt =>
         {
-            opt.SwaggerDoc("v1", new OpenApiInfo { Title = "eCommerce Store API v1" });
+            opt.SwaggerDoc("v1", new OpenApiInfo { Title = "eCommerceApp API v1" });
         });
         return services;
     }

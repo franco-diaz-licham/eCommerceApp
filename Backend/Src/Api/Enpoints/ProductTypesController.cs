@@ -29,9 +29,7 @@ public class ProductTypesController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProductTypeResponse>> GetProductAsync(int id)
     {
-        var product = await _productTypeService.GetAsync(id);
-        if (product == null) return NotFound();
-        var output = _mapper.Map<ProductTypeResponse>(product);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var result = await _productTypeService.GetAsync(id);
+        return _mapper.Map<Result<ProductTypeResponse>>(result).ToActionResult();
     }
 }

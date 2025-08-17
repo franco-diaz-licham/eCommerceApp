@@ -15,7 +15,7 @@ public enum ResultTypeEnum
     Unexpected
 }
 
-public sealed record AppError(string Code, string Message);
+public sealed record AppError(string Message);
 
 public sealed class Result<T>
 {
@@ -24,7 +24,7 @@ public sealed class Result<T>
     public T? Value { get; }
     public AppError? Error { get; }
 
-    private Result(bool ok, ResultTypeEnum type, T? value, AppError? error)
+    private Result(bool ok, ResultTypeEnum type, T? value = default, AppError? error = null)
     {
         IsSuccess = ok;
         Type = type;
@@ -32,6 +32,7 @@ public sealed class Result<T>
         Error = error;
     }
 
-    public static Result<T> Success(T value, ResultTypeEnum type) => new(true, type, value, null);
-    public static Result<T> Fail(string code, string message, ResultTypeEnum type) => new(false, type, default, new AppError(code, message));
+    public static Result<T> Success(T value, ResultTypeEnum type) => new(true, type, value);
+    public static Result<T> Success(ResultTypeEnum type) => new(true, type);
+    public static Result<T> Fail(string message, ResultTypeEnum type) => new(false, type, error: new AppError(message));
 }

@@ -29,9 +29,7 @@ public class BrandsController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<BrandResponse>> GetBrandAsync(int id)
     {
-        var Brand = await _BrandService.GetAsync(id);
-        if (Brand == null) return NotFound();
-        var output = _mapper.Map<BrandResponse>(Brand);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var result = await _BrandService.GetAsync(id);
+        return _mapper.Map<Result<BrandResponse>>(result).ToActionResult();
     }
 }

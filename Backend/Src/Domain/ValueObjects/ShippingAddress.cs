@@ -4,7 +4,6 @@ namespace Backend.Src.Domain.ValueObjects;
 public class ShippingAddress
 {
     public ShippingAddress() { }
-
     public ShippingAddress(string line1, string? line2, string city, string state, string postalCode, string country)
     {
         Line1 = Validate(line1, "Line1");
@@ -14,6 +13,7 @@ public class ShippingAddress
         PostalCode = Validate(postalCode, "PostalCode");
         Country = Validate(country, "Country").ToUpperInvariant();
     }
+    #region Properties
 
     public string Line1 { get; set; } = default!;
     public string? Line2 { get; set; }
@@ -21,6 +21,7 @@ public class ShippingAddress
     public string State { get; set; } = default!;
     public string PostalCode { get; set; } = default!;
     public string Country { get; set; } = default!;
+    #endregion
 
     #region Business logic
     public void SetLine1(string value) => Line1 = Validate(value, "Line1");

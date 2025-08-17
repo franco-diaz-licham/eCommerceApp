@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Infrastructure.Services;
 
-public class StripeService : IPaymentService
+public class StripeService : IRemotePaymentService
 {
     private string _stripeKey = default!;
 
@@ -18,7 +18,7 @@ public class StripeService : IPaymentService
         decimal deliveryFee = subtotal > 10000 ? 0 : 500;
         decimal discount = 0;
 
-        if (basket.Coupon != null) discount = await CalculateDiscountFromAmount(basket.Coupon, subtotal, removeDiscount);
+        if (basket.Coupon != null) discount = await CalculateDiscountFromAmount(basket.Coupon.RemoteId, subtotal, removeDiscount);
         var total = subtotal - discount + deliveryFee;
 
         if (string.IsNullOrEmpty(basket.PaymentIntentId))
@@ -26,7 +26,7 @@ public class StripeService : IPaymentService
             var options = new PaymentIntentCreateOptions
             {
                 Amount = (long)total,
-                Currency = "usd",
+                Currency = "aud",
                 PaymentMethodTypes = ["card"]
             };
             intent = await service.CreateAsync(options);
@@ -52,16 +52,16 @@ public class StripeService : IPaymentService
             Name = promoCode.Coupon.Name,
             AmountOff = promoCode.Coupon.AmountOff,
             PercentOff = promoCode.Coupon.PercentOff,
-            CouponId = promoCode.Coupon.Id,
+            RemoteId = promoCode.Coupon.Id,
             PromotionCode = promoCode.Code
         };
         return output;
     }
 
-    public async Task<decimal> CalculateDiscountFromAmount(CouponDTO appCoupon, decimal amount, bool removeDiscount = false)
+    public async Task<decimal> CalculateDiscountFromAmount(string remoteId, decimal amount, bool removeDiscount = false)
     {
         var couponService = new CouponService();
-        var coupon = await couponService.GetAsync(appCoupon.CouponId);
+        var coupon = await couponService.GetAsync(remoteId);
         if (coupon.AmountOff.HasValue && !removeDiscount) return (decimal)coupon.AmountOff;
         else if (coupon.PercentOff.HasValue && !removeDiscount) return (decimal)Math.Round(amount * (coupon.PercentOff.Value / 100), MidpointRounding.AwayFromZero);
         return 0;
