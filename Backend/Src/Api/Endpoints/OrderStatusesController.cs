@@ -1,4 +1,4 @@
-﻿namespace Backend.Src.Api.Enpoints;
+﻿namespace Backend.Src.Api.Endpoints;
 
 [Route("api/[controller]")]
 [ApiController]

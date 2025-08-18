@@ -49,14 +49,13 @@ public class StripePaymentGateway : IPaymentGateway
         return new CouponInfoModel(
             RemoteId: c.Id,
             Name: c.Name,
-            AmountOffMinorUnits: c.AmountOff,
+            AmountOff: c.AmountOff,
             PercentOff: c.PercentOff,
             PromotionCodeId: promo.Id,
             PromotionCode: promo.Code
         );
     }
 
-    // If you keep this in the gateway (units must be dollars)
     public async Task<decimal> CalculateDiscountFromAmount(string couponId, decimal baseAmountDollars)
     {
         StripeConfiguration.ApiKey = _stripeKey;

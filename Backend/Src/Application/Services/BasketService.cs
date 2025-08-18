@@ -82,7 +82,7 @@ public class BasketService : IBasketService
         var couponDto = new CouponDto
         {
             Name = coupon.Name,
-            AmountOff = coupon.AmountOffMinorUnits.HasValue ? coupon.AmountOffMinorUnits.Value / 100m : null,
+            AmountOff = coupon.AmountOff.HasValue ? coupon.AmountOff.Value / 100m : null,
             PercentOff = coupon.PercentOff,
             RemoteId = coupon.RemoteId,
             PromotionCode = coupon.PromotionCode

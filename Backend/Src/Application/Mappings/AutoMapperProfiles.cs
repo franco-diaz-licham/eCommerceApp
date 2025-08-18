@@ -1,6 +1,4 @@
-﻿using Stripe;
-
-namespace Backend.Src.Application.Mappings;
+﻿namespace Backend.Src.Application.Mappings;
 
 public class AutoMapperProfiles : Profile
 {
@@ -63,7 +61,7 @@ public class AutoMapperProfiles : Profile
         // Coupon
         CreateMap<CouponEntity, CouponDto>();
         CreateMap<CouponInfoModel, CouponDto>()
-            .ForMember(d => d.AmountOff, opt => opt.ConvertUsing(new MinorUnitsToDecimalConverter(), src => src.AmountOffMinorUnits))
+            .ForMember(d => d.AmountOff, opt => opt.ConvertUsing(new MinorUnitsToDecimalConverter(), src => src.AmountOff))
             .ForMember(d => d.RemoteId, opt => opt.MapFrom(src => src.RemoteId))
             .ForMember(d => d.Id, opt => opt.Ignore());
 
