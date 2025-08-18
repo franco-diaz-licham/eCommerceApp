@@ -47,3 +47,6 @@ global using IConfigurationProvider = AutoMapper.IConfigurationProvider;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Backend.Src.Infrastructure.Persistence.DbConfigProfiles;
 global using Account = CloudinaryDotNet.Account;
+global using System.Security.Claims;
+
+

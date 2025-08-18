@@ -14,5 +14,7 @@ public static class AppServices
         builder.Services.AddScoped<IOrderStatusService, OrderStatusService>();
         builder.Services.AddScoped<IRemotePaymentService, StripeService>();
         builder.Services.AddScoped<IBasketService, BasketService>();
+        builder.Services.AddScoped<IPaymentService, PaymentService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
     }
 }

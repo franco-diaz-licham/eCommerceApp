@@ -3,5 +3,5 @@
 public class PhotoCreateRequest
 {
     public string FileName { get; set; } = string.Empty;
-    public IFormFile? Image { get; set; }
+    [Required] public IFormFile? Image { get; set; }
 }

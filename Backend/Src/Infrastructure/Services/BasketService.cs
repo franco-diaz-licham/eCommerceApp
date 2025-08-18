@@ -79,8 +79,8 @@ public class BasketService : IBasketService
 
         // Update basket.
         basket.AddCoupon(_mapper.Map<CouponEntity>(coupon));
-        var intent = await _paymentService.CreateOrUpdatePaymentIntent(_mapper.Map<BasketDTO>(basket));
-        if (intent == null) return Result<BasketDTO>.Fail( "Problem applying coupon to basket...", ResultTypeEnum.Invalid);
+        var (intent, clientSecret) = await _paymentService.CreateOrUpdatePaymentIntent(_mapper.Map<BasketDTO>(basket));
+        basket.AttachPaymentIntent(intent, clientSecret);
 
         // Save changes to db.
         var saved = await _db.SaveChangesAsync() > 0;
@@ -96,8 +96,8 @@ public class BasketService : IBasketService
         if (basket == null || basket.Coupon is null) return Result<bool>.Fail("Unable to update basket with coupon...", ResultTypeEnum.Invalid);
         
         // update basket
-        var intent = await _paymentService.CreateOrUpdatePaymentIntent(_mapper.Map<BasketDTO>(basket), true);
-        if (intent == null) return Result<bool>.Fail("Problem removing coupon from basket...", ResultTypeEnum.Invalid);
+        await _paymentService.CreateOrUpdatePaymentIntent(_mapper.Map<BasketDTO>(basket), true);
+        basket.RemoveCoupon();
 
         // update database
         basket.RemoveCoupon();

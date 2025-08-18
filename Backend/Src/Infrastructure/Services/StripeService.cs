@@ -9,7 +9,7 @@ public class StripeService : IRemotePaymentService
         _stripeKey = config["StripeSettings:SecretKey"] ?? "";
     }
 
-    public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(BasketDTO basket, bool removeDiscount = false)
+    public async Task<(string intentId, string clientSecret)> CreateOrUpdatePaymentIntent(BasketDTO basket, bool removeDiscount = false)
     {
         StripeConfiguration.ApiKey = _stripeKey;
         var service = new PaymentIntentService();
@@ -37,7 +37,10 @@ public class StripeService : IRemotePaymentService
             await service.UpdateAsync(basket.PaymentIntentId, options);
         }
 
-        return intent;
+        // Update passed dto
+        basket.PaymentIntentId = intent.Id;
+        basket.ClientSecret = intent.ClientSecret;
+        return (intent.Id, intent.ClientSecret);
     }
 
     public async Task<CouponDTO?> GetCouponFromPromoCode(string code)
@@ -66,4 +69,5 @@ public class StripeService : IRemotePaymentService
         else if (coupon.PercentOff.HasValue && !removeDiscount) return (decimal)Math.Round(amount * (coupon.PercentOff.Value / 100), MidpointRounding.AwayFromZero);
         return 0;
     }
+
 }

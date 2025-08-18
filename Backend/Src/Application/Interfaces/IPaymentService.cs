@@ -10,7 +10,7 @@ public interface IRemotePaymentService
     /// <summary>
     /// Creates or updates payment intent record in payment service.
     /// </summary>
-    Task<PaymentIntent> CreateOrUpdatePaymentIntent(BasketDTO basket, bool removeDiscount = false);
+    Task<(string intentId, string clientSecret)> CreateOrUpdatePaymentIntent(BasketDTO basket, bool removeDiscount = false);
     
     /// <summary>
     /// Method which gets coupon based on code stored in payment storage.

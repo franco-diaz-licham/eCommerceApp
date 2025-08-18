@@ -25,7 +25,7 @@ public class OrderEntity : BaseEntity
     public decimal DeliveryFee { get; private set; }
     public decimal Discount { get; private set; }
     public string PaymentIntentId { get; private set; } = default!;
-    public string? LastProcessedStripeEventId { get; private set; } // idempotency guard
+    public string? LastProcessedStripeEventId { get; private set; }
     public int OrderStatusId { get; private set; } = (int)OrderStatusEnum.Pending;
     public OrderStatusEntity? OrderStatus { get; private set; }
     public DateTime CreatedOn { get; private set; }
@@ -158,6 +158,12 @@ public class OrderEntity : BaseEntity
         Touch();
     }
 
+    public void MarkPaymentFailed()
+    {
+        TransitionTo(OrderStatusEnum.PaymentFailed);
+        Touch();
+    }
+
     private static readonly Dictionary<OrderStatusEnum, OrderStatusEnum[]> AllowedTransitions = new()
     {
         { OrderStatusEnum.Pending, new[] { OrderStatusEnum.Paid, OrderStatusEnum.Cancelled, OrderStatusEnum.PaymentFailed } },
@@ -165,6 +171,7 @@ public class OrderEntity : BaseEntity
         { OrderStatusEnum.Shipped, new[] { OrderStatusEnum.Completed } },
         { OrderStatusEnum.Completed, new OrderStatusEnum[0] },
         { OrderStatusEnum.Cancelled, new OrderStatusEnum[0] },
+        { OrderStatusEnum.PaymentFailed, new OrderStatusEnum [0] }
     };
 
     private void TransitionTo(OrderStatusEnum next)
