@@ -30,7 +30,7 @@ public class BasketController : ControllerBase
     [HttpPost("add-item")]
     public async Task<ActionResult<BasketResponse>> AddBasketItemAsync(BasketItemAddRequest request)
     {
-        var item = _mapper.Map<BasketItemCreateDTO>(request);
+        var item = _mapper.Map<BasketItemCreateDto>(request);
         var result = await _basketService.AddItemAsync(item);
         return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
@@ -38,7 +38,7 @@ public class BasketController : ControllerBase
     [HttpDelete("remove-item")]
     public async Task<ActionResult> RemoveBasketItemAsync(BasketItemRemoveRequest request)
     {
-        var item = _mapper.Map<BasketItemCreateDTO>(request);
+        var item = _mapper.Map<BasketItemCreateDto>(request);
         var result = await _basketService.RemoveItemAsync(item);
         return result.ToActionResult();
     }
@@ -46,7 +46,7 @@ public class BasketController : ControllerBase
     [HttpPost("add-coupon")]
     public async Task<ActionResult<BasketResponse>> AddCouponCodeAsync(BasketCouponRequest request)
     {
-        var coupon = _mapper.Map<BasketCouponDTO>(request);
+        var coupon = _mapper.Map<BasketCouponDto>(request);
         var result = await _basketService.AddCouponAsync(coupon);
         return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
@@ -54,7 +54,7 @@ public class BasketController : ControllerBase
     [HttpDelete("remove-coupon")]
     public async Task<ActionResult> RemoveCouponAsync(BasketCouponRequest request)
     {
-        var coupon = _mapper.Map<BasketCouponDTO>(request);
+        var coupon = _mapper.Map<BasketCouponDto>(request);
         var result = await _basketService.RemoveCouponAsync(coupon);
         return result.ToActionResult();
     }

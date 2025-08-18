@@ -38,7 +38,7 @@ global using Expression = System.Linq.Expressions.Expression;
 global using Backend.Src.Application.Queries.Providers;
 global using Backend.Src.Application.Queries.Strategies;
 global using Stripe;
-global using ProductService = Backend.Src.Infrastructure.Services.ProductService;
+global using ProductService = Backend.Src.Application.Services.ProductService;
 global using Backend.Src.Application.Models;
 global using File = System.IO.File;
 global using System.Text.RegularExpressions;
@@ -48,5 +48,6 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Backend.Src.Infrastructure.Persistence.DbConfigProfiles;
 global using Account = CloudinaryDotNet.Account;
 global using System.Security.Claims;
+global using Backend.Src.Application.Services;
 
 

@@ -1,54 +1,54 @@
-﻿namespace Backend.Src.Infrastructure.Services;
+﻿namespace Backend.Src.Application.Services;
 
 public class OrderService : IOrderService
 {
     private readonly IMapper _mapper;
     private readonly DataContext _db;
-    private readonly IRemotePaymentService _paymentService;
 
-    public OrderService(DataContext db, IMapper mapper, IRemotePaymentService paymentService)
+    public OrderService(DataContext db, IMapper mapper)
     {
         _db = db;
         _mapper = mapper;
-        _paymentService = paymentService;
     }
 
-    public IQueryable<OrderDTO> GetAllAsync(BaseQuerySpecs specs)
+    public async Task<PagedList<OrderDto>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.Orders.AsNoTracking();
         var queryContext = new QueryStrategyContext<OrderEntity>(
             new SearchEvaluatorStrategy<OrderEntity>(specs.SearchTerm, new OrderSearchProvider()),
             new SortEvaluatorStrategy<OrderEntity>(specs.OrderBy, new OrderSortProvider())
         );
-        return queryContext.ApplyQuery(query).ProjectTo<OrderDTO>(_mapper.ConfigurationProvider);
+        var filtered = queryContext.ApplyQuery(query);
+        var count = await filtered.CountAsync();
+        var projected = filtered.ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
+        return await PagedList<OrderDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
     }
 
-    public async Task<OrderDTO?> GetAsync(int id, string email)
+    public async Task<OrderDto?> GetAsync(int id, string email)
     {
-        var output = await _db.Orders.AsNoTracking().Where(p => p.UserEmail == email && p.Id == id).AsNoTracking().ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        var output = await _db.Orders.AsNoTracking().Where(p => p.UserEmail == email && p.Id == id).AsNoTracking().ProjectTo<OrderDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         return output;
     }
 
-    public async Task<Result<OrderDTO>> CreateOrderAsync(OrderCreateDTO dto)
+    public async Task<Result<OrderDto>> CreateOrderAsync(OrderCreateDto dto)
     {
         // Read associated basket and validate
         var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).ThenInclude(i => i.Product).Include(i => i.Coupon).FirstOrDefaultAsync();
-        if (basket is null || basket.BasketItems.Count == 0) return Result<OrderDTO>.Fail("Basket is empty.", ResultTypeEnum.Invalid);
-        if (string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDTO>.Fail("Invalid basket payment intent.", ResultTypeEnum.Invalid);
+        if (basket is null || basket.BasketItems.Count == 0) return Result<OrderDto>.Fail("Basket is empty.", ResultTypeEnum.Invalid);
+        if (string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDto>.Fail("Invalid basket payment intent.", ResultTypeEnum.Invalid);
 
         // Create order items from basket items
         var orderItems = new List<OrderItemEntity>();
         foreach (var bi in basket.BasketItems)
         {
-            if (bi.Quantity <= 0) return Result<OrderDTO>.Fail("An item has zero quantity.", ResultTypeEnum.Invalid);
-            if (bi.Product is null) return Result<OrderDTO>.Fail("Product not found.", ResultTypeEnum.Invalid);
+            if (bi.Quantity <= 0) return Result<OrderDto>.Fail("An item has zero quantity.", ResultTypeEnum.Invalid);
+            if (bi.Product is null) return Result<OrderDto>.Fail("Product not found.", ResultTypeEnum.Invalid);
             orderItems.Add(new OrderItemEntity(bi.ProductId, bi.Product.Name, bi.UnitPrice, bi.Quantity));
         }
 
         // Calculate discount
-        var deliveryFee = basket.Subtotal > 100.00m ? 0 : 5.00m;
-        var discount = 0m;
-        if (basket.Coupon?.RemoteId is not null) discount = await _paymentService.CalculateDiscountFromAmount(basket.Coupon.RemoteId, basket.Subtotal);
+        var deliveryFee = 0m;
+        if (basket.Subtotal < 100.00m && basket.Discount == 0m) deliveryFee = 5.00m;
 
         await using var transaction = await _db.Database.BeginTransactionAsync();
 
@@ -63,7 +63,7 @@ public class OrderService : IOrderService
             if (affected == 0)
             {
                 await transaction.RollbackAsync();
-                return Result<OrderDTO>.Fail($"Insufficient stock for '{bi.Product?.Name ?? bi.ProductId.ToString()}'.", ResultTypeEnum.Invalid);
+                return Result<OrderDto>.Fail($"Insufficient stock for '{bi.Product?.Name ?? bi.ProductId.ToString()}'.", ResultTypeEnum.Invalid);
             }
         }
 
@@ -73,14 +73,14 @@ public class OrderService : IOrderService
         var summary = _mapper.Map<PaymentSummary>(dto.PaymentSummary);
         if (order == null)
         {
-            order = new OrderEntity(dto.UserEmail, shipping, basket.PaymentIntentId, deliveryFee, basket.Subtotal, discount, summary, orderItems);
+            order = new OrderEntity(dto.UserEmail, shipping, basket.PaymentIntentId, deliveryFee, basket.Subtotal, basket.Discount, summary, orderItems);
             _db.Orders.Add(order);
         }
         else
         {
             orderItems.ForEach(x => order.AddItem(x.ProductId, x.ProductName, x.UnitPrice, x.Quantity));
             order.SetShippingAddress(shipping);
-            order.UpdateCharges(deliveryFee, basket.Subtotal, discount);
+            order.UpdateCharges(deliveryFee, basket.Subtotal, basket.Discount);
             order.SetPaymentSummary(summary);
         }
 
@@ -89,13 +89,13 @@ public class OrderService : IOrderService
         if (!saved)
         {
             await transaction.RollbackAsync();
-            return Result<OrderDTO>.Fail("Order could not be created.", ResultTypeEnum.Invalid);
+            return Result<OrderDto>.Fail("Order could not be created.", ResultTypeEnum.Invalid);
         }
 
         await transaction.CommitAsync();
 
         // Return mapped order (not basket)
-        var dtoOut = _mapper.Map<OrderDTO>(order);
-        return Result<OrderDTO>.Success(dtoOut, ResultTypeEnum.Created);
+        var dtoOut = _mapper.Map<OrderDto>(order);
+        return Result<OrderDto>.Success(dtoOut, ResultTypeEnum.Created);
     }
 }

@@ -2,8 +2,8 @@
 
 public interface IPhotoService
 {
-    Task<PhotoDTO> CreateImageAsync(PhotoCreateDTO dto);
-    Task<bool> DeleteAsync(PhotoDTO dto);
-    Task<PhotoDTO?> GetAsync(int id);
+    Task<PhotoDto> CreateImageAsync(PhotoCreateDto dto);
+    Task<bool> DeleteAsync(PhotoDto dto);
+    Task<PhotoDto?> GetAsync(int id);
     Task<bool> TryDeleteCloudAsync(string? publicId);
 }

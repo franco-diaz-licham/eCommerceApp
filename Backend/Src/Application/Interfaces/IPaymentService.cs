@@ -1,19 +1,8 @@
-﻿namespace Backend.Src.Application.Interfaces;
+﻿
+namespace Backend.Src.Application.Interfaces;
 
-public interface IRemotePaymentService
+public interface IPaymentService
 {
-    /// <summary>
-    /// Calculates discount based on coupon.
-    /// </summary>
-    Task<decimal> CalculateDiscountFromAmount(string remoteId, decimal amount, bool removeDiscount = false);
-
-    /// <summary>
-    /// Creates or updates payment intent record in payment service.
-    /// </summary>
-    Task<(string intentId, string clientSecret)> CreateOrUpdatePaymentIntent(BasketDTO basket, bool removeDiscount = false);
-    
-    /// <summary>
-    /// Method which gets coupon based on code stored in payment storage.
-    /// </summary>
-    Task<CouponDTO?> GetCouponFromPromoCode(string code);
+    Task<Result<BasketDto>> CreateOrUpdatePaymentIntent(int basketId);
+    Task<Result<bool>> RemotePaymentWebhook(string jsonBody, string signature);
 }

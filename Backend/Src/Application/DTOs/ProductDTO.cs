@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class ProductDTO
+public class ProductDto
 {
     public int Id { get; set; }
     public required string Name { get; set; }
@@ -8,9 +8,9 @@ public class ProductDTO
     public decimal UnitPrice { get; set; }
     public int QuantityInStock { get; set; }
     public int ProductTypeId { get; set; }
-    public ProductTypeDTO? ProductType { get; set; }
+    public ProductTypeDto? ProductType { get; set; }
     public int BrandId { get; set; }
-    public BrandDTO? Brand { get; set; }
+    public BrandDto? Brand { get; set; }
     public int PhotoId { get; set; }
-    public PhotoDTO? Photo { get; set; }
+    public PhotoDto? Photo { get; set; }
 }

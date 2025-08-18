@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class ProductCreateDTO
+public class ProductCreateDto
 {
     public string Name { get; private set; } = default!;
     public string Description { get; private set; } = default!;
@@ -8,5 +8,5 @@ public class ProductCreateDTO
     public int QuantityInStock { get; private set; }
     public int ProductTypeId { get; private set; }
     public int BrandId { get; private set; }
-    public PhotoCreateDTO? Photo { get; set; }
+    public PhotoCreateDto? Photo { get; set; }
 }

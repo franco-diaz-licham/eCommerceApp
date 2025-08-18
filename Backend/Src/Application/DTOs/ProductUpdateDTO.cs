@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class ProductUpdateDTO : ProductCreateDTO
+public class ProductUpdateDto : ProductCreateDto
 {
     public int Id { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class PaymentSummaryDTO
+public class PaymentSummaryDto
 {
     public int Last4 { get; set; }
     public required string Brand { get; set; }

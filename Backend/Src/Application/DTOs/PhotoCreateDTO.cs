@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class PhotoCreateDTO
+public class PhotoCreateDto
 {
     public IFormFile? Image { get; set; }
 }

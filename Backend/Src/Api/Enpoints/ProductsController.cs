@@ -6,13 +6,11 @@ public class ProductsController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IProductService _productService;
-    private readonly IPaginationService _paginationService;
     private readonly IFilterService _filteService;
 
-    public ProductsController(IMapper mapper, IProductService productService, IPaginationService paginationService, IFilterService filterService)
+    public ProductsController(IMapper mapper, IProductService productService, IFilterService filterService)
     {
         _productService = productService;
-        _paginationService = paginationService;
         _mapper = mapper;
         _filteService = filterService;
     }
@@ -21,9 +19,8 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<PagedList<ProductResponse>>> GetProductsAsync([FromQuery] ProductQueryParams queryParams)
     {
         var query = _mapper.Map<ProductQuerySpecs>(queryParams);
-        var models = _productService.GetAllAsync(query);
-        var paged = await _paginationService.ApplyPaginationAsync(models, query.PageNumber, query.PageSize);
-        var output = _mapper.Map<PagedList<ProductResponse>>(paged);
+        var models = await _productService.GetAllAsync(query);
+        var output = _mapper.Map<PagedList<ProductResponse>>(models);
         Response.AddPaginationHeader(output.Metadata);
         return Ok(new ApiResponse(StatusCodes.Status200OK, output));
     }
@@ -47,7 +44,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductResponse>> CreateProductAsync(CreateProductRequest model)
     {
-        var product = _mapper.Map<ProductCreateDTO>(model);
+        var product = _mapper.Map<ProductCreateDto>(model);
         var output = await _productService.CreateAsync(product);
         return CreatedAtAction(nameof(GetProductAsync), new { output.Id }, output);
     }
@@ -55,7 +52,7 @@ public class ProductsController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<ProductResponse>> UpdateProduct(UpdateProductRequest model)
     {
-        var product = _mapper.Map<ProductUpdateDTO>(model);
+        var product = _mapper.Map<ProductUpdateDto>(model);
         var output = await _productService.UpdateAsync(product);
         return Accepted(new ApiResponse(202, output));
     }

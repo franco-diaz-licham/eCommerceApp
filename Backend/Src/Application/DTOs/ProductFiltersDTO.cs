@@ -1,12 +1,12 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class ProductFiltersDTO
+public class ProductFiltersDto
 {
-    public ProductFiltersDTO(List<BrandDTO> brands, List<ProductTypeDTO> types)
+    public ProductFiltersDto(List<BrandDto> brands, List<ProductTypeDto> types)
     {
         Brands = brands;
         ProductTypes = types;
     }
-    public List<BrandDTO>? Brands { get; set; }
-    public List<ProductTypeDTO>? ProductTypes { get; set; }
+    public List<BrandDto>? Brands { get; set; }
+    public List<ProductTypeDto>? ProductTypes { get; set; }
 }

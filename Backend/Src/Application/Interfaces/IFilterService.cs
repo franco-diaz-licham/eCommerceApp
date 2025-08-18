@@ -2,6 +2,6 @@
 {
     public interface IFilterService
     {
-        Task<ProductFiltersDTO> GetProductFilters();
+        Task<ProductFiltersDto> GetProductFilters();
     }
 }

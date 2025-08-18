@@ -1,9 +1,8 @@
-﻿namespace Backend.Src.Application.Interfaces
+﻿namespace Backend.Src.Application.Interfaces;
+
+public interface IOrderService
 {
-    public interface IOrderService
-    {
-        Task<Result<OrderDTO>> CreateOrderAsync(OrderCreateDTO dto);
-        IQueryable<OrderDTO> GetAllAsync(BaseQuerySpecs specs);
-        Task<OrderDTO?> GetAsync(int id, string email);
-    }
+    Task<Result<OrderDto>> CreateOrderAsync(OrderCreateDto dto);
+    Task<PagedList<OrderDto>> GetAllAsync(BaseQuerySpecs specs);
+    Task<OrderDto?> GetAsync(int id, string email);
 }

@@ -1,58 +1,59 @@
-﻿namespace Backend.Src.Infrastructure.Services;
+﻿namespace Backend.Src.Application.Services;
 
 public class PaymentService : IPaymentService
 {
     private readonly DataContext _db;
-    private readonly IRemotePaymentService _remotePaymentService;
+    private readonly IPaymentGateway _payments;
     private readonly IMapper _mapper;
     private readonly ILogger<PaymentService> _logger;
-    private readonly IConfiguration _config;
 
-    public PaymentService(DataContext db, IRemotePaymentService remotePaymentService, IMapper mapper, ILogger<PaymentService> logger, IConfiguration config)
+    public PaymentService(DataContext db, IPaymentGateway payments, IMapper mapper, ILogger<PaymentService> logger)
     {
         _db = db;
-        _remotePaymentService = remotePaymentService;
+        _payments = payments;
         _mapper = mapper;
         _logger = logger;
-        _config = config;
     }
 
-    public async Task<Result<BasketDTO>> CreateOrUpdatePaymentIntent(int basketId)
+    public async Task<Result<BasketDto>> CreateOrUpdatePaymentIntent(int basketId)
     {
         // Get basket
         var basket = await _db.Baskets.Where(x => x.Id == basketId).FirstOrDefaultAsync();
-        if (basket is null) return Result<BasketDTO>.Fail("Basket not found.", ResultTypeEnum.NotFound);
+        if (basket is null) return Result<BasketDto>.Fail("Basket not found.", ResultTypeEnum.NotFound);
 
-        // Update basket
-        var basketDto = _mapper.Map<BasketDTO>(basket);
-        var (intentId, clientSecret) = await _remotePaymentService.CreateOrUpdatePaymentIntent(basketDto);
-        basket.AttachPaymentIntent(intentId, clientSecret);
+        // Calculate total
+        var basketDto = _mapper.Map<BasketDto>(basket);
+        decimal subtotal = basketDto.Subtotal;
+        decimal deliveryFee = subtotal > 10000 ? 0 : 500;
+        decimal discount = 0;
+
+        if (basketDto.Coupon != null) discount = await _payments.CalculateDiscountFromAmount(basketDto.Coupon.RemoteId, (long)subtotal);
+        var total = subtotal - discount + deliveryFee;
+
+        // Call gateway with final amount (minor units) & currency
+        var info = await _payments.CreateOrUpdateAsync((long)total, "aud", basket.PaymentIntentId);
+
+        // Update domain + DTO to preserve existing outward behavior
+        basket.AttachPaymentIntent(info.IntentId, info.ClientSecret ?? "");
+        basketDto.PaymentIntentId = info.IntentId;
+        basketDto.ClientSecret = info.ClientSecret;
 
         // Save changes
         var saved = await _db.SaveChangesAsync() > 0;
-        if (!saved) return Result<BasketDTO>.Fail("Basket could not be updated...", ResultTypeEnum.Invalid);
-        return Result<BasketDTO>.Success(basketDto, ResultTypeEnum.Accepted);
+        if (!saved) return Result<BasketDto>.Fail("Basket could not be updated...", ResultTypeEnum.Invalid);
+        return Result<BasketDto>.Success(basketDto, ResultTypeEnum.Accepted);
     }
 
     public async Task<Result<bool>> RemotePaymentWebhook(string jsonBody, string signature)
     {
-        // Contruct strip event
-        var stripeEvent = new Event();
-        try
+        var webhookResult = _payments.ParseWebhook(jsonBody, signature);
+        if (!webhookResult.Success || webhookResult.Status is null || string.IsNullOrWhiteSpace(webhookResult.IntentId))
         {
-            var webHookSecret = _config.GetValue<string>("StripeSettings:WhSecret") ?? "";
-            stripeEvent = EventUtility.ConstructEvent(jsonBody, signature, webHookSecret);
+            _logger.LogError("Stripe webhook error: {Error}", webhookResult.Error);
+            return Result<bool>.Fail("Stripe webhook error.", ResultTypeEnum.Unprocessable);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to construct Stripe event.");
-            return Result<bool>.Fail("Stripe webhook failed.", ResultTypeEnum.Invalid);
-        }
-
-        // Handle payment 
-        if (stripeEvent.Data.Object is not PaymentIntent intent) return Result<bool>.Fail("Stripe webhook error.", ResultTypeEnum.Unprocessable);
-        if (intent.Status == "succeeded") await HandlePaymentIntentSucceded(intent.Id, intent.AmountReceived);
-        else await HandlePaymentIntentFailed(intent.Id);
+        if (webhookResult.Status == "succeeded") await HandlePaymentIntentSucceded(webhookResult.IntentId!, webhookResult.AmountReceived!.Value / 100m);
+        else await HandlePaymentIntentFailed(webhookResult.IntentId!);
         return Result<bool>.Success(ResultTypeEnum.Success);
     }
 

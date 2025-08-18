@@ -1,74 +1,80 @@
-﻿namespace Backend.Src.Application.Mappings;
+﻿using Stripe;
+
+namespace Backend.Src.Application.Mappings;
 
 public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
         // Product
-        CreateMap<ProductDTO, ProductResponse>();
-        CreateMap<ProductEntity, ProductDTO>();
+        CreateMap<ProductDto, ProductResponse>();
+        CreateMap<ProductEntity, ProductDto>();
         CreateMap<ProductQueryParams, ProductQuerySpecs>().ForMember(d => d.PageSize, o => o.Ignore());
-        CreateMap<ProductCreateDTO, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId, null)).ForAllMembers(o => o.Ignore());
-        var map = CreateMap<ProductUpdateDTO, ProductEntity>();
+        CreateMap<ProductCreateDto, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId, null)).ForAllMembers(o => o.Ignore());
+        var map = CreateMap<ProductUpdateDto, ProductEntity>();
         map.ForAllMembers(opt => opt.Ignore());
         map.AfterMap< ProductUpdateAction>();
 
         // Photo
-        CreateMap<PhotoEntity, PhotoDTO>();
-        CreateMap<PhotoDTO, PhotoResponse>();
-        CreateMap<PhotoCreateRequest, PhotoCreateDTO>();
-        CreateMap<PhotoDTO, PhotoEntity>().ConstructUsing(s => new PhotoEntity(s.FileName, s.PublicId, s.PublicUrl)).ForAllMembers(o => o.Ignore());
+        CreateMap<PhotoEntity, PhotoDto>();
+        CreateMap<PhotoDto, PhotoResponse>();
+        CreateMap<PhotoCreateRequest, PhotoCreateDto>();
+        CreateMap<PhotoDto, PhotoEntity>().ConstructUsing(s => new PhotoEntity(s.FileName, s.PublicId, s.PublicUrl)).ForAllMembers(o => o.Ignore());
 
         // Brand
-        CreateMap<BrandEntity, BrandDTO>();
-        CreateMap<BrandDTO, BrandEntity>().ConstructUsing(s => new BrandEntity(s.Name)).ForAllMembers(o => o.Ignore());
-        CreateMap<BrandDTO, BrandResponse>();
+        CreateMap<BrandEntity, BrandDto>();
+        CreateMap<BrandDto, BrandEntity>().ConstructUsing(s => new BrandEntity(s.Name)).ForAllMembers(o => o.Ignore());
+        CreateMap<BrandDto, BrandResponse>();
 
         // ProductType
-        CreateMap<ProductTypeEntity, ProductTypeDTO>();
-        CreateMap<ProductTypeDTO, ProductTypeResponse>();
-        CreateMap<ProductTypeDTO, ProductTypeEntity>().ConstructUsing(s => new ProductTypeEntity(s.Name)).ForAllMembers(o => o.Ignore());
+        CreateMap<ProductTypeEntity, ProductTypeDto>();
+        CreateMap<ProductTypeDto, ProductTypeResponse>();
+        CreateMap<ProductTypeDto, ProductTypeEntity>().ConstructUsing(s => new ProductTypeEntity(s.Name)).ForAllMembers(o => o.Ignore());
 
         // OrderStatus
-        CreateMap<OrderStatusEntity, OrderStatusDTO>();
-        CreateMap<OrderStatusDTO, OrderStatusResponse>();
-        CreateMap<OrderStatusDTO, OrderStatusEntity>().ConstructUsing(s => new OrderStatusEntity(s.Name)).ForAllMembers(o => o.Ignore());
+        CreateMap<OrderStatusEntity, OrderStatusDto>();
+        CreateMap<OrderStatusDto, OrderStatusResponse>();
+        CreateMap<OrderStatusDto, OrderStatusEntity>().ConstructUsing(s => new OrderStatusEntity(s.Name)).ForAllMembers(o => o.Ignore());
 
         // Query
         CreateMap<BaseQueryParams, BaseQuerySpecs>().ForMember(d => d.PageSize, o => o.Ignore());
 
-        // Open-generic PagedList mapping (DTO -> Response)
+        // Open-generic PagedList mapping (Dto -> Response)
         CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
         CreateMap(typeof(Result<>), typeof(Result<>)).ConvertUsing(typeof(ResultConverter<,>));
 
         // Basket items
-        CreateMap<BasketItemEntity, BasketItemCreateDTO>();
-        CreateMap<BasketItemEntity, BasketItemDTO>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal));
+        CreateMap<BasketItemEntity, BasketItemCreateDto>();
+        CreateMap<BasketItemEntity, BasketItemDto>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal));
 
         // Basket
-        CreateMap<BasketEntity, BasketDTO>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal));
-        CreateMap<BasketCouponRequest, BasketCouponDTO>();
+        CreateMap<BasketEntity, BasketDto>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal));
+        CreateMap<BasketCouponRequest, BasketCouponDto>();
 
         // Order
-        CreateMap<OrderEntity, OrderDTO>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.Total));
-        CreateMap<OrderDTO, OrderResponse>();
-        CreateMap<CreateOrderRequest, OrderCreateDTO>().ForMember(x => x.UserEmail, o => o.Ignore());
+        CreateMap<OrderEntity, OrderDto>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.Total));
+        CreateMap<OrderDto, OrderResponse>();
+        CreateMap<CreateOrderRequest, OrderCreateDto>().ForMember(x => x.UserEmail, o => o.Ignore());
 
         // Order Item
-        CreateMap<OrderItemEntity, OrderItemDTO>();
-        CreateMap<OrderItemDTO, OrderItemResponse>();
+        CreateMap<OrderItemEntity, OrderItemDto>();
+        CreateMap<OrderItemDto, OrderItemResponse>();
 
         // Coupon
-        CreateMap<CouponEntity, CouponDTO>();
+        CreateMap<CouponEntity, CouponDto>();
+        CreateMap<CouponInfoModel, CouponDto>()
+            .ForMember(d => d.AmountOff, opt => opt.ConvertUsing(new MinorUnitsToDecimalConverter(), src => src.AmountOffMinorUnits))
+            .ForMember(d => d.RemoteId, opt => opt.MapFrom(src => src.RemoteId))
+            .ForMember(d => d.Id, opt => opt.Ignore());
 
         // Address
-        CreateMap<ShippingAddress, AddressDTO>();
-        CreateMap<AddressDTO, ShippingAddress>();
-        CreateMap<AddressDTO, AddressResponse>().ReverseMap();
-        CreateMap<AddressDTO, AddressEntity>().ConstructUsing(s => new AddressEntity(s.Line1, s.Line2, s.City, s.State, s.PostalCode, s.Country)).ForAllMembers(o => o.Ignore());
+        CreateMap<ShippingAddress, AddressDto>();
+        CreateMap<AddressDto, ShippingAddress>();
+        CreateMap<AddressDto, AddressResponse>().ReverseMap();
+        CreateMap<AddressDto, AddressEntity>().ConstructUsing(s => new AddressEntity(s.Line1, s.Line2, s.City, s.State, s.PostalCode, s.Country)).ForAllMembers(o => o.Ignore());
 
         // Payment Summary
-        CreateMap<PaymentSummary, PaymentSummaryDTO>();
-        CreateMap<PaymentSummaryDTO, PaymentSummaryResponse>().ReverseMap();
+        CreateMap<PaymentSummary, PaymentSummaryDto>();
+        CreateMap<PaymentSummaryDto, PaymentSummaryResponse>().ReverseMap();
     }
 }

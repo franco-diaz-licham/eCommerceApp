@@ -1,8 +1,8 @@
 ﻿namespace Backend.Src.Application.Mappings;
 
-public sealed class ProductUpdateAction : IMappingAction<ProductUpdateDTO, ProductEntity>
+public sealed class ProductUpdateAction : IMappingAction<ProductUpdateDto, ProductEntity>
 {
-    public void Process(ProductUpdateDTO s, ProductEntity d, ResolutionContext context)
+    public void Process(ProductUpdateDto s, ProductEntity d, ResolutionContext context)
     {
         d.SetName(s.Name);
         d.SetDescription(s.Description);

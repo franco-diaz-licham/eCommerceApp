@@ -1,9 +1,9 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class OrderCreateDTO
+public class OrderCreateDto
 {
     public int BasketId { get; set; }
     public string UserEmail { get; set; } = null!;
-    public AddressDTO ShippingAddress { get; set; } = null!;
-    public PaymentSummaryDTO PaymentSummary { get; set; } = null!;
+    public AddressDto ShippingAddress { get; set; } = null!;
+    public PaymentSummaryDto PaymentSummary { get; set; } = null!;
 }

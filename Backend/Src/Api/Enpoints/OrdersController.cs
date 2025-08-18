@@ -6,22 +6,19 @@ public class OrdersController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IOrderService _orderService;
-    private readonly IPaginationService _paginationService;
 
-    public OrdersController(IMapper mapper, IOrderService orderService, IPaginationService paginsationService)
+    public OrdersController(IMapper mapper, IOrderService orderService)
     {
         _mapper = mapper;
         _orderService = orderService;
-        _paginationService = paginsationService;
     }
 
     [HttpGet]
     public async Task<ActionResult<PagedList<OrderResponse>>> GetOrders([FromQuery] BaseQueryParams queryParams)
     {
         var query = _mapper.Map<BaseQuerySpecs>(queryParams);
-        var models = _orderService.GetAllAsync(query);
-        var paged = await _paginationService.ApplyPaginationAsync(models, query.PageNumber, query.PageSize);
-        var output = _mapper.Map<PagedList<OrderResponse>>(paged);
+        var models = await _orderService.GetAllAsync(query);
+        var output = _mapper.Map<PagedList<OrderResponse>>(models);
         Response.AddPaginationHeader(output.Metadata);
         return Ok(new ApiResponse(StatusCodes.Status200OK, output));
     }
@@ -36,7 +33,7 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OrderResponse>> CreateOrder(CreateOrderRequest request)
     {
-        var result = await _orderService.CreateOrderAsync(_mapper.Map<OrderCreateDTO>(request));
+        var result = await _orderService.CreateOrderAsync(_mapper.Map<OrderCreateDto>(request));
         return _mapper.Map<Result<OrderResponse>>(result).ToActionResult();
     }
 }

@@ -2,6 +2,6 @@
 
 public interface IProductTypeService
 {
-    IQueryable<ProductTypeDTO> GetAllAsync(BaseQuerySpecs specs);
-    Task<Result<ProductTypeDTO>> GetAsync(int id);
+    Task<PagedList<ProductTypeDto>> GetAllAsync(BaseQuerySpecs specs);
+    Task<Result<ProductTypeDto>> GetAsync(int id);
 }

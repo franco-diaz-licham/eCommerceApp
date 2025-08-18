@@ -2,9 +2,9 @@
 
 public interface IProductService
 {
-    Task<ProductDTO> CreateAsync(ProductCreateDTO dto);
+    Task<ProductDto> CreateAsync(ProductCreateDto Dto);
     Task<bool> DeleteAsync(int id);
-    IQueryable<ProductDTO> GetAllAsync(ProductQuerySpecs specs);
-    Task<ProductDTO?> GetAsync(int id);
-    Task<ProductDTO> UpdateAsync(ProductUpdateDTO dto);
+    Task<PagedList<ProductDto>> GetAllAsync(ProductQuerySpecs specs);
+    Task<ProductDto?> GetAsync(int id);
+    Task<ProductDto> UpdateAsync(ProductUpdateDto Dto);
 }

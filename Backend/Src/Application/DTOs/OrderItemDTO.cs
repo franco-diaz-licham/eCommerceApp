@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class OrderItemDTO
+public class OrderItemDto
 {
     public int Id { get; set; }
     public int OrderId { get; set; }

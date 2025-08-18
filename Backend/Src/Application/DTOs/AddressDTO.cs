@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class AddressDTO
+public class AddressDto
 {
     public string Line1 { get; set; } = null!;
     public string? Line2 { get; set; }

@@ -2,6 +2,6 @@
 
 public interface IOrderStatusService
 {
-    IQueryable<OrderStatusDTO> GetAllAsync(BaseQuerySpecs specs);
-    Task<Result<OrderStatusDTO>> GetAsync(int id);
+    Task<PagedList<OrderStatusDto>> GetAllAsync(BaseQuerySpecs specs);
+    Task<Result<OrderStatusDto>> GetAsync(int id);
 }

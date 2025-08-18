@@ -26,3 +26,8 @@ public sealed class ResultConverter<TSource, TDestination> : ITypeConverter<Resu
         return Result<TDestination>.Success(context.Mapper.Map<TDestination>(source.Value), source.Type);
     }
 }
+
+public class MinorUnitsToDecimalConverter : IValueConverter<long?, decimal?>
+{
+    public decimal? Convert(long? sourceMember, ResolutionContext context) => sourceMember.HasValue ? sourceMember.Value / 100m : (decimal?)null;
+}

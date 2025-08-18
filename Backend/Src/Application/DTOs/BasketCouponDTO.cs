@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class BasketCouponDTO
+public class BasketCouponDto
 {
     public int BasketId { get; set; }
     public required string Code { get; set; }

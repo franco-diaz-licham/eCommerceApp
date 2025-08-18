@@ -1,6 +1,6 @@
 namespace Backend.Src.Application.DTOs;
 
-public class CouponDTO
+public class CouponDto
 {
     public int Id { get; set; }
     public string RemoteId { get; set; } = null!;

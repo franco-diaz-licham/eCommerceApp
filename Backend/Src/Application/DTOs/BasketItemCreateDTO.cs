@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Application.DTOs;
 
-public class BasketItemCreateDTO
+public class BasketItemCreateDto
 {
     public int BasketId { get; set; }
     public int Quantity { get; set; }

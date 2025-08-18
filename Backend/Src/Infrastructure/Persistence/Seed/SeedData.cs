@@ -9,7 +9,7 @@ public static class SeedData
     private const string PHOTOS = $"{BASE_PATH}/PhotosData.json";
     private const string ORDER_STATUS = $"{BASE_PATH}/OrderStatusData.json";
     private const string IMAGES = $"{BASE_PATH}/Images/";
-    public static async Task SeedAsync(DataContext db, IImageStorageService imageStoreService)
+    public static async Task SeedAsync(DataContext db, IMediaStorageService imageStoreService)
     {
         await Photos(db, imageStoreService);
         await ProductTypes(db);
@@ -63,7 +63,7 @@ public static class SeedData
     /// <summary>
     /// Migrations initial photos.
     /// </summary>
-    private static async Task Photos(DataContext db, IImageStorageService imageStoreService)
+    private static async Task Photos(DataContext db, IMediaStorageService imageStoreService)
     {
         if (await db.Photos.AnyAsync()) return;
         // Load actors

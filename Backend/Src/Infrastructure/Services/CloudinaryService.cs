@@ -1,6 +1,6 @@
 ﻿namespace Backend.Src.Infrastructure.Services;
 
-public class CloudinaryService : IImageStorageService
+public class CloudinaryService : IMediaStorageService
 {
     private readonly Cloudinary _cloud;
 
