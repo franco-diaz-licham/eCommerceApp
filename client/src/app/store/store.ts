@@ -3,14 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { productApi } from "../../features/product/services/product.api";
 import { uiSlice } from "../../components/layout/uiSlice";
 import { errorApi } from "../../features/error/services/error.api";
+import { productSlice } from "../../features/product/services/productSlice";
+import { accountApi } from "../../features/authentication/services/account.api";
+import { adminApi } from "../../features/admin/services/adminApi";
 
 export const store = configureStore({
     reducer: {
         [productApi.reducerPath]: productApi.reducer,
         [errorApi.reducerPath]: errorApi.reducer,
+        // [basketApi.reducerPath]: basketApi.reducer,
+        [accountApi.reducerPath]: accountApi.reducer,
+        // [checkoutApi.reducerPath]: checkoutApi.reducer,
+        // [orderApi.reducerPath]: orderApi.reducer,
+        [adminApi.reducerPath]: adminApi.reducer,
         ui: uiSlice.reducer,
+        products: productSlice.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, accountApi.middleware, adminApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

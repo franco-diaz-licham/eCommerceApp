@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useFetchProductDetailsQuery } from "../services/product.api";
 import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
+import { currencyFormat } from "../../../lib/utils";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
@@ -41,7 +42,7 @@ export default function ProductDetailsPage() {
                 <Typography variant="h3">{product.name}</Typography>
                 <Divider sx={{ mb: 2 }} />
                 <Typography variant="h4" color="secondary">
-                    ${(product.price / 100).toFixed(2)}
+                    {currencyFormat(product.unitPrice)}
                 </Typography>
                 <TableContainer>
                     <Table

@@ -8,13 +8,13 @@ export interface ProductResponse {
     id: number;
     name: string;
     description: string;
-    price: number;
+    unitPrice: number;
     productTypeId: number;
-    productType: ProductTypeResponse;
+    productType?: ProductTypeResponse;
     brandId: number;
-    brand: BrandResponse;
+    brand?: BrandResponse;
     photoId: number;
-    photo: PhotoResponse;
+    photo?: PhotoResponse;
     quantityInStock: number;
 }
 
@@ -22,7 +22,7 @@ export interface ProductResponse {
 export interface ProductCreate {
     name: string;
     description: string;
-    price: number;
+    unitPrice: number;
     productTypeId: number;
     brandId: number;
     photoId: number;
@@ -39,10 +39,12 @@ export interface ProductFormData {
     id?: number;
     name: string;
     description: string;
-    price: number;
+    unitPrice: number;
     productTypeId: number;
     brandId: number;
     photoId: number;
+    /** Preview of picture */
+    pictureUrl?: string;
     quantityInStock: number;
 }
 

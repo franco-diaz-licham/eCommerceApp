@@ -62,7 +62,7 @@ public class StripePaymentGateway : IPaymentGateway
         var couponService = new CouponService();
         var coupon = await couponService.GetAsync(couponId);
 
-        if (coupon.AmountOff.HasValue) return coupon.AmountOff.Value / 100m; // convert cents → dollars
+        if (coupon.AmountOff.HasValue) return coupon.AmountOff.Value / 100m;
         if (coupon.PercentOff.HasValue) return Math.Round(baseAmountDollars * (coupon.PercentOff.Value / 100m), MidpointRounding.AwayFromZero);
         return 0m;
     }
