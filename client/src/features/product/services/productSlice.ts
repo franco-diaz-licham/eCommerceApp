@@ -4,8 +4,8 @@ import type { ProductQueryParams } from "../types/product.types";
 const initialState: ProductQueryParams = {
     pageNumber: 1,
     pageSize: 8,
-    types: [],
-    brands: [],
+    productTypeIds: [],
+    brandIds: [],
     searchTerm: "",
     orderBy: "name",
 };
@@ -25,11 +25,11 @@ export const productSlice = createSlice({
             state.pageNumber = 1;
         },
         setTypes(state, action) {
-            state.types = action.payload;
+            state.productTypeIds = action.payload;
             state.pageNumber = 1;
         },
         setBrands(state, action) {
-            state.brands = action.payload;
+            state.brandIds = action.payload;
             state.pageNumber = 1;
         },
         setSearchTerm(state, action) {

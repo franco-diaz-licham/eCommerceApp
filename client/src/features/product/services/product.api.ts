@@ -1,6 +1,6 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { Pagination } from "../../../types/pagination.type";
-import { createFormData, filterEmptyValues } from "../../../lib/utils";
+import { createFormData } from "../../../lib/utils";
 import type { ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../types/product.types";
 import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
@@ -27,7 +27,7 @@ const transformPaginatedSingleResponse = (response: ApiSingleResponse<ProductRes
 const getProducts = (productParams: ProductQueryParams) => {
     return {
         url: baseUrl,
-        params: filterEmptyValues(productParams),
+        params: productParams,
     };
 };
 

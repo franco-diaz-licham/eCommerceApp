@@ -7,6 +7,20 @@ import { StatusCode, type ErrorApiResponse } from "../../types/api.types";
 /** Create custom base query */
 const customBaseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
+    paramsSerializer: (params) => {
+        const usp = new URLSearchParams();
+        
+        for (const [k, v] of Object.entries(params)) {
+            if (v === null || v === undefined || v === "") continue;
+            if (Array.isArray(v)) {
+                if (v.length === 0) continue;
+                v.forEach((x) => usp.append(k, String(x)));
+            } else {
+                usp.append(k, String(v));
+            }
+        }
+        return usp.toString();
+    },
 });
 
 /** Development delay for loading time. */
@@ -28,7 +42,7 @@ export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: 
         const originalStatus = result.error.status === "PARSING_ERROR" && result.error.originalStatus ? result.error.originalStatus : result.error.status;
         const responseData = result.error.data as ErrorApiResponse;
         console.log(responseData);
-        
+
         switch (originalStatus) {
             case StatusCode.BadRequest:
                 if ("validationErrors" in responseData) toast.error(responseData.validationErrors!.flat().join(" "));

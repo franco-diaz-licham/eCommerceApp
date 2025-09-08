@@ -66,7 +66,7 @@ export default function InventoryPage() {
     return (
         <>
             <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ p: 2 }} variant="h4">
+                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                     Inventory
                 </Typography>
                 <Button onClick={() => setEditMode(true)} sx={{ m: 2 }} size="large" variant="contained">

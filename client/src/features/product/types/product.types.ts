@@ -50,8 +50,8 @@ export interface ProductFormData {
 
 /** Product query params. */
 export interface ProductQueryParams extends BaseQueryParams {
-    types?: number[];
-    brands?: number[];
+    productTypeIds?: number[];
+    brandIds?: number[];
 }
 
 /** Specific filters for product model. */
