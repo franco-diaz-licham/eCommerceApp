@@ -2,16 +2,10 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class ProductTypesController : ControllerBase
+public class ProductTypesController(IMapper mapper, IProductTypeService productTypeService) : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IProductTypeService _productTypeService;
-
-    public ProductTypesController(IMapper mapper, IProductTypeService productTypeService)
-    {
-        _mapper = mapper;
-        _productTypeService = productTypeService;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IProductTypeService _productTypeService = productTypeService;
 
     [HttpGet]
     public async Task<ActionResult<PagedList<ProductTypeResponse>>> GetProductsAsync([FromQuery] BaseQueryParams productParams)

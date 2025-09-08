@@ -2,18 +2,11 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class ProductsController : ControllerBase
+public class ProductsController(IMapper mapper, IProductService productService, IFilterService filterService) : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IProductService _productService;
-    private readonly IFilterService _filteService;
-
-    public ProductsController(IMapper mapper, IProductService productService, IFilterService filterService)
-    {
-        _productService = productService;
-        _mapper = mapper;
-        _filteService = filterService;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IProductService _productService = productService;
+    private readonly IFilterService _filteService = filterService;
 
     [HttpGet]
     public async Task<ActionResult<PagedList<ProductResponse>>> GetProductsAsync([FromQuery] ProductQueryParams queryParams)
@@ -25,7 +18,7 @@ public class ProductsController : ControllerBase
         return Ok(new ApiResponse(StatusCodes.Status200OK, output));
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}", Name = nameof(GetProductAsync))]
     public async Task<ActionResult<ProductResponse>> GetProductAsync(int id)
     {
         var product = await _productService.GetAsync(id);
@@ -42,19 +35,19 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductResponse>> CreateProductAsync(CreateProductRequest model)
+    public async Task<ActionResult<ProductResponse>> CreateProductAsync([FromForm] CreateProductRequest model)
     {
         var product = _mapper.Map<ProductCreateDto>(model);
         var output = await _productService.CreateAsync(product);
-        return CreatedAtAction(nameof(GetProductAsync), new { output.Id }, output);
+        return CreatedAtRoute(nameof(GetProductAsync), new { id = output.Id }, output);
     }
 
     [HttpPut]
-    public async Task<ActionResult<ProductResponse>> UpdateProduct(UpdateProductRequest model)
+    public async Task<ActionResult<ProductResponse>> UpdateProduct([FromForm] UpdateProductRequest model)
     {
         var product = _mapper.Map<ProductUpdateDto>(model);
         var output = await _productService.UpdateAsync(product);
-        return Accepted(new ApiResponse(202, output));
+        return Ok(new ApiResponse(200, output));
     }
 
     [HttpDelete("{id:int}")]

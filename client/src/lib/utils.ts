@@ -21,20 +21,19 @@ export const formatPaymentString = (card: PaymentSummary) => {
             Exp: ${card?.exp_month}/${card?.exp_year}`;
 };
 
-export function handleApiError<T extends FieldValues>(error: unknown, setError: UseFormSetError<T>, fieldNames: Path<T>[]) {
-    const apiError = (error as { message: string }) || {};
-
-    if (apiError.message && typeof apiError.message === "string") {
-        const errorArray = apiError.message.split(",");
-
-        errorArray.forEach((e) => {
-            const matchedField = fieldNames.find((fieldName) => e.toLowerCase().includes(fieldName.toString().toLowerCase()));
-
-            if (matchedField) setError(matchedField, { message: e.trim() });
-        });
-    }
+export function formatDate(date: string): string {
+    return "dd MMM yyyy";
 }
 
-export function formatDate(date: string): string{
-    return "dd MMM yyyy";
+/** Receives an object and return the formData equivalent. */
+export function createFormData<T extends object>(data: T) {
+    const formData = new FormData();
+    Object.entries(data as Record<string, unknown>).forEach(([key, value]) => {
+        if (value == null) return;
+        if (value instanceof Blob) formData.append(key, value);
+        else if (Array.isArray(value)) value.forEach((v) => formData.append(key, String(v)));
+        else if (typeof value === "object") formData.append(key, JSON.stringify(value));
+        else formData.append(key, String(value));
+    });
+    return formData;
 }

@@ -25,8 +25,8 @@ export interface ProductCreate {
     unitPrice: number;
     productTypeId: number;
     brandId: number;
-    photoId: number;
     quantityInStock: number;
+    photo?: File;
 }
 
 /** DTO used for updating a product. */
@@ -42,9 +42,9 @@ export interface ProductFormData {
     unitPrice: number;
     productTypeId: number;
     brandId: number;
-    photoId: number;
     /** Preview of picture */
     pictureUrl?: string;
+    photo?: File;
     quantityInStock: number;
 }
 
@@ -53,3 +53,12 @@ export interface ProductQueryParams extends BaseQueryParams {
     types?: number[];
     brands?: number[];
 }
+
+/** Specific filters for product model. */
+export interface ProductFilters {
+    productTypes: ProductTypeResponse[];
+    brands: BrandResponse[];
+}
+
+/** Filterpreview type to see photo previews. */
+export type FileWithPreview = File & { preview?: string };

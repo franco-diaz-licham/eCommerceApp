@@ -21,7 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 justifyContent: "space-between",
             }}
         >
-            <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.photo.publicUrl} title={product.name} />
+            <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.photo?.publicUrl} title={product.name} />
             <CardContent>
                 <Typography gutterBottom sx={{ textTransform: "uppercase" }} variant="subtitle2">
                     {product.name}

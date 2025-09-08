@@ -10,9 +10,6 @@ public class CloudinaryService : IMediaStorageService
         _cloud = new Cloudinary(acc);
     }
 
-    /// <summary>
-    /// Method which uploads images to cloudinary.
-    /// </summary>
     public async Task<ImageUploadResult> UploadPhotoAsync(IFormFile file, Transformation transform)
     {
         if (file.Length == 0) return new();
@@ -26,9 +23,6 @@ public class CloudinaryService : IMediaStorageService
         return await _cloud.UploadAsync(uploadParams);
     }
 
-    /// <summary>
-    /// Method which uploads images to cloudinary.
-    /// </summary>
     public async Task<ImageUploadResult> UploadPhotoAsync(byte[] fileContent, string fileName, Transformation transform)
     {
         var uploadParams = new ImageUploadParams()
@@ -40,9 +34,6 @@ public class CloudinaryService : IMediaStorageService
         return await _cloud.UploadAsync(uploadParams);
     }
 
-    /// <summary>
-    /// Method which deletes photos from cloudinary.
-    /// </summary>
     public async Task<DeletionResult> DeletePhotoAsync(string publicId)
     {
         var deleteParams = new DeletionParams(publicId);

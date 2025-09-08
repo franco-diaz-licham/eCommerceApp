@@ -5,24 +5,24 @@ import { uiSlice } from "../../components/layout/uiSlice";
 import { errorApi } from "../../features/error/services/error.api";
 import { productSlice } from "../../features/product/services/productSlice";
 import { accountApi } from "../../features/authentication/services/account.api";
-import { adminApi } from "../../features/admin/services/adminApi";
+import { orderApi } from "../../features/order/services/orderApi";
 
 export const store = configureStore({
     reducer: {
         [productApi.reducerPath]: productApi.reducer,
         [errorApi.reducerPath]: errorApi.reducer,
         // [basketApi.reducerPath]: basketApi.reducer,
-        [accountApi.reducerPath]: accountApi.reducer,
         // [checkoutApi.reducerPath]: checkoutApi.reducer,
-        // [orderApi.reducerPath]: orderApi.reducer,
-        [adminApi.reducerPath]: adminApi.reducer,
+        [accountApi.reducerPath]: accountApi.reducer,
+        [orderApi.reducerPath]: orderApi.reducer,
         ui: uiSlice.reducer,
         products: productSlice.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, accountApi.middleware, adminApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, orderApi.middleware, accountApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();

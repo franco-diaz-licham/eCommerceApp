@@ -2,16 +2,10 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class OrderStatusesController : ControllerBase
+public class OrderStatusesController(IMapper mapper, IOrderStatusService OrderStatusService) : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IOrderStatusService _OrderStatusService;
-
-    public OrderStatusesController(IMapper mapper, IOrderStatusService OrderStatusService)
-    {
-        _OrderStatusService = OrderStatusService;
-        _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IOrderStatusService _OrderStatusService = OrderStatusService;
 
     [HttpGet]
     public async Task<ActionResult<PagedList<OrderStatusResponse>>> GetOrderStatussAsync([FromQuery] BaseQueryParams queryParams)

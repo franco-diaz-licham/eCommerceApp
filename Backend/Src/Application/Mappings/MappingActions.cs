@@ -7,6 +7,6 @@ public sealed class ProductUpdateAction : IMappingAction<ProductUpdateDto, Produ
         d.SetName(s.Name);
         d.SetDescription(s.Description);
         d.ChangeUnitPrice(s.UnitPrice);
-        d.IncreaseStock(s.QuantityInStock);
+        d.SetStock(s.QuantityInStock);
     }
 }

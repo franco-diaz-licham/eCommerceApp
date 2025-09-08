@@ -8,5 +8,5 @@ public class ProductCreateDto
     public int QuantityInStock { get; private set; }
     public int ProductTypeId { get; private set; }
     public int BrandId { get; private set; }
-    public PhotoCreateDto? Photo { get; set; }
+    public IFormFile? Photo { get; set; }
 }

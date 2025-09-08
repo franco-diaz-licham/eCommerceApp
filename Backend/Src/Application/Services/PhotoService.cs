@@ -13,9 +13,6 @@ public class PhotoService : IPhotoService
         _cloudinaryService = cloudinaryService;
     }
 
-    /// <summary>
-    /// Method which fetches a photo from the database.
-    /// </summary>
     public async Task<PhotoDto?> GetAsync(int id)
     {
         var model = await _db.Photos.FindAsync(id);
@@ -23,9 +20,6 @@ public class PhotoService : IPhotoService
         return output;
     }
 
-    /// <summary>
-    /// Method which creates a photo and uploads to cloudinary.
-    /// </summary>
     public async Task<PhotoDto> CreateImageAsync(PhotoCreateDto dto)
     {
         // create image
@@ -50,9 +44,7 @@ public class PhotoService : IPhotoService
         return _mapper.Map<PhotoDto>(model);
     }
 
-    /// <summary>
-    /// Method which deletes a photo and deletes it from cloudinary.
-    /// </summary>
+
     public async Task<bool> DeleteAsync(PhotoDto dto)
     {
         var entity = await _db.Photos.FindAsync(dto.Id);

@@ -6,6 +6,9 @@ public class ExceptionMiddleware
     private readonly ILogger _logger;
     private readonly IHostEnvironment _env;
 
+    /// <summary>
+    /// Global middleware for API calls. Catches anything that has not been caught and logs it to server.
+    /// </summary>
     public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
     {
         _next = next;

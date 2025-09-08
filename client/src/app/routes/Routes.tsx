@@ -10,6 +10,7 @@ import BasketPage from "../../features/basket/pages/BasketPage";
 import NotFoundPage from "../../features/error/pages/NotFoundPage";
 import ErrorPage from "../../features/error/pages/ErrorPage";
 import ServerErrorPage from "../../features/error/pages/ServerErrorPage";
+import InventoryPage from "../../features/product/pages/InventoryPage";
 
 export const Routes = createBrowserRouter([
     {
@@ -35,6 +36,7 @@ export const Routes = createBrowserRouter([
             { path: "errors", element: <ErrorPage /> },
             // { path: "login", element: <LoginForm /> },
             // { path: "register", element: <RegisterForm /> },
+            { path: "inventory", element: <InventoryPage /> },
             { path: "server-error", element: <ServerErrorPage /> },
             { path: "not-found", element: <NotFoundPage /> },
             { path: "*", element: <Navigate replace to="/not-found" /> },

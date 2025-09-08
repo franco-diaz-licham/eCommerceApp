@@ -6,6 +6,7 @@ import { setDarkMode } from "./uiSlice";
 
 const midLinks = [
     { title: "products", path: "/products" },
+    { title: "Inventory", path: "/inventory" },
     { title: "about", path: "/about" },
     { title: "contact", path: "/contact" },
     { title: "errors", path: "/errors" },

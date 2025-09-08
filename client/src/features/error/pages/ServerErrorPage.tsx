@@ -10,7 +10,7 @@ export default function ServerErrorPage() {
         <Paper>
             {state.error ? (
                 <>
-                    <Typography gutterBottom variant="h3" sx={{ px: 4, pt: 2 }} color="secondary">
+                    <Typography gutterBottom variant="h5" sx={{ px: 4, pt: 2 }} color="secondary">
                         {error.message} - {error.statusCode}
                     </Typography>
                     <Divider />

@@ -8,7 +8,7 @@ type Props<T extends FieldValues> = {
     name: keyof T;
 } & UseControllerProps<T>;
 
-export default function AppDropzone<T extends FieldValues>(props: Props<T>) {
+export default function Dropzone<T extends FieldValues>(props: Props<T>) {
     const { fieldState, field } = useController({ ...props });
 
     const onDrop = useCallback(

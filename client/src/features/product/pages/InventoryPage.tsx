@@ -1,15 +1,14 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/store/store";
-import { useFetchProductsQuery } from "../../product/services/product.api";
-import { useDeleteProductMutation } from "../services/adminApi";
+import { useCreateProductMutation, useDeleteProductMutation, useFetchProductsQuery, useUpdateProductMutation } from "../services/product.api";
 import ProductForm from "../components/ProductForm";
 import { currencyFormat } from "../../../lib/utils";
 import { Delete, Edit } from "@mui/icons-material";
 import AppPagination from "../../../components/ui/AppPagination";
-import type { ProductFormData, ProductResponse } from "../../product/types/product.types";
-import { mapToProductFormData, mapToProductResponse } from "../../../lib/mapper";
-import { setPageNumber } from "../../product/services/productSlice";
+import type { ProductFormData, ProductResponse } from "../types/product.types";
+import { mapToProductCreate, mapToProductFormData, mapToProductUpdate } from "../../../lib/mapper";
+import { setPageNumber } from "../services/productSlice";
 
 export default function InventoryPage() {
     const productParams = useAppSelector((state) => state.products);
@@ -18,6 +17,8 @@ export default function InventoryPage() {
     const [editMode, setEditMode] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
     const [deleteProduct] = useDeleteProductMutation();
+    const [createProduct] = useCreateProductMutation();
+    const [updateProduct] = useUpdateProductMutation();
 
     /** Handles product selected and sets edit mode. */
     const handleSelectProduct = (product: ProductResponse) => {
@@ -35,13 +36,32 @@ export default function InventoryPage() {
         }
     };
 
-    const handleSelectedProduct = (data: ProductFormData | null) => {
-        if (!data) return;
-        const product = mapToProductResponse(data);
-        setSelectedProduct(product);
+    /** Handles on submit opperations. */
+    const handleOnSubmit = async (data: ProductFormData) => {
+        try {
+            if (data?.id) {
+                const product = mapToProductUpdate(data);
+                await updateProduct(product).unwrap();
+            } else {
+                const product = mapToProductCreate(data);
+                await createProduct(product).unwrap();
+            }
+
+            setEditMode(false);
+            setSelectedProduct(null);
+            refetch();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    if (editMode && selectedProduct) return <ProductForm setEditMode={setEditMode} product={mapToProductFormData(selectedProduct)} refetch={refetch} setSelectedProduct={handleSelectedProduct} />;
+    /** Resets state when cancelled. */
+    const handleCancel = () => {
+        setSelectedProduct(null);
+        setEditMode(false);
+    };
+
+    if (editMode) return <ProductForm onFormCancel={handleCancel} product={selectedProduct ? mapToProductFormData(selectedProduct) : null} onFormSubmit={handleOnSubmit} />;
 
     return (
         <>

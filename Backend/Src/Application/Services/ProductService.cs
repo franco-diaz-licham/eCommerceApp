@@ -1,6 +1,4 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-namespace Backend.Src.Application.Services;
+﻿namespace Backend.Src.Application.Services;
 
 public class ProductService : IProductService
 {
@@ -17,9 +15,6 @@ public class ProductService : IProductService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Method which gets all products.
-    /// </summary>
     public async Task<PagedList<ProductDto>> GetAllAsync(ProductQuerySpecs specs)
     {
         var query = _db.Products.AsNoTracking();
@@ -35,9 +30,6 @@ public class ProductService : IProductService
         return await PagedList<ProductDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
     }
 
-    /// <summary>
-    /// Method which gets a Product.
-    /// </summary>
     public async Task<ProductDto?> GetAsync(int id)
     {
         var product = await _db.Products
@@ -48,9 +40,6 @@ public class ProductService : IProductService
         return product;
     }
 
-    /// <summary>
-    /// Method creates a product.
-    /// </summary>
     public async Task<ProductDto> CreateAsync(ProductCreateDto Dto)
     {
         var model = _mapper.Map<ProductEntity>(Dto);
@@ -61,7 +50,7 @@ public class ProductService : IProductService
         {
             if (Dto.Photo is not null)
             {
-                newPhoto = await _photoService.CreateImageAsync(Dto.Photo);
+                newPhoto = await _photoService.CreateImageAsync(new(Dto.Photo));
                 model.SetPhoto(newPhoto.Id);
             }
 
@@ -79,13 +68,10 @@ public class ProductService : IProductService
         }
     }
 
-    /// <summary>
-    /// Method which updates a product.
-    /// </summary>
-    public async Task<ProductDto> UpdateAsync(ProductUpdateDto Dto)
+    public async Task<ProductDto> UpdateAsync(ProductUpdateDto dto)
     {
-        var product = await _db.Products.Include(p => p.Photo).FirstOrDefaultAsync(p => p.Id == Dto.Id);
-        if (product is null) throw new KeyNotFoundException($"Product {Dto.Id} not found.");
+        var product = await _db.Products.Include(p => p.Photo).FirstOrDefaultAsync(p => p.Id == dto.Id);
+        if (product is null) throw new KeyNotFoundException($"Product {dto.Id} not found.");
         var oldPhoto = _mapper.Map<PhotoDto>(product.Photo);
         PhotoDto? newPhoto = null;
 
@@ -94,12 +80,13 @@ public class ProductService : IProductService
         try
         {
             // Save new photo.
-            if (Dto.Photo is not null)
+            if (dto.Photo is not null)
             {
-                newPhoto = await _photoService.CreateImageAsync(Dto.Photo);
+                newPhoto = await _photoService.CreateImageAsync(new(dto.Photo));
                 product.SetPhoto(newPhoto.Id);
             }
 
+            _mapper.Map(dto, product);
             await _db.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -127,9 +114,6 @@ public class ProductService : IProductService
         }
     }
 
-    /// <summary>
-    /// Method which deletes a product.
-    /// </summary>
     public async Task<bool> DeleteAsync(int id)
     {
         var product = await _db.Products.Include(p => p.Photo).FirstOrDefaultAsync(p => p.Id == id);
@@ -142,8 +126,8 @@ public class ProductService : IProductService
         {
             // Delete product
             _db.Products.Remove(product);
-            await _db.Photos.Where(x => x.Id == photo.Id).ExecuteDeleteAsync();
             await _db.SaveChangesAsync();
+            await _db.Photos.Where(x => x.Id == photo.Id).ExecuteDeleteAsync();
             await transaction.CommitAsync();
         }
         catch

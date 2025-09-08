@@ -2,16 +2,10 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class BasketController : ControllerBase
+public class BasketController(IBasketService basketService, IMapper mapper) : ControllerBase
 {
-    private readonly IBasketService _basketService;
-    private readonly IMapper _mapper;
-
-    public BasketController(IBasketService basketService, IMapper mapper)
-    {
-        _basketService = basketService;
-        _mapper = mapper;
-    }
+    private readonly IBasketService _basketService = basketService;
+    private readonly IMapper _mapper = mapper;
 
     [HttpPost]
     public async Task<ActionResult<BasketResponse>> CreateBasket()

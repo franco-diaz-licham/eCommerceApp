@@ -2,16 +2,10 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class BrandsController : ControllerBase
+public class BrandsController(IMapper mapper, IBrandService BrandService) : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IBrandService _brandService;
-
-    public BrandsController(IMapper mapper, IBrandService BrandService)
-    {
-        _brandService = BrandService;
-        _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IBrandService _brandService = BrandService;
 
     [HttpGet]
     public async Task<ActionResult<PagedList<BrandResponse>>> GetBrandsAsync([FromQuery] BaseQueryParams queryParams)

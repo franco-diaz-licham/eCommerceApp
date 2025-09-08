@@ -1,7 +1,7 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { Pagination } from "../../../types/pagination.type";
-import { filterEmptyValues } from "../../../lib/utils";
-import type { ProductQueryParams, ProductResponse } from "../types/product.types";
+import { createFormData, filterEmptyValues } from "../../../lib/utils";
+import type { ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../types/product.types";
 import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 
@@ -11,6 +11,17 @@ interface mainProductsData {
     response: ProductResponse[];
     pagination: Pagination;
 }
+
+/** Response list handler. */
+const transformPaginatedResponse = (response: ApiResponse<ProductResponse>, meta: FetchBaseQueryMeta) => {
+    const paginationHeader = meta?.response?.headers.get("Pagination");
+    const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
+    const data = response.data;
+    return { response: data, pagination };
+};
+
+/** Response single handler. */
+const transformPaginatedSingleResponse = (response: ApiSingleResponse<ProductResponse>) => response.data;
 
 /** Get products handler. */
 const getProducts = (productParams: ProductQueryParams) => {
@@ -26,18 +37,35 @@ const getProduct = (productId: number) => `${baseUrl}/${productId}`;
 /** Get product filters handler. */
 const getProductFilters = () => `${baseUrl}/filters`;
 
-/** Response list handler. */
-const transformPaginatedResponse = (response: ApiResponse<ProductResponse>, meta: FetchBaseQueryMeta) => {
-    const paginationHeader = meta?.response?.headers.get("Pagination");
-    const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
-    const data = response.data;
-    return { response: data, pagination };
+/** Creates a product. */
+const createProduct = (data: ProductCreate) => {
+    const formData = createFormData(data);
+    return {
+        url: "products",
+        method: "POST",
+        body: formData,
+    };
 };
 
-/** Response single handler. */
-const transformPaginatedSingleResponse = (response: ApiSingleResponse<ProductResponse>) => response.data;
+/** Updates a product. */
+const updateProduct = (data: ProductUpdate) => {
+    const formData = createFormData(data);
+    return {
+        url: "products",
+        method: "PUT",
+        body: formData,
+    };
+};
 
-/** Product redux configuration */
+/** Deletes a product. */
+const deleteProduct = (id: number) => {
+    return {
+        url: `products/${id}`,
+        method: "DELETE",
+    };
+};
+
+/** Product reducer configuration. */
 export const productApi = createApi({
     reducerPath: "productApi",
     baseQuery: baseQueryWithErrorHandling,
@@ -50,10 +78,19 @@ export const productApi = createApi({
             query: getProduct,
             transformResponse: transformPaginatedSingleResponse,
         }),
-        fetchFilters: builder.query<{ brands: string[]; types: string[] }, void>({
+        fetchFilters: builder.query<ProductFilters, void>({
             query: getProductFilters,
+        }),
+        createProduct: builder.mutation<ProductResponse, ProductCreate>({
+            query: (data) => createProduct(data),
+        }),
+        updateProduct: builder.mutation<ProductResponse, ProductUpdate>({
+            query: (data) => updateProduct(data),
+        }),
+        deleteProduct: builder.mutation<void, number>({
+            query: (id: number) => deleteProduct(id),
         }),
     }),
 });
 
-export const { useFetchProductDetailsQuery, useFetchProductsQuery, useFetchFiltersQuery } = productApi;
+export const { useFetchProductDetailsQuery, useFetchProductsQuery, useFetchFiltersQuery, useCreateProductMutation, useUpdateProductMutation, useDeleteProductMutation } = productApi;

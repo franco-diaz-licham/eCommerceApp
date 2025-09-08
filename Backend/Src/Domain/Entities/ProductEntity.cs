@@ -51,6 +51,16 @@ public sealed class ProductEntity : BaseEntity
         Touch();
     }
 
+    /// <summary>
+    /// Updates the stock value.
+    /// </summary>
+    public void SetStock(int quantity)
+    {
+        int val = quantity - QuantityInStock;
+        if (val > 0) IncreaseStock(val);
+        if (val < 0) DecreaseStock(-1 * val);
+    }
+
     public void IncreaseStock(int quantity)
     {
         if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");

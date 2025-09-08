@@ -7,6 +7,6 @@ public class CreateProductRequest
     [Required] public decimal UnitPrice { get; set; }
     [Required] public int ProductTypeId { get; set; }
     [Required] public int BrandId { get; set; }
-    [Required] public required PhotoCreateRequest Photo { get; set; }
+    public IFormFile? Photo { get; set; }
     [Required] public int QuantityInStock { get; set; }
 }

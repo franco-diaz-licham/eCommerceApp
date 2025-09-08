@@ -11,12 +11,13 @@ public class AutoMapperProfiles : Profile
         CreateMap<ProductCreateDto, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId, null)).ForAllMembers(o => o.Ignore());
         var map = CreateMap<ProductUpdateDto, ProductEntity>();
         map.ForAllMembers(opt => opt.Ignore());
-        map.AfterMap< ProductUpdateAction>();
+        map.AfterMap<ProductUpdateAction>();
+        CreateMap<UpdateProductRequest, ProductUpdateDto>();
+        CreateMap<CreateProductRequest, ProductCreateDto>();
 
         // Photo
         CreateMap<PhotoEntity, PhotoDto>();
         CreateMap<PhotoDto, PhotoResponse>();
-        CreateMap<PhotoCreateRequest, PhotoCreateDto>();
         CreateMap<PhotoDto, PhotoEntity>().ConstructUsing(s => new PhotoEntity(s.FileName, s.PublicId, s.PublicUrl)).ForAllMembers(o => o.Ignore());
 
         // Brand
