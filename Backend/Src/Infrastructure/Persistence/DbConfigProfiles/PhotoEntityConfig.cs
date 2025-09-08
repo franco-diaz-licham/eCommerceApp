@@ -7,6 +7,6 @@ public class PhotoEntityConfig : IEntityTypeConfiguration<PhotoEntity>
         builder.Property(p => p.FileName).IsRequired().HasMaxLength(128);
         builder.Property(p => p.PublicId).IsRequired().HasMaxLength(128);
         builder.Property(p => p.PublicUrl).IsRequired();
-        builder.Property(p => p.CreatedOn).HasDefaultValueSql("now() at time zone 'utc'");
+        builder.Property(p => p.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }

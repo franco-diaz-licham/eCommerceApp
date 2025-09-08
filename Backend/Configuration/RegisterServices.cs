@@ -13,7 +13,7 @@ public static class RegisterServices
         builder.Services.AddSwaggerService();
         builder.Services.AddDbContext<DataContext>(opt =>
         {
-            opt.UseNpgsql(builder.Configuration.GetConnectionString("StoreDb") ?? "").UseSnakeCaseNamingConvention();
+            opt.UseSqlServer(builder.Configuration.GetConnectionString("StoreDb") ?? "");
             opt.LogTo(Console.WriteLine, LogLevel.Information);
         });
         builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));

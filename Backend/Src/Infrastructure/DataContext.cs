@@ -18,24 +18,8 @@ public class DataContext : IdentityDbContext<UserEntity>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        // Configure relations
+        // Configure relations and apply all configurations
         base.OnModelCreating(builder);
-        builder.ApplyConfiguration(new AddressEntityConfig());
-        builder.ApplyConfiguration(new BasketEntityConfig());
-        builder.ApplyConfiguration(new BasketItemEntityConfig());
-        builder.ApplyConfiguration(new BrandEntityConfig());
-        builder.ApplyConfiguration(new CouponEntityConfig());
-        builder.ApplyConfiguration(new OrderEntityConfig());
-        builder.ApplyConfiguration(new OrderItemEntityConfig());
-        builder.ApplyConfiguration(new OrderStatusEntityConfig());
-        builder.ApplyConfiguration(new PhotoEntityConfig());
-        builder.ApplyConfiguration(new ProductEntityConfig());
-        builder.ApplyConfiguration(new ProductTypeEntityConfig());
-
-        // Configure all datetimes to be UTC, Before saving to DB and After reading from DB
-        var dateTimeConverter = new ValueConverter<DateTime, DateTime>(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-        foreach (var entityType in builder.Model.GetEntityTypes())
-            foreach (var property in entityType.GetProperties().Where(p => p.ClrType == typeof(DateTime)))
-                property.SetValueConverter(dateTimeConverter);
+        builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
     }
 }

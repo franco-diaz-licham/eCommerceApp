@@ -7,6 +7,6 @@ public sealed class BrandEntityConfig : IEntityTypeConfiguration<BrandEntity>
         builder.Property(b => b.Name).IsRequired().HasMaxLength(64);
         builder.Property(b => b.NameNormalized).IsRequired().HasMaxLength(64);
         builder.Property(b => b.IsActive).HasDefaultValue(true);
-        builder.Property(b => b.CreatedOn).HasDefaultValueSql("now() at time zone 'utc'");
+        builder.Property(b => b.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }

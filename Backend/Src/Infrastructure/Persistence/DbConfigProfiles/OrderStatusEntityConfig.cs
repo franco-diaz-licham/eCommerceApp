@@ -7,6 +7,6 @@ public class OrderStatusEntityConfig : IEntityTypeConfiguration<OrderStatusEntit
         builder.Property(s => s.Name).IsRequired().HasMaxLength(64);
         builder.Property(s => s.NameNormalized).IsRequired().HasMaxLength(64);
         builder.Property(s => s.IsActive).HasDefaultValue(true);
-        builder.Property(s => s.CreatedOn).HasDefaultValueSql("now() at time zone 'utc'");
+        builder.Property(s => s.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }

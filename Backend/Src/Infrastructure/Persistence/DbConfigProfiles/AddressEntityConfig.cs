@@ -10,6 +10,6 @@ public sealed class AddressEntityConfig : IEntityTypeConfiguration<AddressEntity
         builder.Property(a => a.State).IsRequired().HasMaxLength(12);
         builder.Property(a => a.PostalCode).IsRequired().HasMaxLength(4);
         builder.Property(a => a.Country).IsRequired().HasMaxLength(56);
-        builder.Property(a => a.CreatedOn).HasDefaultValueSql("now() at time zone 'utc'");
+        builder.Property(a => a.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }

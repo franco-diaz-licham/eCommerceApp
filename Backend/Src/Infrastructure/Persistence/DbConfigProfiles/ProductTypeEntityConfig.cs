@@ -7,6 +7,6 @@ public class ProductTypeEntityConfig : IEntityTypeConfiguration<ProductTypeEntit
         builder.Property(t => t.Name).IsRequired().HasMaxLength(64);
         builder.Property(t => t.NameNormalized).IsRequired().HasMaxLength(64);
         builder.Property(t => t.IsActive).HasDefaultValue(true);
-        builder.Property(t => t.CreatedOn).HasDefaultValueSql("now() at time zone 'utc'");
+        builder.Property(t => t.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }
