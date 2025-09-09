@@ -11,10 +11,11 @@ public class BasketController(IBasketService basketService, IMapper mapper) : Co
     public async Task<ActionResult<BasketResponse>> CreateBasket()
     {
         var result = await _basketService.CreateBasketAsync();
-        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
+        var location = Url.RouteUrl(nameof(GetBasket));
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult(location);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}", Name = nameof(GetBasket))]
     public async Task<ActionResult<BasketResponse>> GetBasket(int id)
     {
         var result = await _basketService.GetBasketAsync(id);
@@ -26,7 +27,8 @@ public class BasketController(IBasketService basketService, IMapper mapper) : Co
     {
         var item = _mapper.Map<BasketItemCreateDto>(request);
         var result = await _basketService.AddItemAsync(item);
-        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
+        var location = Url.RouteUrl(nameof(GetBasket));
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult(location);
     }
 
     [HttpDelete("remove-item")]
@@ -42,7 +44,8 @@ public class BasketController(IBasketService basketService, IMapper mapper) : Co
     {
         var coupon = _mapper.Map<BasketCouponDto>(request);
         var result = await _basketService.AddCouponAsync(coupon);
-        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
+        var location = Url.RouteUrl(nameof(GetBasket));
+        return _mapper.Map<Result<BasketResponse>>(result).ToActionResult(location);
     }
 
     [HttpDelete("remove-coupon")]

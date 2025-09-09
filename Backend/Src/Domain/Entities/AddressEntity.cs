@@ -3,6 +3,7 @@ namespace Backend.Src.Domain.Entities;
 public sealed class AddressEntity : BaseEntity
 {
     private AddressEntity() { }
+
     public AddressEntity(string line1, string? line2, string city, string state, string postalCode, string country)
     {
         SetLine1(line1);
@@ -39,7 +40,7 @@ public sealed class AddressEntity : BaseEntity
 
     public void SetLine1(string value)
     {
-        Line1 = Validate(value, "Line1");
+        Line1 = Validate(value, nameof(Line1));
         Touch();
     }
     
@@ -51,40 +52,44 @@ public sealed class AddressEntity : BaseEntity
 
     public void SetCity(string value)
     {
-        City = Validate(value, "City");
+        City = Validate(value, nameof(City));
         Touch();
     }
+
     public void SetState(string value)
     {
-        State = Validate(value, "State");
+        State = Validate(value, nameof(State));
         Touch();
     }
+
     public void SetPostalCode(string value)
     {
-        PostalCode = Validate(value, "PostalCode");
+        PostalCode = Validate(value, nameof(PostalCode));
         Touch();
     }
+
     public void SetCountry(string value)
     {
-        Country = Validate(value, "Country").ToUpperInvariant();
+        Country = Validate(value, nameof(Country)).ToUpperInvariant();
         Touch();
     }
 
     private static string Validate(string s, string field)
     {
         if (string.IsNullOrWhiteSpace(s)) throw new ArgumentException($"{field} is required.");
+
         var v = CollapseSpaces(s.Trim());
         return v.Length switch
         {
-            > 128 when field is "Line1" or "Line2" => throw new ArgumentException($"{field} too long."),
-            > 12 when field is "City" or "State" => throw new ArgumentException($"{field} too long."),
-            > 4 when field is "PostalCode" => throw new ArgumentException($"{field} too long."),
-            > 56 when field is "Country" => throw new ArgumentException($"{field} too long."),
+            > 128 when field is nameof(Line1) or nameof(Line2) => throw new ArgumentException($"{field} too long."),
+            > 12 when field is nameof(City) or nameof(State) => throw new ArgumentException($"{field} too long."),
+            > 4 when field is nameof(PostalCode) => throw new ArgumentException($"{field} too long."),
+            > 56 when field is nameof(Country) => throw new ArgumentException($"{field} too long."),
             _ => v
         };
     }
 
-    private static string? ValidateOptional(string? s) => string.IsNullOrWhiteSpace(s) ? null : Validate(s, "Line2");
+    private static string? ValidateOptional(string? s) => string.IsNullOrWhiteSpace(s) ? null : Validate(s, nameof(Line2));
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
     private void Touch() => UpdatedOn = DateTime.UtcNow;
     #endregion
