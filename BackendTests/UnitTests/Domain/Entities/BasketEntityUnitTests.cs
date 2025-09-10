@@ -1,6 +1,4 @@
-﻿using Stripe;
-
-namespace BackendTests.UnitTests.Domain.Entities;
+﻿namespace BackendTests.UnitTests.Domain.Entities;
 
 public class BasketEntityUnitTests
 {
