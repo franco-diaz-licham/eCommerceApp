@@ -3,7 +3,7 @@ import type { ProductQueryParams } from "../types/product.types";
 
 const initialState: ProductQueryParams = {
     pageNumber: 1,
-    pageSize: 8,
+    pageSize: 12,
     productTypeIds: [],
     brandIds: [],
     searchTerm: "",
