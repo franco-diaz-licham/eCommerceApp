@@ -225,7 +225,7 @@ public class ProductEntityUnitTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void SetPhoto_ShouldThrowError_WhenInputIsInvalidId(int photoId)
+    public void SetPhoto_ShouldThrowError_WhenInputIsNonPositive(int photoId)
     {
         // Arrange
         var p = new ProductEntity("x", "d", 10m, 1, 1, 1);
@@ -254,7 +254,7 @@ public class ProductEntityUnitTests
     }
 
     [Fact]
-    public void SetPhoto_ShouldSetId_WhenWithoutReference()
+    public void SetPhoto_ShouldSetId_WhenPhotoReferenceNull()
     {
         // Arrange
         var p = new ProductEntity("x", "d", 10m, 1, 1, 1);

@@ -213,6 +213,20 @@ public class BasketEntityUnitTests
     }
 
     [Fact]
+    public void AddCoupon_ShouldThrowError_WhenCouponIsNull()
+    {
+        // Arrange
+        var basket = new BasketEntity();
+        CouponEntity? coupon = null;
+
+        // Act
+        Action act = () => basket.AddCoupon(coupon!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(coupon)} cannot be less than zero*");
+    }
+
+    [Fact]
     public void AddCoupon_ShouldSetCouponAndAppliesCalculatedDiscount_WhenInputIsValid()
     {
         // Arrange
@@ -230,17 +244,25 @@ public class BasketEntityUnitTests
     }
 
     [Fact]
-    public void AddCoupon_ShouldThrowError_WhenCouponIsNull()
+    public void AddCoupon_ShouldChangeQuantityAndRecalculatesDiscount_WhenCalledTwice()
     {
         // Arrange
         var basket = new BasketEntity();
-        CouponEntity? coupon = null;
+        basket.AddItem(1, 100m, 1);
+        var coupon = CouponEntity.CreatePercentOff("Ten Percent", "rid", "TEN", 10m);
 
         // Act
-        Action act = () => basket.AddCoupon(coupon!);
-
+        basket.AddCoupon(coupon);
+        
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(coupon)} cannot be less than zero*");
+        basket.Discount.Should().Be(10m);
+
+        // Act
+        basket.SetItemQuantity(1, 2);
+        
+        // Assert
+        basket.Subtotal.Should().Be(200m);
+        basket.Discount.Should().Be(10m);
     }
 
     [Fact]
@@ -322,4 +344,27 @@ public class BasketEntityUnitTests
         // Assert
         basket.Subtotal.Should().Be(35m);
     }
+
+    [Fact]
+    public void ClearPaymentIntent_ShouldDoNothing_WhenCalledTwice()
+    {
+        // Arrange
+        var basket = new BasketEntity();
+        basket.AttachPaymentIntent("pi_123", "sec_abc");
+
+        // Act
+        basket.ClearPaymentIntent();
+        
+        // Assert
+        basket.PaymentIntentId.Should().BeNull();
+        basket.ClientSecret.Should().BeNull();
+
+        // Act
+        basket.ClearPaymentIntent();
+        
+        // Assert
+        basket.PaymentIntentId.Should().BeNull();
+        basket.ClientSecret.Should().BeNull();
+    }
+
 }

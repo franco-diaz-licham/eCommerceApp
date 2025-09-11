@@ -119,7 +119,7 @@ public class OrderEntityUnitTests
         var entity = NewOrder();
         
         // Act
-        Action act = () => entity.SetPaymentIntent(paymentIntentId);
+        Action act = () => entity.SetPaymentIntent(paymentIntentId!);
         
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage($"*{nameof(paymentIntentId)} is required.*");
@@ -447,6 +447,22 @@ public class OrderEntityUnitTests
     }
 
     [Fact]
+    public void MarkCancelled_ShouldThrowError_WhenAfterCompleted()
+    {
+        // Arrange
+        var order = NewOrder();
+        order.MarkPaymentSucceeded("evt_1");
+        order.MarkShipped();
+        order.MarkCompleted();
+
+        // Act
+        Action act = () => order.MarkCancelled();
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("*Illegal transition*");
+    }
+
+    [Fact]
     public void MarkShipped_ShouldChangeStatus_WhenCalled()
     {
         // Arrange
@@ -458,6 +474,19 @@ public class OrderEntityUnitTests
         
         // Assert
         entity.OrderStatusId.Should().Be((int)OrderStatusEnum.Shipped);
+    }
+
+    [Fact]
+    public void MarkShipped_ShouldThrowError_WhenBeforePayment()
+    {
+        // Arrange
+        var order = NewOrder();
+
+        // Act
+        Action act = () => order.MarkShipped();
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("*Illegal transition*");
     }
 
     [Fact]
@@ -489,7 +518,7 @@ public class OrderEntityUnitTests
     }
 
     [Fact]
-    public void IllegalTransition_ShouldThrowError_WhenCalled()
+    public void MarkCompleted_ShouldThrowError_WhenBeforePayment()
     {
         // Arrange
         var entity = NewOrder();
@@ -501,6 +530,24 @@ public class OrderEntityUnitTests
         act.Should().Throw<ArgumentException>().WithMessage("*Illegal transition*");
     }
 
+    [Fact]
+    public void MarkCompleted_ShouldThrowError_WhenCalledTwice()
+    {
+        // Arrange
+        var order = NewOrder();
+        order.MarkPaymentSucceeded("evt_1");
+        order.MarkShipped();
+
+        // Act
+        order.MarkCompleted();
+        var status = order.OrderStatusId;
+
+        // Act
+        Action act = () => order.MarkCompleted();
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("*Illegal transition*");
+    }
     [Fact]
     public void RecalculateSubtotal_ShouldUpdateTotal_WhenDiscountIsApplied()
     {
