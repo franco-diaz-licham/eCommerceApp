@@ -7,7 +7,10 @@ public static class MappingServices
         services.AddSingleton<IConfigurationProvider>(sp =>
         {
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            var config = new MapperConfiguration(c => { c.AddProfile<AutoMapperProfiles>(); }, loggerFactory);
+            var config = new MapperConfiguration(c => 
+            { 
+                c.AddProfile<AutoMapperProfiles>(); 
+            }, loggerFactory);
             config.AssertConfigurationIsValid();
             return config;
         });

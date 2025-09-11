@@ -46,5 +46,7 @@ global using File = System.IO.File;
 global using IConfigurationProvider = AutoMapper.IConfigurationProvider;
 global using ILogger = Microsoft.Extensions.Logging.ILogger;
 global using ProductService = Backend.Src.Application.Services.ProductService;
+global using Backend.Src.Application.Queries.Interfaces;
+global using System.Collections;
 
 
