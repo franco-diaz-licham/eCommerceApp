@@ -2,41 +2,34 @@
 
 public class BrandServiceIntegrationTests : SqlDbTestBase
 {
-    private async Task SeedAsync(params BrandEntity[] brands)
-    {
-        using var ctx = Context();
-        ctx.Brands.AddRange(brands);
-        await ctx.SaveChangesAsync();
-    }
-
     [Fact]
     public async Task GetAsync_ShouldReturnsDto_WhenFound()
     {
         // Arrange
-        var b1 = new BrandEntity("acme");
-        await SeedAsync(b1);
+        using var context = CreateContext();
+        var service = new BrandService(context, Mapper);
 
-        using var ctx = Context();
-        var svc = new BrandService(ctx, Mapper);
+        var brand = new BrandEntity("levi");
+        await SeedAsync(brand);
 
         // Act
-        var result = await svc.GetAsync(b1.Id);
+        var result = await service.GetAsync(brand.Id);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value!.Id.Should().Be(b1.Id);
-        result.Value!.Name.Should().Be("acme");
+        result.Value!.Id.Should().Be(brand.Id);
+        result.Value!.Name.Should().Be("levi");
     }
 
     [Fact]
     public async Task GetAsync_ShouldReturnNotFound_WhenMissing()
     {
         // Arrange
-        using var ctx = Context();
-        var svc = new BrandService(ctx, Mapper);
+        using var context = CreateContext();
+        var service = new BrandService(context, Mapper);
 
         // Act
-        var result = await svc.GetAsync(999);
+        var result = await service.GetAsync(999);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -48,17 +41,18 @@ public class BrandServiceIntegrationTests : SqlDbTestBase
     public async Task GetAllAsync_ShouldApplySearchAndSortAndPaging_WhenCalled()
     {
         // Arrange
+        using var context = CreateContext();
+        var service = new BrandService(context, Mapper);
+
         var brands = new[]
         {
             new BrandEntity("apple"),
-            new BrandEntity("acme"),
+            new BrandEntity("levi"),
             new BrandEntity("zeta"),
             new BrandEntity("alpha")
         };
         await SeedAsync(brands);
 
-        using var ctx = Context();
-        var svc = new BrandService(ctx, Mapper);
         var specs = new BaseQuerySpecs
         {
             SearchTerm = "a",                
@@ -68,13 +62,13 @@ public class BrandServiceIntegrationTests : SqlDbTestBase
         };
 
         // Act
-        var page = await svc.GetAllAsync(specs);
+        var page = await service.GetAllAsync(specs);
 
         // Assert
         page.IsSuccess.Should().Be(true);
         page.Type.Should().Be(ResultTypeEnum.Success);
         page.Error.Should().BeNull();
-        page.Value.Should().HaveCount(4);
+        page.Value.Should().HaveCount(3);
         var names = page.Value.Select(x => x.Name).ToArray();
         names.Should().BeInAscendingOrder();
     }
@@ -83,6 +77,9 @@ public class BrandServiceIntegrationTests : SqlDbTestBase
     public async Task GetAllAsync_ShouldPageContent_WhenCalled()
     {
         // Arrange
+        using var context = CreateContext();
+        var service = new BrandService(context, Mapper);
+
         await SeedAsync(
             new BrandEntity("a1"), 
             new BrandEntity("a2"),
@@ -92,10 +89,8 @@ public class BrandServiceIntegrationTests : SqlDbTestBase
         );
 
         // Act
-        using var ctx = Context();
-        var svc = new BrandService(ctx, Mapper);
         var specs = new BaseQuerySpecs { PageNumber = 2, PageSize = 2, OrderBy = "nameAsc" };
-        var page = await svc.GetAllAsync(specs);
+        var page = await service.GetAllAsync(specs);
 
         // Assert
         page.Value.Should().HaveCount(2);

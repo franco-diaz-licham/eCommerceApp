@@ -6,6 +6,7 @@ public class SqlDbTestBase : IAsyncLifetime
     protected SqliteConnection Conn = default!;
     protected DbContextOptions<DataContext> Options = default!;
     protected IMapper Mapper = default!;
+    protected DataContext Context = default!;
 
     public async Task InitializeAsync()
     {
@@ -33,5 +34,27 @@ public class SqlDbTestBase : IAsyncLifetime
         await Conn.DisposeAsync();
     }
 
-    protected DataContext Context() => new DataContext(Options);
+    protected DataContext CreateContext() => Context = new DataContext(Options);
+    protected Mock<DataContext> CreateMockContext() => new Mock<DataContext>(Options) { CallBase = true };
+
+    protected async Task SeedAsync(params object[] entities)
+    {
+        foreach (var e in entities) Context.Add(e);
+        await Context.SaveChangesAsync();
+    }
+
+    protected async Task<ProductEntity> CreateProductAsync()
+    {
+        var brand = new BrandEntity("Puma");
+        var type = new ProductTypeEntity("Shoes");
+        var photo = new PhotoEntity("photo1", "123456789", "https://test/com/photo1.jpg");
+
+        await SeedAsync(brand);
+        await SeedAsync(type);
+        await SeedAsync(photo);
+
+        var product = new ProductEntity("sku-1", "Prod 1", 10.00m, 5, brand.Id, type.Id, photoId: photo.Id, brand: brand, type: type);
+        await SeedAsync(product);
+        return product;
+    }
 }
