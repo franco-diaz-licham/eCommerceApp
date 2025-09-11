@@ -13,7 +13,7 @@ public class ProductEntityUnitTests
             quantityInStock: 5,
             productTypeId: 1,
             brandId: 2,
-            photoId: null
+            photoId: 1
         );
 
         // Assert
@@ -24,7 +24,7 @@ public class ProductEntityUnitTests
         p.QuantityInStock.Should().Be(5);
         p.ProductTypeId.Should().Be(1);
         p.BrandId.Should().Be(2);
-        p.PhotoId.Should().Be(0);
+        p.PhotoId.Should().Be(1);
         p.UpdatedOn.Should().BeNull(); 
     }
 

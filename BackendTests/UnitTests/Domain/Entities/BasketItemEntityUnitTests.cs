@@ -6,7 +6,7 @@ public class BasketItemEntityUnitTests
     public void Constructor_ShouldSetFieldsAndConductComputations_WhenInstantiated()
     {
         // Arrange
-        var product = new ProductEntity("P", "D", 10m, 100, 1, 1, null);
+        var product = new ProductEntity("P", "D", 10m, 100, 1, 1, 1);
 
         // Act
         var item = new BasketItemEntity(10, 20m, 3, product);

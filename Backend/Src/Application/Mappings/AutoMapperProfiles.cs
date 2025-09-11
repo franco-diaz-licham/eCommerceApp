@@ -8,7 +8,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<ProductDto, ProductResponse>();
         CreateMap<ProductEntity, ProductDto>();
         CreateMap<ProductQueryParams, ProductQuerySpecs>();
-        CreateMap<ProductCreateDto, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId, null)).ForAllMembers(o => o.Ignore());
+        CreateMap<ProductCreateDto, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId)).ForAllMembers(o => o.Ignore());
         var map = CreateMap<ProductUpdateDto, ProductEntity>();
         map.ForAllMembers(opt => opt.Ignore());
         map.AfterMap<ProductUpdateAction>();
@@ -61,9 +61,9 @@ public class AutoMapperProfiles : Profile
 
         // Coupon
         CreateMap<CouponEntity, CouponDto>();
+        CreateMap<CouponDto, CouponEntity>().ConstructUsing(s => new CouponEntity(s.Name, s.RemoteId, s.PromotionCode, s.AmountOff, s.PercentOff)).ForAllMembers(o => o.Ignore());
         CreateMap<CouponInfoModel, CouponDto>()
             .ForMember(d => d.AmountOff, opt => opt.ConvertUsing(new MinorUnitsToDecimalConverter(), src => src.AmountOff))
-            .ForMember(d => d.RemoteId, opt => opt.MapFrom(src => src.RemoteId))
             .ForMember(d => d.Id, opt => opt.Ignore());
 
         // Address

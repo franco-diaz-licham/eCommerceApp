@@ -14,4 +14,9 @@ global using FluentAssertions;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
+global using Backend.Src.Application.DTOs;
+global using Backend.Src.Application.Interfaces;
+global using Moq;
+
+
 

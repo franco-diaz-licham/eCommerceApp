@@ -4,6 +4,12 @@ public class BasketEntity : BaseEntity
 {
     public BasketEntity() { }
 
+    public BasketEntity(string clientSecret, string paymentIntentId)
+    {
+        SetClientSecret(clientSecret);
+        SetPaymentIntentId(paymentIntentId);
+    }
+
     #region Properties
     public string? ClientSecret { get; private set; }
     public string? PaymentIntentId { get; private set; }
@@ -15,6 +21,8 @@ public class BasketEntity : BaseEntity
     private readonly List<BasketItemEntity> _basketItems = [];
     public IReadOnlyCollection<BasketItemEntity> BasketItems => _basketItems;
     public decimal Subtotal => _basketItems.Sum(i => i.LineTotal);
+    public decimal DeliveryFee => Subtotal > 100.00m ? 0 : 5.00m;
+    public decimal Total => Subtotal - Discount + DeliveryFee;
     #endregion
 
     #region Busines logic
@@ -57,7 +65,7 @@ public class BasketEntity : BaseEntity
 
     public void AddCoupon(CouponEntity coupon)
     {
-        if (coupon is null) throw new ArgumentNullException($"{nameof(coupon)} cannot be less than zero.");
+        if (coupon is null) throw new ArgumentNullException($"{nameof(coupon)} is required.");
         CouponId = coupon.Id;
         Coupon = coupon;
         SetDiscount(coupon.CalculateDiscount(Subtotal));
@@ -84,6 +92,27 @@ public class BasketEntity : BaseEntity
         PaymentIntentId = null;
         ClientSecret = null;
     }
+
+    // TODO: Write unit tests for this.
+    public void SetClientSecret(string clientSecret)
+    {
+        if (string.IsNullOrWhiteSpace(clientSecret)) throw new ArgumentNullException($"{nameof(clientSecret)} is required.");
+        var trimmed = clientSecret.Trim();
+        if (trimmed.Length > 256) throw new ArgumentException($"{nameof(clientSecret)} too long.");
+        ClientSecret = trimmed;
+    }
+
+    // TODO: Write unit tests for this.
+    public void SetPaymentIntentId(string paymentIntentId)
+    {
+        if (string.IsNullOrWhiteSpace(paymentIntentId)) throw new ArgumentNullException($"{nameof(paymentIntentId)} is required.");
+        var trimmed = paymentIntentId.Trim();
+        if (trimmed.Length > 64) throw new ArgumentException($"{nameof(paymentIntentId)} too long.");
+        PaymentIntentId = trimmed;
+    }
+
+    // TODO: test this
+    public long TotalToMinorUnits() => (long)Math.Round(Total * 100m, MidpointRounding.AwayFromZero);
 
     private BasketItemEntity? FindItem(int productId) => _basketItems.FirstOrDefault(i => i.ProductId == productId);
     private void ClearDiscount() => Discount = 0m;

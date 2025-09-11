@@ -53,7 +53,7 @@ public class BasketService : IBasketService
         return Result<BasketDto>.Success(output, ResultTypeEnum.Success);
     }
 
-    public async Task<Result<bool>> RemoveItemAsync(BasketItemCreateDto dto)
+    public async Task<Result<bool>> RemoveItemAsync(BasketItemDto dto)
     {
         // Validate.
         var basket = await _db.Baskets.Include(b => b.BasketItems).SingleOrDefaultAsync(b => b.Id == dto.BasketId);
@@ -73,32 +73,17 @@ public class BasketService : IBasketService
         // Get and validate
         if (string.IsNullOrWhiteSpace(dto.Code)) return Result<BasketDto>.Fail("Coupon code is required...", ResultTypeEnum.Invalid);
         var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).Include(b => b.Coupon).FirstOrDefaultAsync();
-
         if (basket == null || string.IsNullOrEmpty(basket.ClientSecret)) return Result<BasketDto>.Fail("Unable to apply voucher...", ResultTypeEnum.Invalid);
 
         // Get coupon info
-        var coupon = await _payments.TryGetCouponByPromoCodeAsync(dto.Code);
-        if (coupon is null) return Result<BasketDto>.Fail("Unable to apply voucher...", ResultTypeEnum.Invalid);
-        var couponDto = new CouponDto
-        {
-            Name = coupon.Name!,
-            AmountOff = coupon.AmountOff.HasValue ? coupon.AmountOff.Value / 100m : null,
-            PercentOff = coupon.PercentOff,
-            RemoteId = coupon.RemoteId,
-            PromotionCode = coupon.PromotionCode
-        };
+        var couponInfo = await _payments.TryGetCouponByPromoCodeAsync(dto.Code);
+        if (couponInfo is null) return Result<BasketDto>.Fail("Unable to apply coupon...", ResultTypeEnum.Invalid);
+        var couponDto = _mapper.Map<CouponDto>(couponInfo);
+
+        // Update basket info
         basket.AddCoupon(_mapper.Map<CouponEntity>(couponDto));
-
-        // Compute totals in dollars
-        var subtotal = basket.Subtotal;
-        var deliveryFee = subtotal > 100.00m ? 0 : 5.00m;
-        var discount = await _payments.CalculateDiscountFromAmount(couponDto.RemoteId, subtotal);
-        var totalDollars = subtotal - discount + deliveryFee;
-        long totalMinorUnits = (long)Math.Round(totalDollars * 100m, MidpointRounding.AwayFromZero);
-        var info = await _payments.CreateOrUpdateAsync(totalMinorUnits, "aud", basket.PaymentIntentId);
-
-        // Update basket
-        basket.AttachPaymentIntent(info.IntentId, info.ClientSecret ?? "");
+        var piModel = await _payments.CreateOrUpdateAsync(basket.TotalToMinorUnits(), "aud", basket.PaymentIntentId);
+        basket.AttachPaymentIntent(piModel.IntentId, piModel.ClientSecret ?? "");
 
         // Save changes and output
         var saved = await _db.SaveChangesAsync() > 0;
@@ -109,7 +94,7 @@ public class BasketService : IBasketService
 
     public async Task<Result<bool>> RemoveCouponAsync(BasketCouponDto dto)
     {
-        // Get and validate
+        // Validate
         var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).Include(b => b.Coupon).FirstOrDefaultAsync();
         if (basket == null || basket.Coupon is null) return Result<bool>.Fail("Unable to update basket with coupon...", ResultTypeEnum.Invalid);
 

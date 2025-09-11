@@ -34,7 +34,7 @@ public class BasketController(IBasketService basketService, IMapper mapper) : Co
     [HttpDelete("remove-item")]
     public async Task<ActionResult> RemoveBasketItemAsync(BasketItemRemoveRequest request)
     {
-        var item = _mapper.Map<BasketItemCreateDto>(request);
+        var item = _mapper.Map<BasketItemDto>(request);
         var result = await _basketService.RemoveItemAsync(item);
         return result.ToActionResult();
     }

@@ -8,5 +8,5 @@ public interface IBasketService
     Task<Result<BasketDto>> CreateBasketAsync();
     Task<Result<BasketDto>> GetBasketAsync(int id);
     Task<Result<bool>> RemoveCouponAsync(BasketCouponDto dto);
-    Task<Result<bool>> RemoveItemAsync(BasketItemCreateDto dto);
+    Task<Result<bool>> RemoveItemAsync(BasketItemDto dto);
 }

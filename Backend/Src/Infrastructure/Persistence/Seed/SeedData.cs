@@ -124,6 +124,6 @@ file sealed record ProductSeed(
     decimal UnitPrice,
     int BrandId,
     int ProductTypeId,
-    int? PhotoId,
+    int PhotoId,
     int QuantityInStock
 );

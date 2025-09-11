@@ -223,7 +223,7 @@ public class BasketEntityUnitTests
         Action act = () => basket.AddCoupon(coupon!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(coupon)} cannot be less than zero*");
+        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(coupon)} is required*");
     }
 
     [Fact]
@@ -232,7 +232,7 @@ public class BasketEntityUnitTests
         // Arrange
         var basket = new BasketEntity();
         basket.AddItem(1, 100m, 1);
-        var coupon = CouponEntity.CreatePercentOff("ten off", "remoteId", "10%OFF", 10m);
+        var coupon = CouponEntity.CreateOnPercentOff("ten off", "remoteId", "10%OFF", 10m);
         
         // Act
         basket.AddCoupon(coupon);
@@ -249,7 +249,7 @@ public class BasketEntityUnitTests
         // Arrange
         var basket = new BasketEntity();
         basket.AddItem(1, 100m, 1);
-        var coupon = CouponEntity.CreatePercentOff("Ten Percent", "rid", "TEN", 10m);
+        var coupon = CouponEntity.CreateOnPercentOff("Ten Percent", "rid", "TEN", 10m);
 
         // Act
         basket.AddCoupon(coupon);
@@ -271,7 +271,7 @@ public class BasketEntityUnitTests
         // Arrange
         var basket = new BasketEntity();
         basket.AddItem(1, 50m, 2);
-        var coupon = CouponEntity.CreateAmountOff("ten off", "remoteId", "10%OFF", 10m);
+        var coupon = CouponEntity.CreateOnAmountOff("ten off", "remoteId", "10%OFF", 10m);
         basket.AddCoupon(coupon);
 
         // Act

@@ -3,7 +3,16 @@ namespace Backend.Src.Domain.Entities;
 public sealed class ProductEntity : BaseEntity
 {
     private ProductEntity() { }
-    public ProductEntity(string name, string description, decimal unitPrice, int quantityInStock, int productTypeId, int brandId, int? photoId = null)
+    public ProductEntity(
+        string name, 
+        string description, 
+        decimal unitPrice, 
+        int quantityInStock, 
+        int productTypeId, 
+        int brandId, 
+        int photoId,
+        BrandEntity? brand = null,
+        ProductTypeEntity? type = null)
     {
         SetName(name);
         SetDescription(description);
@@ -11,7 +20,25 @@ public sealed class ProductEntity : BaseEntity
         IncreaseStock(quantityInStock);
         ProductTypeId = productTypeId;
         BrandId = brandId;
-        PhotoId = photoId ?? 0;
+        PhotoId = photoId;
+        Brand = brand;
+        ProductType = type;
+    }
+
+    public ProductEntity(
+        string name,
+        string description,
+        decimal unitPrice,
+        int quantityInStock,
+        int productTypeId,
+        int brandId)
+    {
+        SetName(name);
+        SetDescription(description);
+        ChangeUnitPrice(unitPrice);
+        IncreaseStock(quantityInStock);
+        ProductTypeId = productTypeId;
+        BrandId = brandId;
     }
 
     #region Properties

@@ -2,6 +2,7 @@
 
 public class OrderDto
 {
+    public int Id { get; set; }
     public required string UserEmail { get; set; }
     public required AddressDto ShippingAddress { get; set; }
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;

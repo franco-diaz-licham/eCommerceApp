@@ -3,22 +3,26 @@
 public class CouponEntity : BaseEntity
 {
     private CouponEntity() { }
-    private CouponEntity(string name, string remoteId, string code)
+
+    // TODO: test constructor
+    public CouponEntity(string name, string remoteId, string code, decimal? amountOff = null, decimal? percentOff = null)
     {
         SetName(name);
         SetPromotionCode(code);
         SetRemoteId(remoteId);
         IsActive = true;
+        AmountOff = amountOff;
+        PercentOff = percentOff;
     }
 
-    public static CouponEntity CreateAmountOff(string name, string remoteId, string code, decimal amountOff)
+    public static CouponEntity CreateOnAmountOff(string name, string remoteId, string code, decimal amountOff)
     {
         var c = new CouponEntity(name, remoteId, code);
         c.SetAmountOff(amountOff);
         return c;
     }
 
-    public static CouponEntity CreatePercentOff(string name, string remoteId, string code, decimal percentOff)
+    public static CouponEntity CreateOnPercentOff(string name, string remoteId, string code, decimal percentOff)
     {
         var c = new CouponEntity(name, remoteId, code);
         c.SetPercentOff(percentOff);

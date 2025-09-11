@@ -25,10 +25,11 @@ public class OrderService : IOrderService
         return Result<List<OrderDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
-    public async Task<OrderDto?> GetAsync(int id, string email)
+    public async Task<Result<OrderDto>> GetAsync(int id, string email)
     {
-        var output = await _db.Orders.AsNoTracking().Where(p => p.UserEmail == email && p.Id == id).AsNoTracking().ProjectTo<OrderDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
-        return output;
+        var output = await _db.Orders.AsNoTracking().Where(o => o.UserEmail == email && o.Id == id).AsNoTracking().ProjectTo<OrderDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        if(output is null) return Result<OrderDto>.Fail("Order could not be found...", ResultTypeEnum.Invalid);
+        return Result<OrderDto>.Success(output, ResultTypeEnum.Created);
     }
 
     public async Task<Result<OrderDto>> CreateOrderAsync(OrderCreateDto dto)

@@ -6,7 +6,7 @@ public class CouponEntityUnitTests
     public void CreateAmountOff_ShouldSetCoreFields_WhenInputsAreValid()
     {
         // Arrange and Act
-        var entity = CouponEntity.CreateAmountOff("  summer  sale  ", "remote-1", "  SUM10  ", 10m);
+        var entity = CouponEntity.CreateOnAmountOff("  summer  sale  ", "remote-1", "  SUM10  ", 10m);
 
         // Assert
         entity.Name.Should().Be("summer sale");
@@ -23,7 +23,7 @@ public class CouponEntityUnitTests
     public void CreatePercentOff_ShouldSetFields_WhenInputesAreValid()
     {
         // Arrange and Act
-        var entity = CouponEntity.CreatePercentOff("  ten  percent  ", "r2", "  P10  ", 10m);
+        var entity = CouponEntity.CreateOnPercentOff("  ten  percent  ", "r2", "  P10  ", 10m);
 
         // Arrange
         entity.Name.Should().Be("ten percent");
@@ -43,7 +43,7 @@ public class CouponEntityUnitTests
     public void SetName_ShouldThrowError_WhenInputIsMissing(string? name)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         Action act = () => entity.SetName(name!);
@@ -59,7 +59,7 @@ public class CouponEntityUnitTests
     public void SetName_ShouldThrowError_WhenNameTooLong(int length)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
         var name = new string('a', length);
 
         // Act
@@ -76,7 +76,7 @@ public class CouponEntityUnitTests
     public void SetName_ShouldNormalizeInput_WhenInputIsValid(string name, string expectedName, string normName)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         entity.SetName(name);
@@ -93,7 +93,7 @@ public class CouponEntityUnitTests
     public void SetPromotionCode_ShouldThrowError_WhenInputIsMissing(string? code)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         Action act = () => entity.SetPromotionCode(code!);
@@ -109,7 +109,7 @@ public class CouponEntityUnitTests
     public void SetPromotionCode_ShouldThrowError_WhenCodeTooLong(int length)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
         var code = new string('a', length);
 
         // Act
@@ -126,7 +126,7 @@ public class CouponEntityUnitTests
     public void SetPromotionCode_ShouldNormalizeInput_WhenInputIsValid(string code, string expectedCode, string normCode)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         entity.SetPromotionCode(code);
@@ -143,7 +143,7 @@ public class CouponEntityUnitTests
     public void SetRemoteId_ShouldThrowError_WhenInputIsMissing(string? id)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         Action act = () => entity.SetRemoteId(id!);
@@ -159,7 +159,7 @@ public class CouponEntityUnitTests
     public void SetRemoteId_ShouldTrimInput_WhenInputIsValid(string id, string expectedId)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
 
         // Act
         entity.SetRemoteId(id);
@@ -174,7 +174,7 @@ public class CouponEntityUnitTests
     public void SetAmountOff_ShouldThrowError_WhenInputIsNegative(decimal amount)
     {
         // Arrange
-        var entity = CouponEntity.CreatePercentOff("ok", "r", "code", 5m);
+        var entity = CouponEntity.CreateOnPercentOff("ok", "r", "code", 5m);
         
         // Act
         Action act = () => entity.SetAmountOff(amount);
@@ -189,7 +189,7 @@ public class CouponEntityUnitTests
     public void SetAmountOff_ShouldSetAndClearsPercent_WhenInputIsValid(decimal amount)
     {
         // Arrange
-        var entity = CouponEntity.CreatePercentOff("ok", "r", "code", 5m);
+        var entity = CouponEntity.CreateOnPercentOff("ok", "r", "code", 5m);
 
         // Act
         entity.SetAmountOff(amount);
@@ -206,7 +206,7 @@ public class CouponEntityUnitTests
     public void SetPercentOff_ShouldThrowError_WhenInputIsNegative(decimal percent)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 1m);
         
         // Act
         Action act = () => entity.SetPercentOff(percent);
@@ -223,7 +223,7 @@ public class CouponEntityUnitTests
     public void SetPercentOff_ShouldSetClearAmount_WhenInputIsValid(decimal percent)
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 10m);
+        var entity = CouponEntity.CreateOnAmountOff("ok", "r", "code", 10m);
 
         // Act
         entity.SetPercentOff(percent);
@@ -237,7 +237,7 @@ public class CouponEntityUnitTests
     public void Activate_ShouldDoNothing_WhenActivated()
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("x", "r", "code", 1m);
 
         // Act
         entity.Activate();
@@ -250,7 +250,7 @@ public class CouponEntityUnitTests
     public void Activate_ShouldActivate_WhenDeactivated()
     {
         // Arrange
-        var c = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
+        var c = CouponEntity.CreateOnAmountOff("x", "r", "code", 1m);
         c.Deactivate();
 
         // Act
@@ -264,7 +264,7 @@ public class CouponEntityUnitTests
     public void Deactivate_ShouldSetInactive_WhenActivated()
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("x", "r", "code", 1m);
 
         // Act
         entity.Deactivate();
@@ -277,7 +277,7 @@ public class CouponEntityUnitTests
     public void Deactivate_ShouldDoNothing_WhenDiactivated()
     {
         // Arrange
-        var entity = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
+        var entity = CouponEntity.CreateOnAmountOff("x", "r", "code", 1m);
         entity.Deactivate();
 
         // Act
@@ -296,7 +296,7 @@ public class CouponEntityUnitTests
     public void CalculateDiscount_ShouldCalculateAmountOff_WhenCalled(decimal subtotal, decimal amountOff, decimal expected)
     {
         // Arrange and Act
-        var entity = CouponEntity.CreateAmountOff("x", "r", "code", amountOff);
+        var entity = CouponEntity.CreateOnAmountOff("x", "r", "code", amountOff);
 
         // Assert
         entity.CalculateDiscount(subtotal).Should().Be(expected);
@@ -310,7 +310,7 @@ public class CouponEntityUnitTests
     public void CalculateDiscount_ShouldCalculatePercentOff_WhenCalled(decimal subtotal, decimal percentOff, decimal expected)
     {
         // Arrange and Act
-        var entity = CouponEntity.CreatePercentOff("x", "r", "code", percentOff);
+        var entity = CouponEntity.CreateOnPercentOff("x", "r", "code", percentOff);
         
         // Assert
         entity.CalculateDiscount(subtotal).Should().Be(expected);
@@ -322,7 +322,7 @@ public class CouponEntityUnitTests
     public void CalculateDiscount_ShouldThrowError_WhenInactive()
     {
         // Arrange
-        var c = CouponEntity.CreateAmountOff("x", "r", "code", 10m);
+        var c = CouponEntity.CreateOnAmountOff("x", "r", "code", 10m);
         c.Deactivate();
 
         // Act
@@ -338,7 +338,7 @@ public class CouponEntityUnitTests
     public void CalculateDiscount_SholdThrowError_WhenSubtotalNegative(decimal subtotal)
     {
         // Arrange
-        var c = CouponEntity.CreateAmountOff("x", "r", "code", 10m);
+        var c = CouponEntity.CreateOnAmountOff("x", "r", "code", 10m);
 
         // Act
         Action act = () => c.CalculateDiscount(subtotal);
