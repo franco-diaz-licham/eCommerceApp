@@ -8,18 +8,13 @@ public class BrandEntityUnitTests
     [InlineData(" ToMmY hiLlfigger  ", "ToMmY hiLlfigger", "TOMMY HILLFIGGER")]
     public void Constructor_ShouldSetName_WhenInstantiated(string name, string expectedName, string expectedNormalisedName)
     {
-        // Arrange
-        var now = DateTime.UtcNow;
-
-        // Act
+        // Arrange and Act
         var brand = new BrandEntity(name);
 
         // Assert
         brand.Name.Should().Be(expectedName);
         brand.NameNormalized.Should().Be(expectedNormalisedName);
         brand.IsActive.Should().BeTrue();
-        brand.CreatedOn.Should().BeOnOrAfter(now);
-        brand.UpdatedOn.Should().NotBeNull();
     }
 
     [Theory]
@@ -40,7 +35,6 @@ public class BrandEntityUnitTests
     {
         // Arrange
         var brand = new BrandEntity("acme");
-        var before = brand.UpdatedOn;
 
         // Act
         brand.SetName("  acme   corp  ");
@@ -48,7 +42,6 @@ public class BrandEntityUnitTests
         // Assert
         brand.Name.Should().Be("acme corp");
         brand.NameNormalized.Should().Be("ACME CORP");
-        brand.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -73,14 +66,12 @@ public class BrandEntityUnitTests
     {
         // Arrange
         var brand = new BrandEntity("acme");
-        var before = brand.UpdatedOn;
 
         // Act
         brand.Activate();
 
         // Assert
         brand.IsActive.Should().BeTrue();
-        brand.UpdatedOn.Should().Be(before);
     }
 
     [Fact]
@@ -94,7 +85,6 @@ public class BrandEntityUnitTests
 
         // Assert
         brand.IsActive.Should().BeFalse();
-        brand.UpdatedOn.Should().NotBeNull();
     }
 
     [Fact]
@@ -103,13 +93,11 @@ public class BrandEntityUnitTests
         // Arrange
         var brand = new BrandEntity("acme");
         brand.Deactivate();
-        var before = brand.UpdatedOn;
 
         // Act
         brand.Activate();
 
         // Assert
         brand.IsActive.Should().BeTrue();
-        brand.UpdatedOn.Should().NotBe(before);
     }
 }

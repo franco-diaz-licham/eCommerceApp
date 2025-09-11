@@ -5,10 +5,7 @@ public class AddressEntityUnitTests
     [Fact]
     public void Constructor_ShouldSetFields_WhenGivenValidInput()
     {
-        // Arrange
-        var now = DateTime.UtcNow;
-
-        // Act
+        // Arrange and Act
         var entity = new AddressEntity(" 123   Main St ", " Apt  4 ", " Sydney ", " NSW ", "2000", "au");
 
         // Assert
@@ -18,8 +15,6 @@ public class AddressEntityUnitTests
         entity.State.Should().Be("NSW");
         entity.PostalCode.Should().Be("2000");
         entity.Country.Should().Be("AU");
-        entity.CreatedOn.Should().BeOnOrAfter(now);
-        entity.UpdatedOn.Should().NotBeNull();
     }
 
     [Fact]
@@ -27,7 +22,6 @@ public class AddressEntityUnitTests
     {
         // Arrange
         var entity = new AddressEntity("1 St", null, "City", "NSW", "1234", "AU");
-        var before = entity.UpdatedOn;
 
         // Act
         entity.Update("2 St", "Unit 9", "Melb", "VIC", "3000", "nz");
@@ -39,7 +33,6 @@ public class AddressEntityUnitTests
         entity.State.Should().Be("VIC");
         entity.PostalCode.Should().Be("3000");
         entity.Country.Should().Be("NZ");
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]

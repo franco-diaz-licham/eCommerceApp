@@ -5,10 +5,7 @@ public class CouponEntityUnitTests
     [Fact]
     public void CreateAmountOff_ShouldSetCoreFields_WhenInputsAreValid()
     {
-        // Arrange
-        var now = DateTime.UtcNow;
-
-        // Act
+        // Arrange and Act
         var entity = CouponEntity.CreateAmountOff("  summer  sale  ", "remote-1", "  SUM10  ", 10m);
 
         // Assert
@@ -20,17 +17,12 @@ public class CouponEntityUnitTests
         entity.AmountOff.Should().Be(10m);
         entity.PercentOff.Should().BeNull();
         entity.IsActive.Should().BeTrue();
-        entity.CreatedOn.Should().BeOnOrAfter(now);
-        entity.UpdatedOn.Should().NotBeNull();
     }
 
     [Fact]
     public void CreatePercentOff_ShouldSetFields_WhenInputesAreValid()
     {
-        // Arrange
-        var now = DateTime.UtcNow;
-
-        // Act
+        // Arrange and Act
         var entity = CouponEntity.CreatePercentOff("  ten  percent  ", "r2", "  P10  ", 10m);
 
         // Arrange
@@ -42,8 +34,6 @@ public class CouponEntityUnitTests
         entity.PercentOff.Should().Be(10m);
         entity.AmountOff.Should().BeNull();
         entity.IsActive.Should().BeTrue();
-        entity.CreatedOn.Should().BeOnOrAfter(now);
-        entity.UpdatedOn.Should().NotBeNull();
     }
 
     [Theory]
@@ -87,7 +77,6 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.SetName(name);
@@ -95,7 +84,6 @@ public class CouponEntityUnitTests
         // Assert
         entity.Name.Should().Be(expectedName);
         entity.NameNormalized.Should().Be(normName);
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -118,7 +106,7 @@ public class CouponEntityUnitTests
     [InlineData(65)]
     [InlineData(66)]
     [InlineData(99)]
-    public void SetPromotionCode_ShouldThrowErro_WhenCodeTooLong(int length)
+    public void SetPromotionCode_ShouldThrowError_WhenCodeTooLong(int length)
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
@@ -139,7 +127,6 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.SetPromotionCode(code);
@@ -147,7 +134,6 @@ public class CouponEntityUnitTests
         // Assert
         entity.PromotionCode.Should().Be(expectedCode);
         entity.PromotionCodeNormalized.Should().Be(normCode);
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -174,14 +160,12 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 1m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.SetRemoteId(id);
 
         // Assert
         entity.RemoteId.Should().Be(expectedId);
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -206,7 +190,6 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreatePercentOff("ok", "r", "code", 5m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.SetAmountOff(amount);
@@ -214,7 +197,6 @@ public class CouponEntityUnitTests
         // Assert
         entity.AmountOff.Should().Be(amount);
         entity.PercentOff.Should().BeNull();
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -242,7 +224,6 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("ok", "r", "code", 10m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.SetPercentOff(percent);
@@ -250,7 +231,6 @@ public class CouponEntityUnitTests
         // Assert
         entity.PercentOff.Should().Be(percent);
         entity.AmountOff.Should().BeNull();
-        entity.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -258,14 +238,12 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.Activate();
 
         // Arrange
         entity.IsActive.Should().BeTrue();
-        entity.UpdatedOn.Should().Be(before);
     }
 
     [Fact]
@@ -274,14 +252,12 @@ public class CouponEntityUnitTests
         // Arrange
         var c = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
         c.Deactivate();
-        var before = c.UpdatedOn;
 
         // Act
         c.Activate();
 
         // Assert
         c.IsActive.Should().BeTrue();
-        c.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -289,14 +265,12 @@ public class CouponEntityUnitTests
     {
         // Arrange
         var entity = CouponEntity.CreateAmountOff("x", "r", "code", 1m);
-        var before = entity.UpdatedOn;
 
         // Act
         entity.Deactivate();
 
         // Assert
         entity.IsActive.Should().BeFalse();
-        entity.UpdatedOn.Should().NotBeNull();
     }
 
     [Fact]
@@ -311,7 +285,6 @@ public class CouponEntityUnitTests
 
         // Assert
         entity.IsActive.Should().BeFalse();
-        entity.UpdatedOn.Should().NotBeNull();
     }
 
     [Theory]

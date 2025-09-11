@@ -5,14 +5,10 @@ public class BasketEntityUnitTests
     [Fact]
     public void Constructor_ShouldSetCreatedOn_WhenInstantiated()
     {
-        // Arrange
-        var now = DateTime.UtcNow;
-
-        // Act
-        var basket = new BasketEntity(now);
+        // Arrange and  Act
+        var basket = new BasketEntity();
 
         // Assert
-        basket.CreatedOn.Should().Be(now);
         basket.UpdatedOn.Should().BeNull();
         basket.BasketItems.Should().BeEmpty();
         basket.Subtotal.Should().Be(0m);
@@ -27,7 +23,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
 
         // Act
         basket.AddItem(productId, unitPrice, quantity);
@@ -40,7 +35,6 @@ public class BasketEntityUnitTests
         item.UnitPrice.Should().Be(unitPrice);
         item.Quantity.Should().Be(quantity);
         basket.Subtotal.Should().Be(subtotal);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -48,7 +42,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
 
         // Act
         basket.AddItem(10, 20m, 2);
@@ -58,7 +51,6 @@ public class BasketEntityUnitTests
         basket.BasketItems.Should().HaveCount(1);
         basket.BasketItems.Single().Quantity.Should().Be(5);
         basket.Subtotal.Should().Be(20m * 5);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -99,7 +91,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         decimal unitPrice = 10m;
         int initQuantity = 2;
 
@@ -111,7 +102,6 @@ public class BasketEntityUnitTests
         // Assert
         basket.BasketItems.Single().Quantity.Should().Be(quantity);
         basket.Subtotal.Should().Be(subtotal);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -119,7 +109,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
 
         // Act
         basket.AddItem(1, 10m, 2);
@@ -127,7 +116,6 @@ public class BasketEntityUnitTests
 
         // Assert
         basket.BasketItems.Should().BeEmpty();
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -164,7 +152,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         basket.AddItem(1, 10m, 3);
 
         // Act
@@ -172,7 +159,6 @@ public class BasketEntityUnitTests
         
         // Assert
         basket.BasketItems.Should().BeEmpty();
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -180,7 +166,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         basket.AddItem(1, 10m, 2);
 
         // Act
@@ -190,7 +175,6 @@ public class BasketEntityUnitTests
         basket.BasketItems.Should().HaveCount(1);
         basket.BasketItems.Single().Quantity.Should().Be(2);
         basket.Subtotal.Should().Be(20m);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -200,7 +184,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         decimal unitPrice = 10m;
         int initQuantity = 2;
         var subtotal = unitPrice * initQuantity;
@@ -212,7 +195,6 @@ public class BasketEntityUnitTests
         // Assert
         if(subtotal < amount) basket.Discount.Should().Be(subtotal);
         else basket.Discount.Should().Be(amount);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -235,7 +217,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         basket.AddItem(1, 100m, 1);
         var coupon = CouponEntity.CreatePercentOff("ten off", "remoteId", "10%OFF", 10m);
         
@@ -246,7 +227,6 @@ public class BasketEntityUnitTests
         basket.Coupon.Should().NotBeNull();
         basket.Coupon.Should().BeSameAs(coupon);
         basket.Discount.Should().Be(10m);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -268,7 +248,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         basket.AddItem(1, 50m, 2);
         var coupon = CouponEntity.CreateAmountOff("ten off", "remoteId", "10%OFF", 10m);
         basket.AddCoupon(coupon);
@@ -280,7 +259,6 @@ public class BasketEntityUnitTests
         basket.CouponId.Should().BeNull();
         basket.Coupon.Should().BeNull();
         basket.Discount.Should().Be(0m);
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
@@ -288,7 +266,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
 
         // Act
         basket.AttachPaymentIntent("pi_123", "cs_123");
@@ -296,7 +273,6 @@ public class BasketEntityUnitTests
         // Assert
         basket.PaymentIntentId.Should().Be("pi_123");
         basket.ClientSecret.Should().Be("cs_123");
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Theory]
@@ -323,7 +299,6 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        var before = basket.UpdatedOn;
         basket.AttachPaymentIntent("pi_123", "cs_123");
 
         // Act
@@ -332,7 +307,6 @@ public class BasketEntityUnitTests
         // Assert
         basket.PaymentIntentId.Should().BeNull();
         basket.ClientSecret.Should().BeNull();
-        basket.UpdatedOn.Should().NotBe(before);
     }
 
     [Fact]
