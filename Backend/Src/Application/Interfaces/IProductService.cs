@@ -15,7 +15,7 @@ public interface IProductService
     /// <summary>
     /// Method which gets all products.
     /// </summary>
-    Task<PagedList<ProductDto>> GetAllAsync(ProductQuerySpecs specs);
+    Task<Result<List<ProductDto>>> GetAllAsync(ProductQuerySpecs specs);
 
     /// <summary>
     /// Method which gets a Product.

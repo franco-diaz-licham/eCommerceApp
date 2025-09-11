@@ -7,7 +7,7 @@ public class AutoMapperProfiles : Profile
         // Product
         CreateMap<ProductDto, ProductResponse>();
         CreateMap<ProductEntity, ProductDto>();
-        CreateMap<ProductQueryParams, ProductQuerySpecs>().ForMember(d => d.PageSize, o => o.Ignore());
+        CreateMap<ProductQueryParams, ProductQuerySpecs>();
         CreateMap<ProductCreateDto, ProductEntity>().ConstructUsing(s => new ProductEntity(s.Name, s.Description, s.UnitPrice, s.QuantityInStock, s.ProductTypeId, s.BrandId, null)).ForAllMembers(o => o.Ignore());
         var map = CreateMap<ProductUpdateDto, ProductEntity>();
         map.ForAllMembers(opt => opt.Ignore());
@@ -36,7 +36,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<OrderStatusDto, OrderStatusEntity>().ConstructUsing(s => new OrderStatusEntity(s.Name)).ForAllMembers(o => o.Ignore());
 
         // Query
-        CreateMap<BaseQueryParams, BaseQuerySpecs>().ForMember(d => d.PageSize, o => o.Ignore());
+        CreateMap<BaseQueryParams, BaseQuerySpecs>();
 
         // Open-generic PagedList mapping (Dto -> Response)
         CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));

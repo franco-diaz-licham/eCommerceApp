@@ -11,17 +11,18 @@ public class OrderService : IOrderService
         _mapper = mapper;
     }
 
-    public async Task<PagedList<OrderDto>> GetAllAsync(BaseQuerySpecs specs)
+    public async Task<Result<List<OrderDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.Orders.AsNoTracking();
         var queryContext = new QueryStrategyContext<OrderEntity>(
             new SearchEvaluatorStrategy<OrderEntity>(specs.SearchTerm, new OrderSearchProvider()),
-            new SortEvaluatorStrategy<OrderEntity>(specs.OrderBy, new OrderSortProvider())
+            new SortEvaluatorStrategy<OrderEntity>(specs.OrderBy, new OrderSortProvider()),
+            new SelectEvaluatorStrategy<OrderEntity>(specs.PageNumber, specs.PageSize)
         );
         var filtered = queryContext.ApplyQuery(query);
-        var count = await filtered.CountAsync();
-        var projected = filtered.ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
-        return await PagedList<OrderDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
+        var projected = await filtered.ProjectTo<OrderDto>(_mapper.ConfigurationProvider).ToListAsync();
+        if (projected is null) return Result<List<OrderDto>>.Fail("Orders not found...", ResultTypeEnum.NotFound);
+        return Result<List<OrderDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
     public async Task<OrderDto?> GetAsync(int id, string email)

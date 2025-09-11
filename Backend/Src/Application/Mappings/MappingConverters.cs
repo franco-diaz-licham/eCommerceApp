@@ -22,8 +22,8 @@ public sealed class ResultConverter<TSource, TDestination> : ITypeConverter<Resu
     {
         if (!source.IsSuccess) return Result<TDestination>.Fail(source.Error?.Message ?? "Problem...", source.Type);
         if (source.Value is null) return Result<TDestination>.Success(source.Type);
-        if (typeof(TSource) == typeof(TDestination)) return Result<TDestination>.Success((TDestination)(object)source.Value!, source.Type);
-        return Result<TDestination>.Success(context.Mapper.Map<TDestination>(source.Value), source.Type);
+        if (typeof(TSource) == typeof(TDestination)) return Result<TDestination>.Success((TDestination)(object)source.Value!, source.Type, source.TotalCount);
+        return Result<TDestination>.Success(context.Mapper.Map<TDestination>(source.Value), source.Type, source.TotalCount);
     }
 }
 

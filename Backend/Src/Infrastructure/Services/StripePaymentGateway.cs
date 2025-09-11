@@ -44,7 +44,7 @@ public class StripePaymentGateway : IPaymentGateway
 
         var promo = promos.FirstOrDefault();
         var c = promo?.Coupon;
-        if (c is null) return null;
+        if (promo is null || c is null) return null;
 
         return new CouponInfoModel(
             RemoteId: c.Id,

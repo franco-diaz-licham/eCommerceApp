@@ -12,7 +12,6 @@ public sealed class AddressEntity : BaseEntity
         SetState(state);
         SetPostalCode(postalCode);
         SetCountry(country);
-        CreatedOn = DateTime.UtcNow;
     }
 
     #region Properties
@@ -22,8 +21,6 @@ public sealed class AddressEntity : BaseEntity
     public string State { get; private set; } = default!;
     public string PostalCode { get; private set; } = default!;
     public string Country { get; private set; } = default!;
-    public DateTime CreatedOn { get; private set; }
-    public DateTime? UpdatedOn { get; private set; }
     #endregion
 
     #region Business logic
@@ -35,43 +32,36 @@ public sealed class AddressEntity : BaseEntity
         SetState(state);
         SetPostalCode(postalCode);
         SetCountry(country);
-        Touch();
     }
 
     public void SetLine1(string value)
     {
         Line1 = Validate(value, nameof(Line1));
-        Touch();
     }
     
     public void SetLine2(string? value)
     {
         Line2 = ValidateOptional(value);
-        Touch();
     }
 
     public void SetCity(string value)
     {
         City = Validate(value, nameof(City));
-        Touch();
     }
 
     public void SetState(string value)
     {
         State = Validate(value, nameof(State));
-        Touch();
     }
 
     public void SetPostalCode(string value)
     {
         PostalCode = Validate(value, nameof(PostalCode));
-        Touch();
     }
 
     public void SetCountry(string value)
     {
         Country = Validate(value, nameof(Country)).ToUpperInvariant();
-        Touch();
     }
 
     private static string Validate(string s, string field)
@@ -91,7 +81,6 @@ public sealed class AddressEntity : BaseEntity
 
     private static string? ValidateOptional(string? s) => string.IsNullOrWhiteSpace(s) ? null : Validate(s, nameof(Line2));
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
-    private void Touch() => UpdatedOn = DateTime.UtcNow;
     #endregion
 }
 

@@ -12,6 +12,5 @@ public sealed class CouponEntityConfig : IEntityTypeConfiguration<CouponEntity>
         builder.Property(c => c.AmountOff).HasPrecision(18, 2);
         builder.Property(c => c.PercentOff).HasPrecision(5, 2);
         builder.Property(c => c.IsActive).HasDefaultValue(true);
-        builder.Property(c => c.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
     }
 }

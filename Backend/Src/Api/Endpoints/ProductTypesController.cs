@@ -12,9 +12,9 @@ public class ProductTypesController(IMapper mapper, IProductTypeService productT
     {
         var query = _mapper.Map<BaseQuerySpecs>(productParams);
         var models = await _productTypeService.GetAllAsync(query);
-        var output = _mapper.Map<PagedList<ProductTypeResponse>>(models);
-        Response.AddPaginationHeader(output.Metadata);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var response = _mapper.Map<Result<List<ProductTypeResponse>>>(models);
+        var output = response.ToActionPaginatedResult(Response, query.PageNumber, query.PageSize, response.TotalCount);
+        return output;
     }
 
     [HttpGet("{id:int}")]

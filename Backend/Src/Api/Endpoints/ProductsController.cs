@@ -13,9 +13,9 @@ public class ProductsController(IMapper mapper, IProductService productService, 
     {
         var query = _mapper.Map<ProductQuerySpecs>(queryParams);
         var models = await _productService.GetAllAsync(query);
-        var output = _mapper.Map<PagedList<ProductResponse>>(models);
-        Response.AddPaginationHeader(output.Metadata);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var response = _mapper.Map<Result<List<ProductResponse>>>(models);
+        var output = response.ToActionPaginatedResult(Response, query.PageNumber, query.PageSize, response.TotalCount);
+        return output;
     }
 
     [HttpGet("{id:int}", Name = nameof(GetProductAsync))]

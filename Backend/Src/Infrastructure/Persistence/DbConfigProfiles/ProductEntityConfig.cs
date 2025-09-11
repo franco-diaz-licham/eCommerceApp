@@ -9,7 +9,6 @@ public class ProductEntityConfig : IEntityTypeConfiguration<ProductEntity>
         builder.Property(p => p.NameNormalized).IsRequired().HasMaxLength(64);
         builder.Property(p => p.UnitPrice).HasPrecision(18, 2);
         builder.Property(p => p.QuantityInStock).IsRequired();
-        builder.Property(p => p.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
 
         // Relationships
         builder.HasOne(p => p.ProductType).WithMany().HasForeignKey(p => p.ProductTypeId).OnDelete(DeleteBehavior.Restrict);

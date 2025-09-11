@@ -7,26 +7,22 @@ public class PhotoEntity : BaseEntity
     {
         SetFileName(fileName);
         ReplaceRemote(publicId, publicUrl);
-        CreatedOn = DateTime.UtcNow;
     }
 
     #region Properties
     public string FileName { get; private set; } = default!;
     public string PublicId { get; private set; } = default!;
     public string PublicUrl { get; private set; } = default!;
-    public DateTime CreatedOn { get; private set; }
-    public DateTime? UpdatedOn { get; private set; }
     #endregion
 
     #region Business Logic
     public void SetFileName(string fileName)
     {
-        if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException("Name is required.");
+        if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException($"{nameof(fileName)} is required.");
         var collapsed = CollapseSpaces(fileName.Trim());
-        if (collapsed.Length > 128) throw new ArgumentException("Name too long (max 64).");
+        if (collapsed.Length > 128) throw new ArgumentException($"{nameof(fileName)} too long (max 64).");
 
         FileName = collapsed;
-        Touch();
     }
 
     public void ReplaceRemote(string newPublicId, string newPublicUrl)
@@ -41,10 +37,8 @@ public class PhotoEntity : BaseEntity
 
         PublicId = publicId;
         PublicUrl = newPublicUrl;
-        Touch();
     }
 
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
-    private void Touch() => UpdatedOn = DateTime.UtcNow;
     #endregion
 }

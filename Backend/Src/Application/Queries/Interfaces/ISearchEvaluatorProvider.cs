@@ -1,4 +1,4 @@
-﻿namespace Backend.Src.Application.Interfaces;
+﻿namespace Backend.Src.Application.Queries.Interfaces;
 
 /// <summary>
 /// Searching provider for implementation.

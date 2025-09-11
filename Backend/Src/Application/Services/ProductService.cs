@@ -15,19 +15,20 @@ public class ProductService : IProductService
         _logger = logger;
     }
 
-    public async Task<PagedList<ProductDto>> GetAllAsync(ProductQuerySpecs specs)
+    public async Task<Result<List<ProductDto>>> GetAllAsync(ProductQuerySpecs specs)
     {
         var query = _db.Products.AsNoTracking();
         var queryContext = new QueryStrategyContext<ProductEntity>(
             new SearchEvaluatorStrategy<ProductEntity>(specs.SearchTerm, new ProductSearchProvider()),
             new FilterEvaluatorStrategy<ProductEntity, bool>(new ProductFilterProvider().BuildFilter(specs)),
-            new SortEvaluatorStrategy<ProductEntity>(specs.OrderBy, new ProductSortProvider())
+            new SortEvaluatorStrategy<ProductEntity>(specs.OrderBy, new ProductSortProvider()), 
+            new SelectEvaluatorStrategy<ProductEntity>(specs.PageNumber, specs.PageSize)
         );
 
         var filtered = queryContext.ApplyQuery(query);
-        var count = await filtered.CountAsync();
-        var projected = filtered.ProjectTo<ProductDto>(_mapper.ConfigurationProvider);
-        return await PagedList<ProductDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
+        var projected = await filtered.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).ToListAsync();
+        if (projected is null) return Result<List<ProductDto>>.Fail("Products not found...", ResultTypeEnum.NotFound);
+        return Result<List<ProductDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
     public async Task<ProductDto?> GetAsync(int id)

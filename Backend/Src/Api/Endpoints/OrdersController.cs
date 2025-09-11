@@ -12,9 +12,9 @@ public class OrdersController(IMapper mapper, IOrderService orderService) : Cont
     {
         var query = _mapper.Map<BaseQuerySpecs>(queryParams);
         var models = await _orderService.GetAllAsync(query);
-        var output = _mapper.Map<PagedList<OrderResponse>>(models);
-        Response.AddPaginationHeader(output.Metadata);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var response = _mapper.Map<Result<List<OrderResponse>>>(models);
+        var output = response.ToActionPaginatedResult(Response, query.PageNumber, query.PageSize, response.TotalCount);
+        return output;
     }
 
     [HttpGet("{id:int}")]

@@ -11,17 +11,18 @@ public class BrandService : IBrandService
         _mapper = mapper;
     }
 
-    public async Task<PagedList<BrandDto>> GetAllAsync(BaseQuerySpecs specs)
+    public async Task<Result<List<BrandDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.Brands.AsNoTracking();
         var queryContext = new QueryStrategyContext<BrandEntity>(
             new SearchEvaluatorStrategy<BrandEntity>(specs.SearchTerm, new BrandSearchProvider()),
-            new SortEvaluatorStrategy<BrandEntity>(specs.OrderBy, new BrandSortProvider())
+            new SortEvaluatorStrategy<BrandEntity>(specs.OrderBy, new BrandSortProvider()),
+            new SelectEvaluatorStrategy<BrandEntity>(specs.PageNumber, specs.PageSize)
         );
         var filtered = queryContext.ApplyQuery(query);
-        var count = await filtered.CountAsync();
-        var projected = filtered.ProjectTo<BrandDto>(_mapper.ConfigurationProvider);
-        return await PagedList<BrandDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
+        var projected = await filtered.ProjectTo<BrandDto>(_mapper.ConfigurationProvider).ToListAsync();
+        if (projected is null) return Result<List<BrandDto>>.Fail("Brands not found...", ResultTypeEnum.NotFound);
+        return Result<List<BrandDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
     public async Task<Result<BrandDto>> GetAsync(int id)

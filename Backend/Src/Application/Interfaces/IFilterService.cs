@@ -1,7 +1,6 @@
-﻿namespace Backend.Src.Application.Interfaces
+﻿namespace Backend.Src.Application.Interfaces;
+
+public interface IFilterService
 {
-    public interface IFilterService
-    {
-        Task<ProductFiltersDto> GetProductFilters();
-    }
+    Task<ProductFiltersDto> GetProductFilters();
 }

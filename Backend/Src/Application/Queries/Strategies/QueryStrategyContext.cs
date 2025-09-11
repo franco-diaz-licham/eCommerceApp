@@ -1,12 +1,11 @@
 ﻿namespace Backend.Src.Application.Queries.Strategies;
 
-public sealed class QueryStrategyContext<T>
+/// <summary>
+/// Context class for the strategy pattern. This is the orchestrator of what strategy to be set.
+/// </summary>
+public sealed class QueryStrategyContext<T>(params IQueryEvaluatorStrategy<T>[] steps)
 {
-    private readonly IQueryEvaluatorStrategy<T>[] _steps;
-    public QueryStrategyContext(params IQueryEvaluatorStrategy<T>[] steps)
-    {
-        _steps = steps;
-    }
+    private readonly IQueryEvaluatorStrategy<T>[] _steps = steps;
 
     public IQueryable<T> ApplyQuery(IQueryable<T> query)
     {

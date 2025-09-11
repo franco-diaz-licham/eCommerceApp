@@ -3,18 +3,16 @@
 public class BaseQuerySpecs
 {
     private const int MAX_PAGE_SIZE = 50;
-
+    private const int PAGE_SIZE = 8;
     private const int PAGE_NUMBER = 1;
-
     private int _pageNumber = PAGE_NUMBER;
+    private int _pageSize = PAGE_SIZE;
 
     public int PageNumber
     {
         get => _pageNumber;
         set => _pageNumber = value > PAGE_NUMBER ? value : PAGE_NUMBER;
     }
-
-    private int _pageSize = 10;
 
     public int PageSize
     {
@@ -25,5 +23,4 @@ public class BaseQuerySpecs
     public string OrderBy { get; set; } = string.Empty;
 
     public string? SearchTerm { get; set; }
-
 }

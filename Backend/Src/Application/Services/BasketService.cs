@@ -60,7 +60,7 @@ public class BasketService : IBasketService
         if (basket is null) return Result<bool>.Fail("Basket not found...", ResultTypeEnum.NotFound);
 
         // Remove item.
-        basket.RemoveItem(dto.ProductId, dto.Quantity);
+        basket.RemoveItem(dto.ProductId);
 
         // Save changes to db.
         var saved = await _db.SaveChangesAsync() > 0;
@@ -81,7 +81,7 @@ public class BasketService : IBasketService
         if (coupon is null) return Result<BasketDto>.Fail("Unable to apply voucher...", ResultTypeEnum.Invalid);
         var couponDto = new CouponDto
         {
-            Name = coupon.Name,
+            Name = coupon.Name!,
             AmountOff = coupon.AmountOff.HasValue ? coupon.AmountOff.Value / 100m : null,
             PercentOff = coupon.PercentOff,
             RemoteId = coupon.RemoteId,

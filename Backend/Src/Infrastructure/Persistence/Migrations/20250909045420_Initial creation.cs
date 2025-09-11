@@ -23,7 +23,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     State = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(56)", maxLength: 56, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -54,7 +54,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NameNormalized = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -76,7 +76,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     PromotionCode = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     PromotionCodeNormalized = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -93,7 +93,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NameNormalized = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -110,7 +110,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     FileName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     PublicId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     PublicUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -127,7 +127,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NameNormalized = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -198,7 +198,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     PaymentIntentId = table.Column<string>(type: "varchar(64)", unicode: false, maxLength: 64, nullable: true),
                     CouponId = table.Column<int>(type: "int", nullable: true),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -219,14 +219,14 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Subtotal = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DeliveryFee = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PaymentIntentId = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     LastProcessedStripeEventId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ShippingAddress_Line1 = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ShippingAddress_Line2 = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
@@ -264,7 +264,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     ProductTypeId = table.Column<int>(type: "int", nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false),
                     PhotoId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -411,7 +411,7 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     ProductName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>

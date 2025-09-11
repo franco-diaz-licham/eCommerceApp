@@ -47,4 +47,42 @@ public static class HttpExtensions
             _ => new ObjectResult(error) { StatusCode = code }
         };
     }
+
+    /// <summary>
+    /// Converts service response to appropariate HTTP code response. The exception will be caught by middleware.
+    /// </summary>
+    public static ActionResult ToActionPaginatedResult<T>(this Result<List<T>> result, HttpResponse response, int pageNumber, int pageSize, int totalCount)
+    {
+        var code = ApiResponse.GetHTTPCode(result.Type);
+
+        if (result.IsSuccess)
+        {
+            if (result.Value is null) return new NoContentResult();
+
+            // convert to paginated result
+            var paginated = new PagedList<T>(result.Value, totalCount, pageNumber, pageSize);
+            response.AddPaginationHeader(paginated.Metadata);
+            var output = new ApiResponse(code, paginated);
+
+            return code switch
+            {
+                StatusCodes.Status200OK => new OkObjectResult(output),
+                _ => new ObjectResult(output) { StatusCode = code }
+            };
+        }
+
+        if (result.Error is null) throw new ArgumentException("There is no error to return...");
+        var error = new ApiResponse(code, result.Error.Message);
+
+        return code switch
+        {
+            StatusCodes.Status400BadRequest => new BadRequestObjectResult(error),
+            StatusCodes.Status401Unauthorized => new UnauthorizedObjectResult(error),
+            StatusCodes.Status403Forbidden => new ObjectResult(error) { StatusCode = 403 },
+            StatusCodes.Status404NotFound => new NotFoundObjectResult(error),
+            StatusCodes.Status409Conflict => new ConflictObjectResult(error),
+            StatusCodes.Status422UnprocessableEntity => new UnprocessableEntityObjectResult(error),
+            _ => new ObjectResult(error) { StatusCode = code }
+        };
+    }
 }

@@ -11,8 +11,6 @@
             builder.Property(o => o.PaymentIntentId).IsRequired().HasMaxLength(64);
             builder.Property(o => o.LastProcessedStripeEventId).HasMaxLength(128);
             builder.Property(o => o.OrderStatusId).HasDefaultValue((int)OrderStatusEnum.Pending);
-            builder.Property(o => o.OrderDate).HasDefaultValueSql("GETUTCDATE()");
-            builder.Property(o => o.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
 
             // Relationships
             builder.HasOne(o => o.OrderStatus).WithMany().HasForeignKey(o => o.OrderStatusId).OnDelete(DeleteBehavior.Restrict);

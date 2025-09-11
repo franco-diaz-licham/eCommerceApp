@@ -12,17 +12,18 @@ public class ProductTypeService : IProductTypeService
     }
 
    
-    public async Task<PagedList<ProductTypeDto>> GetAllAsync(BaseQuerySpecs specs)
+    public async Task<Result<List<ProductTypeDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.ProductTypes.AsNoTracking();
         var queryContext = new QueryStrategyContext<ProductTypeEntity>(
             new SearchEvaluatorStrategy<ProductTypeEntity>(specs.SearchTerm, new ProductTypeSearchProvider()),
-            new SortEvaluatorStrategy<ProductTypeEntity>(specs.OrderBy, new ProductTypeSortProvider())
+            new SortEvaluatorStrategy<ProductTypeEntity>(specs.OrderBy, new ProductTypeSortProvider()),
+            new SelectEvaluatorStrategy<ProductTypeEntity>(specs.PageNumber, specs.PageSize)
         );
         var filtered = queryContext.ApplyQuery(query);
-        var count = await filtered.CountAsync();
-        var projected = filtered.ProjectTo<ProductTypeDto>(_mapper.ConfigurationProvider);
-        return await PagedList<ProductTypeDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
+        var projected = await filtered.ProjectTo<ProductTypeDto>(_mapper.ConfigurationProvider).ToListAsync();
+        if (projected is null) return Result<List<ProductTypeDto>>.Fail("Product types not found...", ResultTypeEnum.NotFound);
+        return Result<List<ProductTypeDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
     public async Task<Result<ProductTypeDto>> GetAsync(int id)

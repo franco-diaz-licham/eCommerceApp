@@ -11,17 +11,18 @@ public class OrderStatusService : IOrderStatusService
         _mapper = mapper;
     }
 
-    public async Task<PagedList<OrderStatusDto>> GetAllAsync(BaseQuerySpecs specs)
+    public async Task<Result<List<OrderStatusDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.OrderStatuses.AsNoTracking();
         var queryContext = new QueryStrategyContext<OrderStatusEntity>(
             new SearchEvaluatorStrategy<OrderStatusEntity>(specs.SearchTerm, new OrderStatusSearchProvider()),
-            new SortEvaluatorStrategy<OrderStatusEntity>(specs.OrderBy, new OrderStatusSortProvider())
+            new SortEvaluatorStrategy<OrderStatusEntity>(specs.OrderBy, new OrderStatusSortProvider()),
+            new SelectEvaluatorStrategy<OrderStatusEntity>(specs.PageNumber, specs.PageSize)
         );
         var filtered = queryContext.ApplyQuery(query);
-        var count = await filtered.CountAsync();
-        var projected = filtered.ProjectTo<OrderStatusDto>(_mapper.ConfigurationProvider);
-        return await PagedList<OrderStatusDto>.ToPagedList(projected, count, specs.PageNumber, specs.PageSize);
+        var projected = await filtered.ProjectTo<OrderStatusDto>(_mapper.ConfigurationProvider).ToListAsync();
+        if (projected is null) return Result<List<OrderStatusDto>>.Fail("Order Status not found...", ResultTypeEnum.NotFound);
+        return Result<List<OrderStatusDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
     public async Task<Result<OrderStatusDto>> GetAsync(int id)

@@ -12,7 +12,6 @@ public sealed class ProductEntity : BaseEntity
         ProductTypeId = productTypeId;
         BrandId = brandId;
         PhotoId = photoId ?? 0;
-        CreatedOn = DateTime.UtcNow;
     }
 
     #region Properties
@@ -27,28 +26,24 @@ public sealed class ProductEntity : BaseEntity
     public BrandEntity? Brand { get; private set; }
     public int PhotoId { get; private set; }
     public PhotoEntity? Photo { get; private set; }
-    public DateTime CreatedOn { get; private set; }
-    public DateTime? UpdatedOn { get; private set; }
     #endregion
 
     #region Business Logic
     public void SetName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException("Name is required.");
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException($"{nameof(name)} is required.");
         var collapsed = CollapseSpaces(name.Trim());
-        if (collapsed.Length > 64) throw new ArgumentException("Name too long (max 64).");
+        if (collapsed.Length > 64) throw new ArgumentException($"{nameof(name)} too long (max 64).");
 
         Name = collapsed;
         NameNormalized = collapsed.ToUpperInvariant();
-        Touch();
     }
 
-    public void ChangeUnitPrice(decimal newPrice)
+    public void ChangeUnitPrice(decimal price)
     {
-        if (newPrice < 0m) throw new ArgumentException("Price cannot be negative.");
-        if (newPrice == UnitPrice) return;
-        UnitPrice = newPrice;
-        Touch();
+        if (price < 0m) throw new ArgumentException($"{nameof(price)} cannot be negative.");
+        if (price == UnitPrice) return;
+        UnitPrice = price;
     }
 
     /// <summary>
@@ -63,35 +58,30 @@ public sealed class ProductEntity : BaseEntity
 
     public void IncreaseStock(int quantity)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
-        QuantityInStock += quantity;
-        Touch();
+        if (quantity <= 0) throw new ArgumentException($"{nameof(quantity)} must be positive.");
+        checked { QuantityInStock += quantity; };
     }
 
     public void DecreaseStock(int quantity)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
+        if (quantity <= 0) throw new ArgumentException($"{nameof(quantity)} must be positive.");
         if (quantity > QuantityInStock) throw new ArgumentException("Insufficient stock.");
         QuantityInStock -= quantity;
-        Touch();
     }
 
     public void SetPhoto(int photoId, PhotoEntity? photo = null)
     {
-        if (photoId <= 0) throw new ArgumentException("Invalid photo id.");
+        if (photoId <= 0) throw new ArgumentException($"{nameof(photoId)} is invalid.");
         PhotoId = photoId;
         Photo = photo;
-        Touch();
     }
 
     public void SetDescription(string description)
     {
-        if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description is required.");
+        if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException($"{nameof(description)} is required.");
         Description = description.Trim();
-        Touch();
     }
 
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");
-    private void Touch() => UpdatedOn = DateTime.UtcNow;
     #endregion
 }

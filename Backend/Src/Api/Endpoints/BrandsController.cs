@@ -12,9 +12,9 @@ public class BrandsController(IMapper mapper, IBrandService BrandService) : Cont
     {
         var query = _mapper.Map<BaseQuerySpecs>(queryParams);
         var models = await _brandService.GetAllAsync(query);
-        var output = _mapper.Map<PagedList<BrandResponse>>(models);
-        Response.AddPaginationHeader(output.Metadata);
-        return Ok(new ApiResponse(StatusCodes.Status200OK, output));
+        var response = _mapper.Map<Result<List<BrandResponse>>>(models);
+        var output = response.ToActionPaginatedResult(Response, query.PageNumber, query.PageSize, response.TotalCount);
+        return output;
     }
 
     [HttpGet("{id:int}")]
