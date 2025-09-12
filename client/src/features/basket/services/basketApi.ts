@@ -1,123 +1,95 @@
-// import { createApi } from "@reduxjs/toolkit/query/react";
-// import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
+import type { BasketCouponDto, BasketItemDto, BasketResponse } from "../types/basket.type";
 
+/** Base url resource endpoint. */
+const baseUrl: string = "basket";
 
-// function isBasketItem(product: Product | Item): product is Item {
-//     return (product as Item).quantity !== undefined;
-// }
+const getActiveBasket = () => `${baseUrl}/active`;
 
-// export const basketApi = createApi({
-//     reducerPath: "basketApi",
-//     baseQuery: baseQueryWithErrorHandling,
-//     tagTypes: ["Basket"],
-//     endpoints: (builder) => ({
-//         fetchBasket: builder.query<Basket, void>({
-//             query: () => "basket",
-//             providesTags: ["Basket"],
-//         }),
-//         addBasketItem: builder.mutation<Basket, { product: Product | Item; quantity: number }>({
-//             query: ({ product, quantity }) => {
-//                 const productId = isBasketItem(product) ? product.productId : product.id;
-//                 return {
-//                     url: `basket?productId=${productId}&quantity=${quantity}`,
-//                     method: "POST",
-//                 };
-//             },
-//             onQueryStarted: async ({ product, quantity }, { dispatch, queryFulfilled }) => {
-//                 let isNewBasket = false;
-//                 const patchResult = dispatch(
-//                     basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
-//                         const productId = isBasketItem(product) ? product.productId : product.id;
+const createBasket = () => {
+    return {
+        url: baseUrl,
+        method: "POST",
+    };
+};
 
-//                         if (!draft?.basketId) isNewBasket = true;
+const addBasketItem = (data: BasketItemDto) => {
+    return {
+        url: `${baseUrl}/add-item`,
+        method: "POST",
+        body: data,
+    };
+};
 
-//                         if (!isNewBasket) {
-//                             const existingItem = draft.items.find((item) => item.productId === productId);
-//                             if (existingItem) existingItem.quantity += quantity;
-//                             else draft.items.push(isBasketItem(product) ? product : { ...product, productId: product.id, quantity });
-//                         }
-//                     })
-//                 );
+const removeBasketItem = (data: BasketItemDto) => {
+    return {
+        url: `${baseUrl}/remove-item`,
+        method: "DELETE",
+        body: data,
+    };
+};
 
-//                 try {
-//                     await queryFulfilled;
+const addCoupon = (data: BasketCouponDto) => {
+    return {
+        url: `basket/${data}`,
+        method: "POST",
+        body: data,
+    };
+};
 
-//                     if (isNewBasket) dispatch(basketApi.util.invalidateTags(["Basket"]));
-//                 } catch (error) {
-//                     console.log(error);
-//                     patchResult.undo();
-//                 }
-//             },
-//         }),
-//         removeBasketItem: builder.mutation<void, { productId: number; quantity: number }>({
-//             query: ({ productId, quantity }) => ({
-//                 url: `basket?productId=${productId}&quantity=${quantity}`,
-//                 method: "DELETE",
-//             }),
-//             onQueryStarted: async ({ productId, quantity }, { dispatch, queryFulfilled }) => {
-//                 const patchResult = dispatch(
-//                     basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
-//                         const itemIndex = draft.items.findIndex((item) => item.productId === productId);
-//                         if (itemIndex >= 0) {
-//                             draft.items[itemIndex].quantity -= quantity;
-//                             if (draft.items[itemIndex].quantity <= 0) {
-//                                 draft.items.splice(itemIndex, 1);
-//                             }
-//                         }
-//                     })
-//                 );
+const removeCoupon = (data: BasketCouponDto) => {
+    return {
+        url: "basket/remove-coupon",
+        method: "DELETE",
+        body: data,
+    };
+};
 
-//                 try {
-//                     await queryFulfilled;
-//                 } catch (error) {
-//                     console.log(error);
-//                     patchResult.undo();
-//                 }
-//             },
-//         }),
-//         clearBasket: builder.mutation<void, void>({
-//             queryFn: () => ({ data: undefined }),
-//             onQueryStarted: async (_, { dispatch }) => {
-//                 dispatch(
-//                     basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
-//                         draft.items = [];
-//                         draft.basketId = "";
-//                     })
-//                 );
-//                 Cookies.remove("basketId");
-//             },
-//         }),
-//         addCoupon: builder.mutation<Basket, string>({
-//             query: (code: string) => ({
-//                 url: `basket/${code}`,
-//                 method: "POST",
-//             }),
-//             onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-//                 const { data: updatedBasket } = await queryFulfilled;
+export const basketApi = createApi({
+    reducerPath: "basketApi",
+    baseQuery: baseQueryWithErrorHandling,
+    tagTypes: ["Basket"],
+    endpoints: (builder) => ({
+        createBasket: builder.mutation<BasketResponse, void>({
+            query: () => createBasket(),
+        }),
+        fetchBasket: builder.query<BasketResponse, void>({
+            query: () => getActiveBasket(),
+            providesTags: ["Basket"],
+        }),
+        addBasketItem: builder.mutation<BasketResponse, BasketItemDto>({
+            query: (data) => addBasketItem(data),
+        }),
+        removeBasketItem: builder.mutation<void, BasketItemDto>({
+            query: (data) => removeBasketItem(data),
+        }),
+        clearBasket: builder.mutation<void, void>({
+            queryFn: () => ({ data: undefined }),
+            onQueryStarted: async (_, { dispatch, getState }) => {
+                // Read current cached basket
+                const sel = basketApi.endpoints.fetchBasket.select();
+                const basket = sel(getState()).data;
 
-//                 dispatch(
-//                     basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
-//                         Object.assign(draft, updatedBasket);
-//                     })
-//                 );
-//             },
-//         }),
-//         removeCoupon: builder.mutation<Basket, void>({
-//             query: () => ({
-//                 url: "basket/remove-coupon",
-//                 method: "DELETE",
-//             }),
-//             onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-//                 await queryFulfilled;
+                if (!basket || !basket.items?.length) return;
 
-//                 dispatch(
-//                     basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
-//                         draft.coupon = null;
-//                     })
-//                 );
-//             },
-//         }),
-//     }),
-// });
+                // Kick off remove calls in parallel (one per item, removing full quantity)
+                const removals = basket.items.map((item) => dispatch(basketApi.endpoints.removeBasketItem.initiate({ productId: item.productId, quantity: item.quantity, basketId: item.id }, { track: false })).unwrap());
 
-// export const { useFetchBasketQuery, useAddBasketItemMutation, useAddCouponMutation, useRemoveCouponMutation, useRemoveBasketItemMutation, useClearBasketMutation } = basketApi;
+                // Wait for all to settle (don’t throw if one fails)
+                await Promise.allSettled(removals);
+
+                // Finally, refresh basket from server to ensure truth
+                dispatch(basketApi.util.invalidateTags(["Basket"]));
+            },
+        }),
+        addCoupon: builder.mutation<BasketResponse, BasketCouponDto>({
+            query: (data) => addCoupon(data),
+        }),
+        removeCoupon: builder.mutation<void, BasketCouponDto>({
+            query: (data) => removeCoupon(data),
+        }),
+    }),
+});
+
+export const { useFetchBasketQuery, useAddBasketItemMutation, useAddCouponMutation, useRemoveCouponMutation, useRemoveBasketItemMutation, useClearBasketMutation } = basketApi;

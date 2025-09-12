@@ -10,6 +10,7 @@ const customBaseQuery = fetchBaseQuery({
     paramsSerializer: (params) => {
         const usp = new URLSearchParams();
         
+        // go through params and clean query
         for (const [k, v] of Object.entries(params)) {
             if (v === null || v === undefined || v === "") continue;
             if (Array.isArray(v)) {
@@ -63,6 +64,10 @@ export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: 
             default:
                 break;
         }
+    }
+    else{
+        if(result.meta?.request.method === "POST" || result.meta?.request.method === "PUT") toast.success("Saved successful");
+        else if(result.meta?.request.method === "DELETE")toast.warning("Deletion successful");
     }
 
     return result;

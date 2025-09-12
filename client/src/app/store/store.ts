@@ -6,19 +6,20 @@ import { errorApi } from "../../features/error/services/error.api";
 import { productSlice } from "../../features/product/services/productSlice";
 import { accountApi } from "../../features/authentication/services/account.api";
 import { orderApi } from "../../features/order/services/orderApi";
+import { basketApi } from "../../features/basket/services/basketApi";
 
 export const store = configureStore({
     reducer: {
         [productApi.reducerPath]: productApi.reducer,
         [errorApi.reducerPath]: errorApi.reducer,
-        // [basketApi.reducerPath]: basketApi.reducer,
+        [basketApi.reducerPath]: basketApi.reducer,
         // [checkoutApi.reducerPath]: checkoutApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [orderApi.reducerPath]: orderApi.reducer,
         ui: uiSlice.reducer,
         products: productSlice.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, orderApi.middleware, accountApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, orderApi.middleware, accountApi.middleware, basketApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

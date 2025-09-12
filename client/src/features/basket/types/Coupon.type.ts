@@ -1,7 +1,6 @@
-export type Coupon = {
-  name: string;
-  amountOff?: number;
-  percentOff?: number;
-  promotionCode: string;
-  couponId: string;
-}
+export type CouponResponse = {
+    id: number;
+    amountOff?: number;
+    percentOff?: number;
+    promotionCode: string;
+};

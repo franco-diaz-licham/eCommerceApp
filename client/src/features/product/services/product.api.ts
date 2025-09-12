@@ -41,7 +41,7 @@ const getProductFilters = () => `${baseUrl}/filters`;
 const createProduct = (data: ProductCreate) => {
     const formData = createFormData(data);
     return {
-        url: "products",
+        url: baseUrl,
         method: "POST",
         body: formData,
     };
@@ -51,7 +51,7 @@ const createProduct = (data: ProductCreate) => {
 const updateProduct = (data: ProductUpdate) => {
     const formData = createFormData(data);
     return {
-        url: "products",
+        url: baseUrl,
         method: "PUT",
         body: formData,
     };
@@ -60,7 +60,7 @@ const updateProduct = (data: ProductUpdate) => {
 /** Deletes a product. */
 const deleteProduct = (id: number) => {
     return {
-        url: `products/${id}`,
+        url: `${baseUrl}/${id}`,
         method: "DELETE",
     };
 };
