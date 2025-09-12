@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace BackendTests.IntegrationTests.Application;
 
-namespace BackendTests.IntegrationTests.Application
+public class ProductTypeServiceIntegrationTests
 {
-    class ProductTypeServiceIntegrationTests
-    {
-    }
 }

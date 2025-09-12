@@ -57,4 +57,15 @@ public class SqlDbTestBase : IAsyncLifetime
         await SeedAsync(product);
         return product;
     }
+
+    protected async Task<BasketEntity> MakeBasketWithItems((ProductEntity p, int qty)[] items, string? piId = "pi_123", string? clientSecret = "cs_123", decimal discount = 0m)
+    {
+        var basket = new BasketEntity();
+        if (piId is not null) basket.SetPaymentIntentId(piId);
+        if (clientSecret is not null) basket.SetClientSecret(clientSecret);
+        foreach (var (p, qty) in items) basket.AddItem(p.Id, p.UnitPrice, qty);
+        if (discount > 0) basket.SetDiscount(discount);
+        await SeedAsync(basket);
+        return basket;
+    }
 }

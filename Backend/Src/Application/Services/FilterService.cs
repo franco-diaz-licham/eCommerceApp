@@ -1,15 +1,9 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class FilterService : IFilterService
+public class FilterService(DataContext db, IMapper mapper) : IFilterService
 {
-    private readonly IMapper _mapper;
-    private readonly DataContext _db;
-
-    public FilterService(DataContext db, IMapper mapper)
-    {
-        _db = db;
-        _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly DataContext _db = db;
 
     public async Task<ProductFiltersDto> GetProductFilters()
     {

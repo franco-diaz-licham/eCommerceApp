@@ -1,19 +1,11 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class BasketService : IBasketService
+public class BasketService(DataContext db, IMapper mapper, ILogger<BasketService> logger, IPaymentGateway payments) : IBasketService
 {
-    private readonly IMapper _mapper;
-    private readonly ILogger<BasketService> _logger;
-    private readonly DataContext _db;
-    private readonly IPaymentGateway _payments;
-
-    public BasketService(DataContext db, IMapper mapper, ILogger<BasketService> logger, IPaymentGateway payments)
-    {
-        _db = db;
-        _mapper = mapper;
-        _logger = logger;
-        _payments = payments;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger<BasketService> _logger = logger;
+    private readonly DataContext _db = db;
+    private readonly IPaymentGateway _payments = payments;
 
     public async Task<Result<BasketDto>> CreateBasketAsync()
     {

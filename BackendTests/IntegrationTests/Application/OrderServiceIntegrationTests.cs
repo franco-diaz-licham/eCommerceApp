@@ -2,16 +2,6 @@
 
 public class OrderServiceIntegrationTests : SqlDbTestBase
 {
-    private BasketEntity MakeBasketWithItems((ProductEntity p, int qty)[] items, string? piId = "pi_123", string? cs = "cs_123", decimal discount = 0m)
-    {
-        var b = new BasketEntity();
-        if (piId is not null) b.SetPaymentIntentId(piId);
-        if (cs is not null) b.SetClientSecret(cs);
-        foreach (var (p, qty) in items) b.AddItem(p.Id, p.UnitPrice, qty);
-        if (discount > 0) b.SetDiscount(discount); // if your entity enforces a method, switch to it.
-        return b;
-    }
-
     private OrderService Service(DataContext context) => new(context, Mapper);
 
     [Fact]
@@ -47,7 +37,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
     }
 
     [Fact]
-    public async Task GetAsync_ShouldReturnNull_WhenEmailDoesNotMatch()
+    public async Task GetAsync_ShouldReturnNull_WhenIdOrEmailDoNotMatch()
     {
         // Arrange
         using var context = CreateContext();
@@ -63,296 +53,208 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         result.Error!.Message.Should().Contain("Order could not be found");
     }
 
-    //// ------------------------- GetAllAsync --------------------------------
+    [Fact]
+    public async Task GetAllAsync_ShouldReturnPagedOrders()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var service = Service(context);
+        var orderStatus = new OrderStatusEntity("Pending");
+        await SeedAsync(orderStatus);
 
-    //[Fact]
-    //public async Task GetAllAsync_ShouldReturnPagedOrders()
-    //{
-    //    // Seed a few orders
-    //    var o1 = new OrderEntity("a@x.com", new ShippingAddress("L1", "", "", "", "", "AU"), "pi1", 5m, 50m, 0m, new PaymentSummary("pm", "ch", "s", DateTime.UtcNow), new());
-    //    var o2 = new OrderEntity("b@x.com", new ShippingAddress("L1", "", "", "", "", "AU"), "pi2", 0m, 150m, 0m, new PaymentSummary("pm", "ch", "s", DateTime.UtcNow), new());
-    //    var o3 = new OrderEntity("c@x.com", new ShippingAddress("L1", "", "", "", "", "AU"), "pi3", 0m, 200m, 10m, new PaymentSummary("pm", "ch", "s", DateTime.UtcNow), new());
+        var address1 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var address2 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var address3 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var payment1 = new PaymentSummary { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 };
+        var payment2 = new PaymentSummary { Last4 = 1224, Brand = "Puma", ExpMonth = 1, ExpYear = 2026 };
+        var payment3 = new PaymentSummary { Last4 = 1134, Brand = "Puma", ExpMonth = 1, ExpYear = 2027 };
+        var order1 = new OrderEntity("a@x.com", address1, "pi1", 5m, 50m, 0m, payment1, new());
+        var order2 = new OrderEntity("b@x.com", address2, "pi2", 0m, 150m, 0m, payment2, new());
+        var order3 = new OrderEntity("c@x.com", address3, "pi3", 0m, 200m, 10m, payment3, new());
+        var specs = new BaseQuerySpecs { PageNumber = 1, PageSize = 2, OrderBy = "createdDesc" };
+        await SeedAsync(order1, order2, order3);
 
-    //    await SeedAsync(o1, o2, o3);
+        // Act
+        var result = await service.GetAllAsync(specs);
+        
+        // Asswer
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().HaveCount(2);
+        result.Type.Should().Be(ResultTypeEnum.Success);
+    }
 
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
-    //    var specs = new BaseQuerySpecs
-    //    {
-    //        PageNumber = 1,
-    //        PageSize = 2,
-    //        OrderBy = "idAsc" // <-- adjust to match your OrderSortProvider
-    //    };
+    [Fact]
+    public async Task GetAllAsync_ShouldFail_WhenNoOrdersFound()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var service = Service(context);
+        var specs = new BaseQuerySpecs { PageNumber = 1, PageSize = 2, OrderBy = "createdDesc" };
 
-    //    var res = await svc.GetAllAsync(specs);
+        // Act
+        var result = await service.GetAllAsync(specs);
 
-    //    res.IsSuccess.Should().BeTrue();
-    //    res.Value.Should().HaveCount(2);
-    //    res.Type.Should().Be(ResultTypeEnum.Success);
-    //}
+        // Asswer
+        result.IsSuccess.Should().BeFalse();
+        result.Type.Should().Be(ResultTypeEnum.NotFound);
+        result.Error?.Message.Should().Contain("Orders not found");
+    }
 
-    //// --------------------- CreateOrderAsync: Guards -----------------------
+    [Fact]
+    public async Task CreateOrderAsync_ShouldFail_WhenBasketEmpty()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var service = Service(context);
+        var basket = new BasketEntity( "pi_empty", "cs" );
+        await SeedAsync(basket);
+        var orderCreateDto = new OrderCreateDto
+        {
+            BasketId = basket.Id,
+            UserEmail = "user@x.com",
+            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
+        };
 
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldFail_WhenBasketEmpty()
-    //{
-    //    var basket = new BasketEntity { PaymentIntentId = "pi_empty", ClientSecret = "cs" };
-    //    await SeedAsync(basket);
+        // Act
+        var res = await service.CreateOrderAsync(orderCreateDto);
+        
+        // Assert
+        res.IsSuccess.Should().BeFalse();
+        res.Type.Should().Be(ResultTypeEnum.Invalid);
+        res.Error!.Message.Should().Contain("Basket is empty");
+    }
 
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
+    [Fact]
+    public async Task CreateOrderAsync_ShouldFail_WhenBasketHasNoPaymentIntent()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var service = Service(context);
+        var product = await CreateProductAsync();
+        var basket = await MakeBasketWithItems(new[] { (product, 1) }, piId: null, clientSecret: "cs-any");
+        var dto = new OrderCreateDto
+        {
+            BasketId = basket.Id,
+            UserEmail = "user@x.com",
+            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
+        };
 
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
+        // Act
+        var res = await service.CreateOrderAsync(dto);
+        
+        // Assert
+        res.IsSuccess.Should().BeFalse();
+        res.Type.Should().Be(ResultTypeEnum.Invalid);
+        res.Error!.Message.Should().Contain("Invalid basket payment intent");
+    }
 
-    //    var res = await svc.CreateOrderAsync(dto);
-    //    res.IsSuccess.Should().BeFalse();
-    //    res.Type.Should().Be(ResultTypeEnum.Invalid);
-    //    res.Error!.Message.Should().Contain("Basket is empty");
-    //}
+    [Fact]
+    public async Task CreateOrderAsync_ShouldFail_WhenUnableToSaveChanges()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var ctxMock = new Mock<DataContext>(Options) { CallBase = true };
+        ctxMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
+        var service = Service(ctxMock.Object);
 
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldFail_WhenBasketHasNoPaymentIntent()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku1", "P1", 30m, 5, brand, type);
+        var product = await CreateProductAsync();
+        var basket = await MakeBasketWithItems(new[] { (product, 1) }, piId: null, clientSecret: "cs-any");
+        var dto = new OrderCreateDto
+        {
+            BasketId = basket.Id,
+            UserEmail = "user@x.com",
+            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
+        };
 
-    //    var basket = MakeBasketWithItems(new[] { (p, 1) }, piId: null, cs: "cs-any");
-    //    await SeedAsync(brand, type, p, basket);
+        // Act
+        var result = await service.CreateOrderAsync(dto);
 
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Type.Should().Be(ResultTypeEnum.Invalid);
+        result.Error?.Message.Contains("Order could not be created");
+    }
 
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
+    [Fact]
+    public async Task CreateOrderAsync_ShouldRollback_WhenDomainLogicThrowsInsufficientStock()
+    {
+        // Arrange: replicate insufficient item stock
+        using var context = CreateContext();
+        var service = Service(context);
 
-    //    var res = await svc.CreateOrderAsync(dto);
-    //    res.IsSuccess.Should().BeFalse();
-    //    res.Type.Should().Be(ResultTypeEnum.Invalid);
-    //    res.Error!.Message.Should().Contain("Invalid basket payment intent");
-    //}
+        var status = new OrderStatusEntity("Pending");
+        var brand = new BrandEntity("B");
+        var type = new ProductTypeEntity("T");
+        var photo = new PhotoEntity("photo1", "123456789", "https://test/com/photo1.jpg");
 
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldFail_WhenAnyBasketItemHasZeroQuantity()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku2", "P2", 20m, 5, brand, type);
+        await SeedAsync(status, brand, type, photo);
 
-    //    // Manually craft a zero-qty item (bypassing AddItem guard if any)
-    //    var basket = new BasketEntity { PaymentIntentId = "piZ", ClientSecret = "csZ" };
-    //    basket.BasketItems.Add(new BasketItemEntity { ProductId = p.Id, UnitPrice = p.UnitPrice, Quantity = 0 });
+        var product = new ProductEntity("sku3", "P3", 40m, 1, type.Id, brand.Id, photoId: photo.Id);
+        await SeedAsync(product);
 
-    //    await SeedAsync(brand, type, p, basket);
+        var basket = await MakeBasketWithItems(new[] { (product, 5) }, piId: "pi_ins", clientSecret: "cs_ins");
+        var orderCreateDto = new OrderCreateDto
+        {
+            BasketId = basket.Id,
+            UserEmail = "user@x.com",
+            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
+        };
 
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
+        // Act
+        var result = await service.CreateOrderAsync(orderCreateDto);
 
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Type.Should().Be(ResultTypeEnum.Invalid);
+        result.Error!.Message.Should().Contain("There was a problem creating the order");
 
-    //    var res = await svc.CreateOrderAsync(dto);
-    //    res.IsSuccess.Should().BeFalse();
-    //    res.Type.Should().Be(ResultTypeEnum.Invalid);
-    //    res.Error!.Message.Should().Contain("zero quantity");
-    //}
+        var after = await context.Products.AsNoTracking().SingleAsync(x => x.Id == product.Id);
+        after.QuantityInStock.Should().Be(1);
 
-    //// ----------- CreateOrderAsync: Insufficient stock rollback ------------
+        var anyOrder = await context.Orders.AsNoTracking().AnyAsync(o => o.PaymentIntentId == "pi_ins");
+        anyOrder.Should().BeFalse();
+    }
 
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldRollback_WhenInsufficientStock()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku3", "P3", 40m, stock: 1, brand, type);
+    [Fact]
+    public async Task CreateOrderAsync_ShouldCreateNewOrder()
+    {
+        // Act
+        using var context = CreateContext();
+        var service = Service(context);
 
-    //    var basket = MakeBasketWithItems(new[] { (p, 5) }, piId: "pi_ins", cs: "cs_ins");
-    //    await SeedAsync(brand, type, p, basket);
+        var status = new OrderStatusEntity("Pending");
+        var brand = new BrandEntity("B");
+        var type = new ProductTypeEntity("T");
+        var photo = new PhotoEntity("photo1", "123456789", "https://test/com/photo1.jpg");
+        await SeedAsync(status, brand, type, photo);
 
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
+        var p1 = new ProductEntity("sku7", "P7", 20m, 10, type.Id, brand.Id, photoId: photo.Id);
+        var p2 = new ProductEntity("sku8", "P8", 15m, 10, type.Id, brand.Id, photoId: photo.Id);
+        await SeedAsync(p1, p2);
 
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
+        var basket = await MakeBasketWithItems(new[] { (p1, 2), (p2, 2) }, piId: "pi_same", clientSecret: "cs_same", discount: 0m);
 
-    //    var res = await svc.CreateOrderAsync(dto);
+        var dto = new OrderCreateDto
+        {
+            BasketId = basket.Id,
+            UserEmail = "user@x.com",
+            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
+        };
 
-    //    res.IsSuccess.Should().BeFalse();
-    //    res.Type.Should().Be(ResultTypeEnum.Invalid);
-    //    res.Error!.Message.Should().Contain("Insufficient stock");
+        // Act
+        var res = await service.CreateOrderAsync(dto);
 
-    //    // Stock should remain unchanged due to rollback
-    //    var after = await ctx.Products.AsNoTracking().SingleAsync(x => x.Id == p.Id);
-    //    after.QuantityInStock.Should().Be(1);
-
-    //    // No order should be inserted
-    //    var anyOrder = await ctx.Orders.AsNoTracking().AnyAsync(o => o.PaymentIntentId == "pi_ins");
-    //    anyOrder.Should().BeFalse();
-    //}
-
-    //// --------------- CreateOrderAsync: Happy path (create) ----------------
-
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldCreateOrder_DecrementStock_ApplyDeliveryFeeRule()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku4", "P4", 30m, stock: 10, brand, type); // price=30
-
-    //    // subtotal = 60 (< 100) & discount = 0 → deliveryFee = 5
-    //    var basket = MakeBasketWithItems(new[] { (p, 2) }, piId: "pi_ok", cs: "cs_ok", discount: 0m);
-    //    await SeedAsync(brand, type, p, basket);
-
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
-
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
-
-    //    var res = await svc.CreateOrderAsync(dto);
-
-    //    res.IsSuccess.Should().BeTrue();
-    //    res.Type.Should().Be(ResultTypeEnum.Created);
-    //    res.Value!.UserEmail.Should().Be("user@x.com");
-    //    res.Value!.DeliveryFee.Should().Be(5m);
-    //    res.Value!.Items.Should().ContainSingle(i => i.ProductId == p.Id && i.Quantity == 2);
-
-    //    // Stock should decrement by 2
-    //    var after = await ctx.Products.AsNoTracking().SingleAsync(x => x.Id == p.Id);
-    //    after.QuantityInStock.Should().Be(8);
-    //}
-
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldSetZeroDelivery_WhenSubtotalAtLeast100()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku5", "P5", 50m, stock: 10, brand, type); // 50 * 2 = 100
-
-    //    var basket = MakeBasketWithItems(new[] { (p, 2) }, piId: "pi_free", cs: "cs_free", discount: 0m);
-    //    await SeedAsync(brand, type, p, basket);
-
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
-
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
-
-    //    var res = await svc.CreateOrderAsync(dto);
-
-    //    res.IsSuccess.Should().BeTrue();
-    //    res.Value!.DeliveryFee.Should().Be(0m);
-    //}
-
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldSetZeroDelivery_WhenDiscountApplied()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p = MakeProduct("sku6", "P6", 30m, stock: 10, brand, type);
-
-    //    // subtotal = 60 but discount > 0 → deliveryFee = 0
-    //    var basket = MakeBasketWithItems(new[] { (p, 2) }, piId: "pi_disc", cs: "cs_disc", discount: 5m);
-    //    await SeedAsync(brand, type, p, basket);
-
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
-
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("L1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm", "ch", "succeeded", DateTime.UtcNow)
-    //    };
-
-    //    var res = await svc.CreateOrderAsync(dto);
-
-    //    res.IsSuccess.Should().BeTrue();
-    //    res.Value!.DeliveryFee.Should().Be(0m);
-    //}
-
-    //// --------------- CreateOrderAsync: Upsert (update existing) -----------
-
-    //[Fact]
-    //public async Task CreateOrderAsync_ShouldAppendItemsAndUpdateFields_WhenOrderExistsForPaymentIntent()
-    //{
-    //    var brand = new BrandEntity("B");
-    //    var type = new ProductTypeEntity("T");
-    //    var p1 = MakeProduct("sku7", "P7", 20m, stock: 10, brand, type);
-    //    var p2 = MakeProduct("sku8", "P8", 15m, stock: 10, brand, type);
-
-    //    // Existing order tied to same payment intent
-    //    var existing = new OrderEntity(
-    //        "user@x.com",
-    //        new ShippingAddress("Old", "", "", "", "", "AU"),
-    //        "pi_same",
-    //        deliveryFee: 0m,
-    //        subtotal: 20m,
-    //        discount: 0m,
-    //        summary: new PaymentSummary("pm-old", "ch-old", "requires_action", DateTime.UtcNow),
-    //        items: new() { new OrderItemEntity(p1.Id, p1.Name, p1.UnitPrice, 1) }
-    //    );
-
-    //    // Basket with new items on same intent
-    //    var basket = MakeBasketWithItems(new[] { (p2, 2) }, piId: "pi_same", cs: "cs_same", discount: 0m);
-
-    //    await SeedAsync(brand, type, p1, p2, existing, basket);
-
-    //    using var ctx = CreateContext();
-    //    var svc = Svc(ctx);
-
-    //    var dto = new OrderCreateDto
-    //    {
-    //        BasketId = basket.Id,
-    //        UserEmail = "user@x.com",
-    //        ShippingAddress = new ShippingAddressDto("NewL1", "", "City", "State", "2000", "AU"),
-    //        PaymentSummary = new PaymentSummaryDto("pm-new", "ch-new", "succeeded", DateTime.UtcNow)
-    //    };
-
-    //    var res = await svc.CreateOrderAsync(dto);
-
-    //    res.IsSuccess.Should().BeTrue();
-    //    res.Type.Should().Be(ResultTypeEnum.Created);
-
-    //    // Items appended (existing p1 + new p2)
-    //    res.Value!.Items.Should().HaveCount(2);
-    //    res.Value!.Items.Any(i => i.ProductId == p1.Id).Should().BeTrue();
-    //    res.Value!.Items.Any(i => i.ProductId == p2.Id && i.Quantity == 2).Should().BeTrue();
-
-    //    // Shipping/charges/summary updated
-    //    res.Value!.ShippingAddress.Line1.Should().Be("NewL1");
-    //    res.Value!.PaymentSummary.Should().NotBeNull();
-    //}
+        res.IsSuccess.Should().BeTrue();
+        res.Type.Should().Be(ResultTypeEnum.Created);
+        res.Value!.OrderItems.Should().HaveCount(2);
+        res.Value!.OrderItems.Any(i => i.ProductId == p1.Id && i.Quantity == 2).Should().BeTrue();
+        res.Value!.OrderItems.Any(i => i.ProductId == p2.Id && i.Quantity == 2).Should().BeTrue();
+        res.Value!.ShippingAddress.Line1.Should().Be("L1");
+        res.Value!.PaymentSummary.Should().NotBeNull();
+    }
 }

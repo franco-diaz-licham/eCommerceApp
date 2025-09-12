@@ -73,7 +73,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<AddressDto, AddressEntity>().ConstructUsing(s => new AddressEntity(s.Line1, s.Line2, s.City, s.State, s.PostalCode, s.Country)).ForAllMembers(o => o.Ignore());
 
         // Payment Summary
-        CreateMap<PaymentSummary, PaymentSummaryDto>();
+        CreateMap<PaymentSummary, PaymentSummaryDto>().ReverseMap();
         CreateMap<PaymentSummaryDto, PaymentSummaryResponse>().ReverseMap();
     }
 }

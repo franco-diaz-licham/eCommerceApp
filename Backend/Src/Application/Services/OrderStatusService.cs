@@ -1,15 +1,9 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class OrderStatusService : IOrderStatusService
+public class OrderStatusService(DataContext db, IMapper mapper) : IOrderStatusService
 {
-    private readonly IMapper _mapper;
-    private readonly DataContext _db;
-
-    public OrderStatusService(DataContext db, IMapper mapper)
-    {
-        _db = db;
-        _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly DataContext _db = db;
 
     public async Task<Result<List<OrderStatusDto>>> GetAllAsync(BaseQuerySpecs specs)
     {

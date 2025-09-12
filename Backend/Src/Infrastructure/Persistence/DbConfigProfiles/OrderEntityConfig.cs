@@ -16,6 +16,7 @@
             builder.HasOne(o => o.OrderStatus).WithMany().HasForeignKey(o => o.OrderStatusId).OnDelete(DeleteBehavior.Restrict);
             builder.HasMany(o => o.OrderItems).WithOne(i => i.Order).HasForeignKey(i => i.OrderId).OnDelete(DeleteBehavior.Cascade);
             builder.Navigation(o => o.OrderItems).HasField("_orderItems").UsePropertyAccessMode(PropertyAccessMode.Field);
+            builder.HasIndex(o => o.PaymentIntentId).IsUnique();
             builder.OwnsOne(o => o.ShippingAddress, sa =>
             {
                 sa.Property(a => a.Line1).IsRequired().HasMaxLength(128);

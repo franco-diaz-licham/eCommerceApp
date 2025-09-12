@@ -1,15 +1,9 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class BrandService : IBrandService
+public class BrandService(DataContext db, IMapper mapper) : IBrandService
 {
-    private readonly IMapper _mapper;
-    private readonly DataContext _db;
-
-    public BrandService(DataContext db, IMapper mapper)
-    {
-        _db = db;
-        _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly DataContext _db = db;
 
     public async Task<Result<List<BrandDto>>> GetAllAsync(BaseQuerySpecs specs)
     {

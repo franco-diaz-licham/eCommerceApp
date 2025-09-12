@@ -1,17 +1,10 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class ProductTypeService : IProductTypeService
+public class ProductTypeService(DataContext db, IMapper mapper) : IProductTypeService
 {
-    private readonly IMapper _mapper;
-    private readonly DataContext _db;
+    private readonly IMapper _mapper = mapper;
+    private readonly DataContext _db = db;
 
-    public ProductTypeService(DataContext db, IMapper mapper)
-    {
-        _db = db;
-        _mapper = mapper;
-    }
-
-   
     public async Task<Result<List<ProductTypeDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
         var query = _db.ProductTypes.AsNoTracking();

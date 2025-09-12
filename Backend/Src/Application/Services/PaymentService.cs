@@ -1,19 +1,11 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class PaymentService : IPaymentService
+public class PaymentService(DataContext db, IPaymentGateway payments, IMapper mapper, ILogger<PaymentService> logger) : IPaymentService
 {
-    private readonly DataContext _db;
-    private readonly IPaymentGateway _payments;
-    private readonly IMapper _mapper;
-    private readonly ILogger<PaymentService> _logger;
-
-    public PaymentService(DataContext db, IPaymentGateway payments, IMapper mapper, ILogger<PaymentService> logger)
-    {
-        _db = db;
-        _payments = payments;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly DataContext _db = db;
+    private readonly IPaymentGateway _payments = payments;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger<PaymentService> _logger = logger;
 
     public async Task<Result<BasketDto>> CreateOrUpdatePaymentIntent(int basketId)
     {

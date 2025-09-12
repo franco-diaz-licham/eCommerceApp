@@ -1,19 +1,11 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class ProductService : IProductService
+public class ProductService(DataContext db, IMapper mapper, IPhotoService photoService, ILogger<ProductService> logger) : IProductService
 {
-    private readonly IMapper _mapper;
-    private readonly IPhotoService _photoService;
-    private readonly ILogger<ProductService> _logger;
-    private readonly DataContext _db;
-
-    public ProductService(DataContext db, IMapper mapper, IPhotoService photoService, ILogger<ProductService> logger)
-    {
-        _db = db;
-        _mapper = mapper;
-        _photoService = photoService;
-        _logger = logger;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IPhotoService _photoService = photoService;
+    private readonly ILogger<ProductService> _logger = logger;
+    private readonly DataContext _db = db;
 
     public async Task<Result<List<ProductDto>>> GetAllAsync(ProductQuerySpecs specs)
     {

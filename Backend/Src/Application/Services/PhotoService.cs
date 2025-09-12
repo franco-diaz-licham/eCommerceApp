@@ -1,17 +1,10 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class PhotoService : IPhotoService
+public class PhotoService(DataContext db, IMapper mapper, IMediaStorageService cloudinaryService) : IPhotoService
 {
-    private readonly IMediaStorageService _cloudinaryService;
-    private readonly DataContext _db;
-    private readonly IMapper _mapper;
-
-    public PhotoService(DataContext db, IMapper mapper, IMediaStorageService cloudinaryService)
-    {
-        _db = db;
-        _mapper = mapper;
-        _cloudinaryService = cloudinaryService;
-    }
+    private readonly IMediaStorageService _cloudinaryService = cloudinaryService;
+    private readonly DataContext _db = db;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<PhotoDto?> GetAsync(int id)
     {
