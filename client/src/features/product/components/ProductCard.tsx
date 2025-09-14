@@ -3,16 +3,20 @@ import { Link } from "react-router-dom";
 // import { useAddBasketItemMutation } from "../basket/basketApi";
 import type { ProductResponse } from "../types/product.types";
 import { currencyFormat } from "../../../lib/utils";
+import { useBasket } from "../../../hooks/useBasket";
 
 /** Functional props. */
 interface ProductCardProps {
     product: ProductResponse;
-};
+}
 
 export default function ProductCard({ product }: ProductCardProps) {
-    // const [addBasketItem, { isLoading }] = useAddBasketItemMutation();
+    const { isAdding, addItemEnsuringBasket } = useBasket();
+    const handleAddItem = () => addItemEnsuringBasket(product.id, 1);
+
     return (
-        <Card elevation={3}
+        <Card
+            elevation={3}
             sx={{
                 width: 280,
                 borderRadius: 2,
@@ -31,9 +35,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: "space-between" }}>
-                {/* <Button disabled={isLoading} onClick={() => addBasketItem({ product, quantity: 1 })}>
+                <Button disabled={isAdding} onClick={() => handleAddItem()}>
                     Add to cart
-                </Button> */}
+                </Button>
                 <Button component={Link} to={`/product/${product.id}`}>
                     View
                 </Button>

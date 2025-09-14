@@ -1,50 +1,44 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 import type { BasketCouponDto, BasketItemDto, BasketResponse } from "../types/basket.type";
+import type { ApiSingleResponse } from "../../../types/api.types";
 
 /** Base url resource endpoint. */
 const baseUrl: string = "basket";
 
-const getActiveBasket = () => `${baseUrl}/active`;
+const transformPaginatedSingleResponse = (r: ApiSingleResponse<BasketResponse>) => (r && typeof r === "object" && "data" in r ? (r as { data: BasketResponse }).data : (r as BasketResponse));
 
-const createBasket = () => {
-    return {
-        url: baseUrl,
-        method: "POST",
-    };
-};
+// Keep a stable "active" endpoint so components don't need an id
+const getBasket = (id: number) => `${baseUrl}/${id}`;
 
-const addBasketItem = (data: BasketItemDto) => {
-    return {
-        url: `${baseUrl}/add-item`,
-        method: "POST",
-        body: data,
-    };
-};
+const createBasket = () => ({
+    url: baseUrl,
+    method: "POST",
+});
 
-const removeBasketItem = (data: BasketItemDto) => {
-    return {
-        url: `${baseUrl}/remove-item`,
-        method: "DELETE",
-        body: data,
-    };
-};
+const addBasketItem = (data: BasketItemDto) => ({
+    url: `${baseUrl}/add-item`,
+    method: "POST",
+    body: data,
+});
 
-const addCoupon = (data: BasketCouponDto) => {
-    return {
-        url: `basket/${data}`,
-        method: "POST",
-        body: data,
-    };
-};
+const removeBasketItem = (data: BasketItemDto) => ({
+    url: `${baseUrl}/remove-item`,
+    method: "DELETE",
+    body: data,
+});
 
-const removeCoupon = (data: BasketCouponDto) => {
-    return {
-        url: "basket/remove-coupon",
-        method: "DELETE",
-        body: data,
-    };
-};
+const addCoupon = (data: BasketCouponDto) => ({
+    url: `${baseUrl}/add-coupon`,
+    method: "POST",
+    body: data,
+});
+
+const removeCoupon = (data: BasketCouponDto) => ({
+    url: `${baseUrl}/remove-coupon`,
+    method: "DELETE",
+    body: data,
+});
 
 export const basketApi = createApi({
     reducerPath: "basketApi",
@@ -53,43 +47,53 @@ export const basketApi = createApi({
     endpoints: (builder) => ({
         createBasket: builder.mutation<BasketResponse, void>({
             query: () => createBasket(),
+            invalidatesTags: ["Basket"],
         }),
-        fetchBasket: builder.query<BasketResponse, void>({
-            query: () => getActiveBasket(),
-            providesTags: ["Basket"],
+        fetchBasket: builder.query<BasketResponse, number>({
+            query: (data) => getBasket(data),
+            transformResponse: transformPaginatedSingleResponse,
+            providesTags: (id) => [{ type: "Basket", id: Number(id) }],
         }),
         addBasketItem: builder.mutation<BasketResponse, BasketItemDto>({
             query: (data) => addBasketItem(data),
+            transformResponse: transformPaginatedSingleResponse,
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    const { data: updated } = await queryFulfilled;
+                    dispatch(basketApi.util.upsertQueryData("fetchBasket", updated.id, updated));
+                } catch {
+                    // ignore; error handling is in baseQueryWithErrorHandling
+                }
+            },
         }),
         removeBasketItem: builder.mutation<void, BasketItemDto>({
             query: (data) => removeBasketItem(data),
+            invalidatesTags: ["Basket"],
         }),
         clearBasket: builder.mutation<void, void>({
             queryFn: () => ({ data: undefined }),
-            onQueryStarted: async (_, { dispatch, getState }) => {
-                // Read current cached basket
-                const sel = basketApi.endpoints.fetchBasket.select();
+            async onQueryStarted(_, { dispatch, getState }) {
+                const basketId = localStorage.getItem("basketId");
+                if(!basketId) return;
+                const sel = basketApi.endpoints.fetchBasket.select(Number(basketId));
                 const basket = sel(getState()).data;
-
-                if (!basket || !basket.items?.length) return;
-
-                // Kick off remove calls in parallel (one per item, removing full quantity)
-                const removals = basket.items.map((item) => dispatch(basketApi.endpoints.removeBasketItem.initiate({ productId: item.productId, quantity: item.quantity, basketId: item.id }, { track: false })).unwrap());
-
-                // Wait for all to settle (don’t throw if one fails)
+                if (!basket || !basket.basketItems?.length) return;
+                // Remove each item fully (use the basket's id, not item.id)
+                const removals = basket.basketItems.map((item) => dispatch(basketApi.endpoints.removeBasketItem.initiate({ productId: item.productId, quantity: item.quantity, basketId: basket.id }, { track: false })).unwrap());
                 await Promise.allSettled(removals);
-
-                // Finally, refresh basket from server to ensure truth
+                // Ensure re-fetch for source of truth
                 dispatch(basketApi.util.invalidateTags(["Basket"]));
             },
         }),
         addCoupon: builder.mutation<BasketResponse, BasketCouponDto>({
             query: (data) => addCoupon(data),
+            invalidatesTags: ["Basket"],
         }),
         removeCoupon: builder.mutation<void, BasketCouponDto>({
             query: (data) => removeCoupon(data),
+            invalidatesTags: ["Basket"],
         }),
     }),
 });
 
-export const { useFetchBasketQuery, useAddBasketItemMutation, useAddCouponMutation, useRemoveCouponMutation, useRemoveBasketItemMutation, useClearBasketMutation } = basketApi;
+export const { useFetchBasketQuery, useAddBasketItemMutation, useAddCouponMutation, useRemoveCouponMutation, useRemoveBasketItemMutation, useClearBasketMutation, useCreateBasketMutation } = basketApi;

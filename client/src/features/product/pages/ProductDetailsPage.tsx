@@ -1,24 +1,40 @@
 import { useParams } from "react-router-dom";
 import { useFetchProductDetailsQuery } from "../services/product.api";
-import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
-import { useState, type ChangeEvent } from "react";
+import { Button, Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { currencyFormat } from "../../../lib/utils";
+import { useBasket } from "../../../hooks/useBasket";
+import type { BasketItemResponse } from "../../basket/types/basket.type";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
+    const { getbasketItem, addItemEnsuringBasket, removeItemEnsuringBasket, items } = useBasket();
+    const productId = id ? Number.parseInt(id) : 0;
+    const { data: product, isLoading } = useFetchProductDetailsQuery(productId);
+    const [item, setItem] = useState<BasketItemResponse | undefined>();
     const [quantity, setQuantity] = useState(1);
+    const quantitySetRef = useRef<boolean>(false);
 
-    const { data: product, isLoading } = useFetchProductDetailsQuery(id ? Number.parseInt(id) : 0);
+    useEffect(() => {
+        if (items) {
+            const basketItem = getbasketItem(productId);
+            setItem(basketItem);
+            if (!basketItem) return;
+            if (quantitySetRef.current) return;
+            setQuantity(basketItem.quantity);
+            quantitySetRef.current = true;
+        }
+    }, [items, productId, getbasketItem]);
+
     if (!product || isLoading) return <div>Loading...</div>;
 
-    // const handleUpdateBasket = () => {
-    //     const updatedQuantity = item ? Math.abs(quantity - item.quantity) : quantity;
-    //     if (!item || quantity > item.quantity) {
-    //         addBasketItem({ product, quantity: updatedQuantity });
-    //     } else {
-    //         removeBasketItem({ productId: product.id, quantity: updatedQuantity });
-    //     }
-    // };
+    /** Update basket on removing or adding poducts. */
+    const handleUpdateBasket = async () => {
+        const updatedQuantity = item ? Math.abs(quantity - item.quantity) : quantity;
+        if (!item || quantity > item.quantity) await addItemEnsuringBasket(Number(id), updatedQuantity);
+        else await removeItemEnsuringBasket(product.id, updatedQuantity);
+        if (quantity === 0) setQuantity(1);
+    };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = +event.currentTarget.value;
@@ -65,9 +81,9 @@ export default function ProductDetailsPage() {
                         <TextField variant="outlined" type="number" label="Quantity in basket" fullWidth value={quantity} onChange={handleInputChange} />
                     </Grid>
                     <Grid size={6}>
-                        {/* <Button onClick={handleUpdateBasket} disabled={quantity === item?.quantity || (!item && quantity === 0)} sx={{ height: "55px" }} color="primary" size="large" variant="contained" fullWidth>
-                            {item ? "Update quantity" : "Add to basket"}
-                        </Button> */}
+                        <Button onClick={handleUpdateBasket} disabled={quantity === item?.quantity || (!item && quantity === 0)} sx={{ height: "55px" }} color="primary" size="large" variant="contained" fullWidth>
+                            {item && quantity < item.quantity ? "Update quantity" : "Add to basket"}
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>

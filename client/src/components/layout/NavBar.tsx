@@ -3,7 +3,7 @@ import { DarkMode, LightMode, ShoppingCart } from "@mui/icons-material";
 import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import { setDarkMode } from "./uiSlice";
-import { useFetchBasketQuery } from "../../features/basket/services/basketApi";
+import { useBasket } from "../../hooks/useBasket";
 
 const midLinks = [
     { title: "products", path: "/products" },
@@ -32,11 +32,9 @@ const navStyles = {
 
 export default function NavBar() {
     // const { data: user } = useUserInfoQuery();
-    const { data: basket } = useFetchBasketQuery();
+    const { itemCount } = useBasket();
     const { isLoading, darkMode } = useAppSelector((state) => state.ui);
     const dispatch = useAppDispatch();
-
-    const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
     return (
         <AppBar position="fixed">

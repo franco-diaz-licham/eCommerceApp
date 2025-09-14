@@ -1,20 +1,18 @@
 import type { CouponResponse } from "./coupon.type";
 
 export type BasketItemResponse = {
-    id: number;
     basketId: number;
     productId: number;
     name: string;
-    price: number;
-    pictureUrl: string;
-    brand: string;
-    type: string;
+    unitPrice: number;
     quantity: number;
+    publicUrl: string;
+    lineTotal: number;
 };
 
 export type BasketResponse = {
     id: number;
-    items: BasketItemResponse[];
+    basketItems: BasketItemResponse[];
     clientSecret?: string;
     paymentIntentId?: string;
     subtotal: number;
@@ -23,14 +21,14 @@ export type BasketResponse = {
 };
 
 export type BasketItemDto = {
-    basketId: number;
+    basketId?: number;
     productId: number;
     quantity: number;
 };
 
 export type BasketClearDto = {
     id: string;
-    items: number[];
+    basketItems: number[];
 };
 
 export type BasketCouponDto = {

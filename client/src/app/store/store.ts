@@ -7,6 +7,7 @@ import { productSlice } from "../../features/product/services/productSlice";
 import { accountApi } from "../../features/authentication/services/account.api";
 import { orderApi } from "../../features/order/services/orderApi";
 import { basketApi } from "../../features/basket/services/basketApi";
+import { basketSessionSlice } from "../../features/basket/services/basketSlice";
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
         [orderApi.reducerPath]: orderApi.reducer,
         ui: uiSlice.reducer,
         products: productSlice.reducer,
+        basketSession: basketSessionSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, orderApi.middleware, accountApi.middleware, basketApi.middleware),
 });
