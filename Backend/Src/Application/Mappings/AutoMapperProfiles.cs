@@ -43,12 +43,31 @@ public class AutoMapperProfiles : Profile
         CreateMap(typeof(Result<>), typeof(Result<>)).ConvertUsing(typeof(ResultConverter<,>));
 
         // Basket items
-        CreateMap<BasketItemEntity, BasketItemCreateDto>();
         CreateMap<BasketItemEntity, BasketItemDto>().ForMember(d => d.LineTotal, opt => opt.MapFrom(s => s.LineTotal));
+        CreateMap<BasketItemAddRequest, BasketItemCreateDto>();
+        CreateMap<BasketItemRemoveRequest, BasketItemDto>()
+            .ConvertUsing(src => new BasketItemDto
+            {
+                BasketId = src.BasketId,
+                ProductId = src.ProductId,
+                Quantity = src.Quantity
+            });
+        CreateMap<BasketItemDto, BasketItemResponse>()
+            .ConvertUsing(src => new BasketItemResponse
+            {
+                BasketId = src.BasketId,
+                ProductId = src.ProductId,
+                Quantity = src.Quantity,
+                Name = src.Product!.Name,
+                UnitPrice = src.UnitPrice,
+                PublicUrl = src.Product!.Photo!.PublicUrl,
+                LineTotal = src.LineTotal
+            }); 
 
         // Basket
         CreateMap<BasketEntity, BasketDto>().ForMember(d => d.Subtotal, opt => opt.MapFrom(s => s.Subtotal));
         CreateMap<BasketCouponRequest, BasketCouponDto>();
+        CreateMap<BasketDto, BasketResponse>();
 
         // Order
         CreateMap<OrderEntity, OrderDto>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.Total));
@@ -61,6 +80,7 @@ public class AutoMapperProfiles : Profile
 
         // Coupon
         CreateMap<CouponEntity, CouponDto>();
+        CreateMap<CouponDto, CouponResponse>();
         CreateMap<CouponDto, CouponEntity>().ConstructUsing(s => new CouponEntity(s.Name, s.RemoteId, s.PromotionCode, s.AmountOff, s.PercentOff)).ForAllMembers(o => o.Ignore());
         CreateMap<CouponInfoModel, CouponDto>()
             .ForMember(d => d.AmountOff, opt => opt.ConvertUsing(new MinorUnitsToDecimalConverter(), src => src.AmountOff))

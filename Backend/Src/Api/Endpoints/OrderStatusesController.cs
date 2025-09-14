@@ -2,6 +2,7 @@
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("Order Status")]
 public class OrderStatusesController(IMapper mapper, IOrderStatusService OrderStatusService) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;

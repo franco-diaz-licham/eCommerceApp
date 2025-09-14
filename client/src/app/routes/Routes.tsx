@@ -11,22 +11,28 @@ import NotFoundPage from "../../features/error/pages/NotFoundPage";
 import ErrorPage from "../../features/error/pages/ErrorPage";
 import ServerErrorPage from "../../features/error/pages/ServerErrorPage";
 import InventoryPage from "../../features/product/pages/InventoryPage";
+import CheckoutSuccessPage from "../../features/checkout/pages/CheckoutSuccessPage";
+import CheckoutPage from "../../features/checkout/pages/CheckoutPage";
+import OrdersPage from "../../features/order/pages/OrdersPage";
+import OrderDetailedPage from "../../features/order/pages/OrderDetailsPage";
+import LoginFormPage from "../../features/authentication/pages/LoginFormPage";
+import RegisterFormPage from "../../features/authentication/pages/RegisterFormPage";
 
 export const Routes = createBrowserRouter([
     {
         path: "/",
         element: <App />,
         children: [
-            // {
-            //     element: <RequireAuth />,
-            //     children: [
-            //         { path: "checkout", element: <CheckoutPage /> },
-            //         { path: "checkout/success", element: <CheckoutSuccess /> },
-            //         { path: "orders", element: <OrdersPage /> },
-            //         { path: "orders/:id", element: <OrderDetailedPage /> },
-            //         { path: "inventory", element: <InventoryPage /> },
-            //     ],
-            // },
+            {
+                element: <RequireAuth />,
+                children: [
+                    { path: "checkout", element: <CheckoutPage /> },
+                    { path: "checkout/success", element: <CheckoutSuccessPage /> },
+                    { path: "orders", element: <OrdersPage /> },
+                    { path: "orders/:id", element: <OrderDetailedPage /> },
+                    { path: "inventory", element: <InventoryPage /> },
+                ],
+            },
             { path: "", element: <HomePage /> },
             { path: "products", element: <ProductsPage /> },
             { path: "product/:id", element: <ProductDetailsPage /> },
@@ -34,8 +40,8 @@ export const Routes = createBrowserRouter([
             { path: "contact", element: <ContactPage /> },
             { path: "basket", element: <BasketPage /> },
             { path: "errors", element: <ErrorPage /> },
-            // { path: "login", element: <LoginForm /> },
-            // { path: "register", element: <RegisterForm /> },
+            { path: "login", element: <LoginFormPage /> },
+            { path: "register", element: <RegisterFormPage /> },
             { path: "inventory", element: <InventoryPage /> },
             { path: "server-error", element: <ServerErrorPage /> },
             { path: "not-found", element: <NotFoundPage /> },

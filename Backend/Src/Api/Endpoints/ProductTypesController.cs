@@ -2,6 +2,7 @@
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("Product Types")]
 public class ProductTypesController(IMapper mapper, IProductTypeService productTypeService) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;

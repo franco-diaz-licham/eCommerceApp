@@ -6,7 +6,7 @@ public class BasketResponse
     public string? ClientSecret { get; set; }
     public string? PaymentIntentId { get; set; }
     public decimal Subtotal { get; set; }
-    public int CouponId { get; set; }
-    public string? CouponCode { get; set; }
-    public List<BasketItemResponse> Items { get; set; } = [];
+    public int? CouponId { get; set; }
+    public CouponResponse? Coupon { get; set; }
+    public List<BasketItemResponse> BasketItems { get; set; } = [];
 }

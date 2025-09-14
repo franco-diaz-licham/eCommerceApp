@@ -28,19 +28,25 @@ public class BasketService(DataContext db, IMapper mapper, ILogger<BasketService
 
     public async Task<Result<BasketDto>> AddItemAsync(BasketItemCreateDto dto)
     {
-        // Validate.
+        // Validate
         if (dto.Quantity <= 0) return Result<BasketDto>.Fail("Quantity must be positive.", ResultTypeEnum.Invalid);
-        var basket = await _db.Baskets.Include(b => b.BasketItems).SingleOrDefaultAsync(b => b.Id == dto.BasketId);
-        if (basket is null) return Result<BasketDto>.Fail("Basket not found...", ResultTypeEnum.NotFound);
         var product = await _db.Products.FindAsync(dto.ProductId);
         if (product is null) return Result<BasketDto>.Fail("Product not found...", ResultTypeEnum.NotFound);
 
-        // Add item.
+        // Create new basket if necessary
+        BasketEntity? basket = await _db.Baskets.Include(x => x.BasketItems).SingleOrDefaultAsync(b => b.Id == dto.BasketId) ?? new();
+        if (dto.BasketId is null)
+        {
+            _db.Baskets.Add(basket);
+            await _db.SaveChangesAsync();
+        }
+
         basket.AddItem(dto.ProductId, product.UnitPrice, dto.Quantity);
 
         // Save changes to db.
         var saved = await _db.SaveChangesAsync() > 0;
         if(!saved) return Result<BasketDto>.Fail("Item could not be added...", ResultTypeEnum.Invalid);
+        await _db.Entry(basket).Collection(b => b.BasketItems).Query().Include(i => i.Product).ThenInclude(x => x.Photo).LoadAsync();
         var output = _mapper.Map<BasketDto>(basket);
         return Result<BasketDto>.Success(output, ResultTypeEnum.Success);
     }
@@ -51,8 +57,8 @@ public class BasketService(DataContext db, IMapper mapper, ILogger<BasketService
         var basket = await _db.Baskets.Include(b => b.BasketItems).SingleOrDefaultAsync(b => b.Id == dto.BasketId);
         if (basket is null) return Result<bool>.Fail("Basket not found...", ResultTypeEnum.NotFound);
 
-        // Remove item.
-        basket.RemoveItem(dto.ProductId);
+        // update item.
+        basket.SetItemQuantity(dto.ProductId, dto.Quantity);
 
         // Save changes to db.
         var saved = await _db.SaveChangesAsync() > 0;

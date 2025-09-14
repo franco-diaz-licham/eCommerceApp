@@ -46,8 +46,8 @@ public class BasketEntity : BaseEntity
         if(item is null) throw new ArgumentNullException($"{nameof(item)} not found.");
 
         // Replace quantity
-        if (quantity == 0) _basketItems.Remove(item);
-        else item.ReplaceQuantity(quantity);
+        if (item.Quantity == 1 || quantity == item.Quantity) _basketItems.Remove(item);
+        else item.DecreaseQuantity(quantity);
     }
 
     public void RemoveItem(int productId)

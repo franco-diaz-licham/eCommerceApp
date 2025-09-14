@@ -6,15 +6,16 @@ import { errorApi } from "../../features/error/services/error.api";
 import { productSlice } from "../../features/product/services/productSlice";
 import { accountApi } from "../../features/authentication/services/account.api";
 import { orderApi } from "../../features/order/services/orderApi";
-import { basketApi } from "../../features/basket/services/basketApi";
+import { basketApi } from "../../features/basket/services/basket.api";
 import { basketSessionSlice } from "../../features/basket/services/basketSlice";
+import { checkoutApi } from "../../features/checkout/services/checkout.api";
 
 export const store = configureStore({
     reducer: {
         [productApi.reducerPath]: productApi.reducer,
         [errorApi.reducerPath]: errorApi.reducer,
         [basketApi.reducerPath]: basketApi.reducer,
-        // [checkoutApi.reducerPath]: checkoutApi.reducer,
+        [checkoutApi.reducerPath]: checkoutApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [orderApi.reducerPath]: orderApi.reducer,
         ui: uiSlice.reducer,

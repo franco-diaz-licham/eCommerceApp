@@ -1,4 +1,4 @@
-import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation } from "../features/basket/services/basketApi";
+import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation } from "../features/basket/services/basket.api";
 import type { BasketItemResponse } from "../features/basket/types/basket.type";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useAppDispatch, useAppSelector } from "../app/store/store";

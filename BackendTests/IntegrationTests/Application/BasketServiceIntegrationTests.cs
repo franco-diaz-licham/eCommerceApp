@@ -95,7 +95,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         // Arrange
         using var context = CreateContext();
         var service = Service(context);
-        var dto = new BasketItemCreateDto{ BasketId = 1, ProductId = 1, Quantity = 0 };
+        var dto = new BasketItemDto{ BasketId = 1, ProductId = 1, Quantity = 0 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -113,7 +113,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         using var context = CreateContext();
         var service = Service(context);
         var product = await CreateProductAsync();
-        var dto = new BasketItemCreateDto{ BasketId = 123456, ProductId = product.Id, Quantity = 1 };
+        var dto = new BasketItemDto{ BasketId = 123456, ProductId = product.Id, Quantity = 1 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -131,7 +131,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         using var context = CreateContext();
         var service = Service(context);
         var basketId = await CreateBasketAsync(new BasketEntity(), context);
-        var dto = new BasketItemCreateDto{ BasketId = basketId, ProductId = 999999, Quantity = 1 };
+        var dto = new BasketItemDto{ BasketId = basketId, ProductId = 999999, Quantity = 1 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -150,7 +150,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
         var product = await CreateProductAsync();
         var basketId = await CreateBasketAsync(new BasketEntity(), context);
-        var dto = new BasketItemCreateDto { BasketId = basketId, ProductId = product.Id, Quantity = 3 };
+        var dto = new BasketItemDto { BasketId = basketId, ProductId = product.Id, Quantity = 3 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -169,7 +169,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity();
         basket.AddItem(product.Id, product.UnitPrice, 1);
         var basketId = await CreateBasketAsync(basket, context);
-        var dto = new BasketItemCreateDto{ BasketId = basketId, ProductId = product.Id, Quantity = 2 };
+        var dto = new BasketItemDto{ BasketId = basketId, ProductId = product.Id, Quantity = 2 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -187,7 +187,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var ctxMock = new Mock<DataContext>(Options) { CallBase = true };
         ctxMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
         var service = Service(ctxMock.Object);
-        var dto = new Mock<BasketItemCreateDto>().Object;
+        var dto = new Mock<BasketItemDto>().Object;
 
         // Act
         var result = await service.AddItemAsync(dto);

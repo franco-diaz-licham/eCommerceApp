@@ -2,6 +2,7 @@
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("Errors")]
 public class BuggyController : ControllerBase   
 {
     [HttpGet("not-found")]

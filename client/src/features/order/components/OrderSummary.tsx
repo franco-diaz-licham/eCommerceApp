@@ -2,7 +2,7 @@ import { Box, Typography, Divider, Button, TextField, Paper } from "@mui/materia
 import { Link, useLocation } from "react-router-dom";
 import { type FieldValues, useForm } from "react-hook-form";
 import { Delete } from "@mui/icons-material";
-import { useAddCouponMutation, useRemoveCouponMutation } from "../../basket/services/basketApi";
+import { useAddCouponMutation, useRemoveCouponMutation } from "../../basket/services/basket.api";
 import { currencyFormat } from "../../../lib/utils";
 import { useBasket } from "../../../hooks/useBasket";
 

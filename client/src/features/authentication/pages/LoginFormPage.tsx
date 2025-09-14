@@ -7,7 +7,7 @@ import { useLazyUserInfoQuery, useLoginMutation } from "../services/account.api"
 import { loginSchema, type LoginSchema } from "../types/loginSchema";
 
 
-export default function LoginForm() {
+export default function LoginFormPage() {
     const [login, {isLoading}] = useLoginMutation();
     const [fetchUserInfo] = useLazyUserInfoQuery();
     const location = useLocation();
@@ -42,7 +42,6 @@ export default function LoginForm() {
                     <TextField
                         fullWidth
                         label='Email'
-                        autoFocus
                         {...register('email')}
                         error={!!errors.email}
                         helperText={errors.email?.message}
