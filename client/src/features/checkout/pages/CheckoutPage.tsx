@@ -17,9 +17,10 @@ export default function CheckoutPage() {
     const { darkMode } = useAppSelector((state) => state.ui);
 
     useEffect(() => {
-        if (!created.current) createPaymentIntent();
+        if(!basket) return;
+        if (!created.current) createPaymentIntent(basket.id);
         created.current = true;
-    }, [createPaymentIntent]);
+    }, [basket, createPaymentIntent]);
 
     const options: StripeElementsOptions | undefined = useMemo(() => {
         if (!basket?.clientSecret) return undefined;

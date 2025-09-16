@@ -40,6 +40,15 @@ export default function CheckoutSuccessPage() {
                     <Divider />
                     <Box display="flex" justifyContent="space-between">
                         <Typography variant="body2" color="textSecondary">
+                            Recipient
+                        </Typography>
+                        <Typography variant="body2" fontWeight="bold">
+                            {order.shippingAddress.recipientName}
+                        </Typography>
+                    </Box>
+                    <Divider />
+                    <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" color="textSecondary">
                             Shipping address
                         </Typography>
                         <Typography variant="body2" fontWeight="bold">

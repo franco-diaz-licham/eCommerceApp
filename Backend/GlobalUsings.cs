@@ -48,5 +48,12 @@ global using ILogger = Microsoft.Extensions.Logging.ILogger;
 global using ProductService = Backend.Src.Application.Services.ProductService;
 global using Backend.Src.Application.Queries.Interfaces;
 global using System.Collections;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using System.Text;
+global using Microsoft.AspNetCore.Authorization;
+global using AccountService = Backend.Src.Application.Services.AccountService;
+global using Backend.Src.Infrastructure.Repositories;
+global using Swashbuckle.AspNetCore.SwaggerGen;
 
 

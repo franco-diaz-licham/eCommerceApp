@@ -9,13 +9,15 @@ public static class SeedData
     private const string PHOTOS = $"{BASE_PATH}/PhotosData.json";
     private const string ORDER_STATUS = $"{BASE_PATH}/OrderStatusData.json";
     private const string IMAGES = $"{BASE_PATH}/Images/";
-    public static async Task SeedAsync(DataContext db, IMediaStorageService imageStoreService)
+    public static async Task SeedAsync(DataContext db, UserManager<UserEntity> userManager, IMediaStorageService imageStoreService)
     {
         await Photos(db, imageStoreService);
         await ProductTypes(db);
         await OrderStatus(db);
         await Brands(db);
         await Products(db);
+        await Roles(db);
+        await Users(userManager);
     }
 
     /// <summary>
@@ -114,6 +116,29 @@ public static class SeedData
 
         await db.Products.AddRangeAsync(entities);
         await db.SaveChangesAsync();
+    }
+
+    private static async Task Roles(DataContext db)
+    {
+        if (await db.Roles.AnyAsync()) return;
+        var roles = new List<IdentityRole>()
+        {
+            new (){ Name = "Member", NormalizedName = "MEMBER"},
+            new (){ Name = "Admin", NormalizedName = "ADMIN"}
+        };
+        await db.Roles.AddRangeAsync(roles);
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task Users(UserManager<UserEntity> userManager) 
+    {
+        if (await userManager.Users.AnyAsync()) return;
+        var user = new UserEntity("admin@admin.com", "admin@admin.com");
+        await userManager.CreateAsync(user, "Welcome1$");
+        await userManager.AddToRoleAsync(user, "Member");
+        var admin = new UserEntity("admin@admin.com", "admin@admin.com");
+        await userManager.CreateAsync(user, "Welcome1$");
+        await userManager.AddToRolesAsync(admin, ["Member", "Admin"]);
     }
 }
 

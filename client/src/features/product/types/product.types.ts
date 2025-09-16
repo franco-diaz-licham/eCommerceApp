@@ -2,6 +2,7 @@ import type { PhotoResponse } from "../../../lib/photo/photo.types";
 import type { BaseQueryParams } from "../../../types/baseQueryParams.type";
 import type { BrandResponse } from "../../../entities/brand/brand.types";
 import type { ProductTypeResponse } from "../../../entities/productType/productTypeResponse.type";
+import type { Pagination } from "../../../types/pagination.type";
 
 /** Product response DTO. */
 export interface ProductResponse {
@@ -62,3 +63,8 @@ export interface ProductFilters {
 
 /** Filterpreview type to see photo previews. */
 export type FileWithPreview = File & { preview?: string };
+
+export interface PaginatedProductsData {
+    response: ProductResponse[];
+    pagination: Pagination;
+}

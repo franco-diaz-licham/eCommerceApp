@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useCreateOrderMutation } from "../../order/services/orderApi";
 import type { ConfirmationToken, StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from "../../authentication/services/account.api";
+import type { OrderCreateDto } from "../../order/types/order.type";
 
 const steps = ["Address", "Payment", "Review"];
 
@@ -24,7 +25,7 @@ export default function CheckoutStepper() {
     const [addressComplete, setAddressComplete] = useState(false);
     const [paymentComplete, setPaymentComplete] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const { total, clearBasket } = useBasket();
+    const { total, deleteBasket } = useBasket();
     const navigate = useNavigate();
     const [confirmationToken, setConfirmationToken] = useState<ConfirmationToken | null>(null);
 
@@ -35,8 +36,8 @@ export default function CheckoutStepper() {
 
     const handleNext = async () => {
         if (activeStep === 0 && saveAddressChecked && elements) {
-            const address = await getStripeAddress();
-            if (address) await updateAddress(address);
+            // const address = await getStripeAddress();
+            // if (address) await updateAddress(address);
         }
         if (activeStep === 1) {
             if (!elements || !stripe) return;
@@ -60,7 +61,6 @@ export default function CheckoutStepper() {
 
             const orderModel = await createOrderModel();
             const orderResult = await createOrder(orderModel);
-
             const paymentResult = await stripe?.confirmPayment({
                 clientSecret: basket.clientSecret,
                 redirect: "if_required",
@@ -70,8 +70,8 @@ export default function CheckoutStepper() {
             });
 
             if (paymentResult?.paymentIntent?.status === "succeeded") {
+                await deleteBasket();
                 navigate("/checkout/success", { state: orderResult });
-                clearBasket();
             } else if (paymentResult?.error) {
                 throw new Error(paymentResult.error.message);
             } else {
@@ -87,13 +87,22 @@ export default function CheckoutStepper() {
         }
     };
 
-    const createOrderModel = async () => {
+    const createOrderModel = async (): Promise<OrderCreateDto> => {
         const shippingAddress = await getStripeAddress();
-        const paymentSummary = confirmationToken?.payment_method_preview.card;
-
+        const paymentSummary = getPaymentSummary();
         if (!shippingAddress || !paymentSummary) throw new Error("Problem creating order");
+        return { basketId: basket!.id, shippingAddress, paymentSummary };
+    };
 
-        return { shippingAddress, paymentSummary };
+    const getPaymentSummary = () => {
+        const paymentSummary = confirmationToken?.payment_method_preview.card;
+        if (!paymentSummary) return null;
+        return {
+            last4: paymentSummary.last4,
+            brand: paymentSummary.brand,
+            expMonth: paymentSummary.exp_month,
+            expYear: paymentSummary.exp_year,
+        };
     };
 
     const getStripeAddress = async () => {
@@ -103,22 +112,25 @@ export default function CheckoutStepper() {
             value: { name, address },
         } = await addressElement.getValue();
 
-        if (name && address) return { ...address, name };
+        if (name && address)
+            return {
+                recipientName: name,
+                line1: address.line1,
+                line2: address.line2,
+                city: address.city,
+                state: address.state,
+                postalCode: address.postal_code,
+                country: address.country,
+            };
 
         return null;
     };
 
-    const handleBack = () => {
-        setActiveStep((step) => step - 1);
-    };
+    const handleBack = () => setActiveStep((step) => step - 1);
 
-    const handleAddressChange = (event: StripeAddressElementChangeEvent) => {
-        setAddressComplete(event.complete);
-    };
+    const handleAddressChange = (event: StripeAddressElementChangeEvent) => setAddressComplete(event.complete);
 
-    const handlePaymentChange = (event: StripePaymentElementChangeEvent) => {
-        setPaymentComplete(event.complete);
-    };
+    const handlePaymentChange = (event: StripePaymentElementChangeEvent) => setPaymentComplete(event.complete);
 
     if (isLoading) return <Typography variant="h6">Loading checkout...</Typography>;
 
@@ -163,7 +175,6 @@ export default function CheckoutStepper() {
                     <Review confirmationToken={confirmationToken} />
                 </Box>
             </Box>
-
             <Box display="flex" paddingTop={2} justifyContent="space-between">
                 <Button onClick={handleBack}>Back</Button>
                 <Button onClick={handleNext} disabled={(activeStep === 0 && !addressComplete) || (activeStep === 1 && !paymentComplete) || submitting} loading={submitting}>

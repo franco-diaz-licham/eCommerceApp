@@ -1,7 +1,10 @@
+import type { Pagination } from "../../../types/pagination.type";
+
 export interface OrderResponse {
     id: number;
-    buyerEmail: string;
-    shippingAddress: ShippingAddress;
+    userId: string;
+    shippingAddress: ShippingAddressDto;
+    paymentSummary: PaymentSummaryDto;
     orderDate: string;
     orderItems: OrderItem[];
     subtotal: number;
@@ -9,54 +12,41 @@ export interface OrderResponse {
     discount: number;
     total: number;
     orderStatus: string;
-    paymentSummary: PaymentSummary;
 }
 
-export interface OrderCreate {
-    shippingAddress: ShippingAddress;
-    paymentSummary: PaymentSummary;
+export interface OrderCreateDto {
+    basketId: number;
+    shippingAddress: ShippingAddressDto;
+    paymentSummary: PaymentSummaryDto;
 }
 
-export interface Order {
-    id: number
-    buyerEmail: string
-    shippingAddress: ShippingAddress
-    orderDate: string
-    orderItems: OrderItem[]
-    subtotal: number
-    deliveryFee: number
-    discount: number
-    total: number
-    orderStatus: string
-    paymentSummary: PaymentSummary
-  }
-  
-  export interface ShippingAddress {
-    name: string
-    line1: string
-    line2?: string | null
-    city: string
-    state: string
-    postal_code: string
-    country: string
-  }
-  
-  export interface OrderItem {
-    productId: number
-    name: string
-    pictureUrl: string
-    price: number
-    quantity: number
-  }
-  
-  export interface PaymentSummary {
-    last4: number | string
-    brand: string
-    exp_month: number
-    exp_year: number
-  }
-  
-  export interface CreateOrder {
-    shippingAddress: ShippingAddress
-    paymentSummary: PaymentSummary
-  }
+export interface ShippingAddressDto {
+    recipientName: string;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}
+
+export interface PaymentSummaryDto {
+    last4: number | string;
+    brand: string;
+    expMonth: number;
+    expYear: number;
+}
+
+export interface OrderItem {
+    productId: number;
+    name: string;
+    pictureUrl: string;
+    price: number;
+    quantity: number;
+}
+
+/** Paginated orders response */
+export interface PaginatedOrdersData {
+    response: OrderResponse[];
+    pagination: Pagination;
+}

@@ -25,7 +25,6 @@ export default function RegisterFormPage() {
             const apiError = error as { message: string };
             if (apiError.message && typeof apiError.message === "string") {
                 const errorArray = apiError.message.split(",");
-
                 errorArray.forEach((e) => {
                     if (e.includes("Password")) {
                         setError("password", { message: e });

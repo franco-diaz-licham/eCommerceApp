@@ -1,9 +1,10 @@
 ﻿namespace Backend.Src.Application.Services;
 
-public class OrderService(DataContext db, IMapper mapper) : IOrderService
+public class OrderService(DataContext db, IMapper mapper, ICurrentUser currentUser) : IOrderService
 {
     private readonly IMapper _mapper = mapper;
     private readonly DataContext _db = db;
+    private readonly ICurrentUser _currentUser = currentUser;
 
     public async Task<Result<List<OrderDto>>> GetAllAsync(BaseQuerySpecs specs)
     {
@@ -19,9 +20,9 @@ public class OrderService(DataContext db, IMapper mapper) : IOrderService
         return Result<List<OrderDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
     }
 
-    public async Task<Result<OrderDto>> GetAsync(int id, string email)
+    public async Task<Result<OrderDto>> GetAsync(int id)
     {
-        var output = await _db.Orders.AsNoTracking().Where(o => o.UserEmail == email && o.Id == id).AsNoTracking().ProjectTo<OrderDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        var output = await _db.Orders.AsNoTracking().Where(o => o.UserId == _currentUser.UserId && o.Id == id).AsNoTracking().ProjectTo<OrderDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         if(output is null) return Result<OrderDto>.Fail("Order could not be found...", ResultTypeEnum.Invalid);
         return Result<OrderDto>.Success(output, ResultTypeEnum.Created);
     }
@@ -32,10 +33,11 @@ public class OrderService(DataContext db, IMapper mapper) : IOrderService
         var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).ThenInclude(i => i.Product).Include(i => i.Coupon).FirstOrDefaultAsync();
         if (basket is null || basket.BasketItems.Count == 0) return Result<OrderDto>.Fail("Basket is empty.", ResultTypeEnum.Invalid);
         if (string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDto>.Fail("Invalid basket payment intent.", ResultTypeEnum.Invalid);
+        if(_currentUser.UserId is null) return Result<OrderDto>.Fail("User not found.", ResultTypeEnum.Invalid);
 
         await using var transaction = await _db.Database.BeginTransactionAsync();
 
-        // Create items from basket items and Atomic concurrent handle: allow SQL handle competting update requests
+        // Create items from basket items and apply atomic concurrent handle: allow SQL handle competting update requests
         var orderItems = new List<OrderItemEntity>();
         foreach (var bi in basket.BasketItems)
         {
@@ -52,11 +54,12 @@ public class OrderService(DataContext db, IMapper mapper) : IOrderService
             }
         }
 
-        // Create order
-        var address = new ShippingAddress(dto.ShippingAddress.Line1, dto.ShippingAddress.Line2, dto.ShippingAddress.City, dto.ShippingAddress.State, dto.ShippingAddress.PostalCode, dto.ShippingAddress.Country);
+        // Create order and delete basket
+        var address = _mapper.Map<ShippingAddress>(dto.ShippingAddress);
         var summary = _mapper.Map<PaymentSummary>(dto.PaymentSummary);
-        var order = new OrderEntity(dto.UserEmail, address, basket.PaymentIntentId, basket.DeliveryFee, basket.Subtotal, basket.Discount, summary, orderItems);
+        var order = new OrderEntity(_currentUser.UserId, address, basket.PaymentIntentId, basket.DeliveryFee, basket.Subtotal, basket.Discount, summary, orderItems);
         _db.Orders.Add(order);
+        _db.Baskets.Remove(basket);
 
         // Save and validate actions
         var saved = await _db.SaveChangesAsync() > 0;

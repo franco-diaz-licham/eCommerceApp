@@ -21,7 +21,7 @@ public class OrderEntityUnitTests
         var order = new OrderEntity("USER@X.COM", address, "pi_123", 5m, 20m, 2m, new(), items);
 
         // Assert
-        order.UserEmail.Should().Be("user@x.com");
+        order.UserFullName.Should().Be("user@x.com");
         order.PaymentIntentId.Should().Be("pi_123");
         order.ShippingAddress.Should().NotBeNull();
         order.PaymentSummary.Should().NotBeNull();
@@ -44,7 +44,7 @@ public class OrderEntityUnitTests
         var entity = NewOrder();
         
         // Act
-        Action act = () => entity.SetUserEmail(userEmail!);
+        Action act = () => entity.SetUserFullName(userEmail!);
         
         // Assert
         act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(userEmail)} is ivalid.*");
@@ -61,7 +61,7 @@ public class OrderEntityUnitTests
         var userEmail = new string('a', length);
         
         // Act
-        Action act = () => entity.SetUserEmail(userEmail);
+        Action act = () => entity.SetUserFullName(userEmail);
         
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage($"*{nameof(userEmail)} is too long.*");
@@ -77,10 +77,10 @@ public class OrderEntityUnitTests
         var entity = NewOrder(10, email: "X");
 
         // Act
-        entity.SetUserEmail(userEmail);
+        entity.SetUserFullName(userEmail);
 
         // Assert
-        entity.UserEmail.Should().Be(expected);
+        entity.UserFullName.Should().Be(expected);
     }
 
     [Fact]

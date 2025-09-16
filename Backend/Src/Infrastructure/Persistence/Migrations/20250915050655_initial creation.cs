@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Src.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialcreation : Migration
+    public partial class initialcreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -140,8 +140,8 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     AddressId = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -226,8 +226,6 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     PaymentIntentId = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     LastProcessedStripeEventId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ShippingAddress_Line1 = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ShippingAddress_Line2 = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     ShippingAddress_City = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
@@ -237,7 +235,9 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     PaymentSummary_Last4 = table.Column<int>(type: "int", nullable: false),
                     PaymentSummary_Brand = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     PaymentSummary_ExpMonth = table.Column<int>(type: "int", nullable: false),
-                    PaymentSummary_ExpYear = table.Column<int>(type: "int", nullable: false)
+                    PaymentSummary_ExpYear = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -489,6 +489,12 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                 name: "IX_Orders_OrderStatusId",
                 table: "Orders",
                 column: "OrderStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentIntentId",
+                table: "Orders",
+                column: "PaymentIntentId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrdersItems_OrderId",

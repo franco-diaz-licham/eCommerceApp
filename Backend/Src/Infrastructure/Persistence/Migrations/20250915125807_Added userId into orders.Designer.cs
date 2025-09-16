@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Src.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250909045420_Initial creation")]
-    partial class Initialcreation
+    [Migration("20250915125807_Added userId into orders")]
+    partial class AddeduserIdintoorders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -266,13 +266,19 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("PaymentIntentId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -496,6 +502,9 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -524,9 +533,6 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -717,6 +723,12 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Backend.Src.Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("Backend.Src.Domain.ValueObjects.PaymentSummary", "PaymentSummary", b1 =>
                         {
                             b1.Property<int>("OrderEntityId")
@@ -761,6 +773,12 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                                 .HasMaxLength(56)
                                 .HasColumnType("nvarchar(56)");
 
+                            b1.Property<DateTime>("CreatedOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int");
+
                             b1.Property<string>("Line1")
                                 .IsRequired()
                                 .HasMaxLength(128)
@@ -780,6 +798,14 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                                 .HasMaxLength(12)
                                 .HasColumnType("nvarchar(12)");
 
+                            b1.Property<DateTime?>("UpdatedOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("UserFullName")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)");
+
                             b1.HasKey("OrderEntityId");
 
                             b1.ToTable("Orders");
@@ -795,6 +821,8 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Navigation("ShippingAddress")
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderItemEntity", b =>

@@ -7,9 +7,9 @@ public class OrderEntity : BaseEntity
     /// </summary>
     private OrderEntity() { }
 
-    public OrderEntity(string userEmail, ShippingAddress shipping, string paymentIntentId, decimal deliveryFee, decimal subtotal, decimal discount, PaymentSummary summary, List<OrderItemEntity> items)
+    public OrderEntity(string userId, ShippingAddress shipping, string paymentIntentId, decimal deliveryFee, decimal subtotal, decimal discount, PaymentSummary summary, List<OrderItemEntity> items)
     {
-        SetUserEmail(userEmail);
+        SetUserId(userId);
         SetDeliveryFee(deliveryFee);
         SetSubtotal(subtotal);
         ApplyDiscount(discount);
@@ -22,7 +22,8 @@ public class OrderEntity : BaseEntity
     }
 
     #region Core data 
-    public string UserEmail { get; private set; } = null!;
+    public string UserId { get; private set; } = null!;
+    public UserEntity? User { get; set; }
     public DateTime OrderDate { get; private set; } = DateTime.UtcNow;
     public decimal Subtotal { get; private set; } 
     public decimal DeliveryFee { get; private set; }
@@ -43,13 +44,11 @@ public class OrderEntity : BaseEntity
     #endregion
 
     #region Business Logic
-    public void SetUserEmail(string userEmail)
+    public void SetUserId(string userId)
     {
-        if (string.IsNullOrWhiteSpace(userEmail)) throw new ArgumentNullException($"{nameof(userEmail)} is ivalid.");
-        var email = userEmail.Trim();
-        if (email.Length > 64) throw new ArgumentException($"{nameof(userEmail)} is too long.");
-
-        UserEmail = email.ToLower();
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentNullException($"{nameof(userId)} is ivalid.");
+        if (userId.Length > 450) throw new ArgumentException($"{nameof(userId)} is too long.");
+        UserId = userId;
     }
 
     public void SetShippingAddress(ShippingAddress address)
@@ -119,10 +118,7 @@ public class OrderEntity : BaseEntity
         Discount = amount;
     }
 
-    public void ClearDiscount()
-    {
-        Discount = 0m;
-    }
+    public void ClearDiscount() => Discount = 0m;
 
     public void MarkPaymentSucceeded(string stripeEventId)
     {
@@ -132,25 +128,13 @@ public class OrderEntity : BaseEntity
         TransitionTo(OrderStatusEnum.Paid);
     }
 
-    public void MarkCancelled()
-    {
-        TransitionTo(OrderStatusEnum.Cancelled);
-    }
+    public void MarkCancelled() => TransitionTo(OrderStatusEnum.Cancelled);
 
-    public void MarkShipped()
-    {
-        TransitionTo(OrderStatusEnum.Shipped);
-    }
+    public void MarkShipped() => TransitionTo(OrderStatusEnum.Shipped);
 
-    public void MarkCompleted()
-    {
-        TransitionTo(OrderStatusEnum.Completed);
-    }
+    public void MarkCompleted() => TransitionTo(OrderStatusEnum.Completed);
 
-    public void MarkPaymentFailed()
-    {
-        TransitionTo(OrderStatusEnum.PaymentFailed);
-    }
+    public void MarkPaymentFailed() => TransitionTo(OrderStatusEnum.PaymentFailed);
 
     /// <summary>
     /// Specifies the allowed transistions per current states.

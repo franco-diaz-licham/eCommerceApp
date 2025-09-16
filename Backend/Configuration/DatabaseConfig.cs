@@ -14,8 +14,9 @@ public static class DatabaseConfig
         {
             var db = services.GetRequiredService<DataContext>() ?? throw new InvalidOperationException("No data context...");
             var imageStoreService = services.GetRequiredService<IMediaStorageService>();
+            var userManager = services.GetRequiredService<UserManager<UserEntity>>() ?? throw new InvalidOperationException("No data context...");
             await db.Database.MigrateAsync();
-            await SeedData.SeedAsync(db, imageStoreService);
+            await SeedData.SeedAsync(db, userManager, imageStoreService);
         }
         catch (Exception ex)
         {

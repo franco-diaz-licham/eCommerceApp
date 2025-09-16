@@ -22,7 +22,13 @@ export const store = configureStore({
         products: productSlice.reducer,
         basketSession: basketSessionSlice.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productApi.middleware, errorApi.middleware, orderApi.middleware, accountApi.middleware, basketApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
+        productApi.middleware, 
+        errorApi.middleware, 
+        orderApi.middleware, 
+        accountApi.middleware, 
+        basketApi.middleware, 
+        checkoutApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

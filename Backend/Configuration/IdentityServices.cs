@@ -1,21 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-
-namespace Backend.Configuration;
+﻿namespace Backend.Configuration;
 
 public static class IdentityServices
 {
     public static void AddIdentityServices(this WebApplicationBuilder builder)
     {
-        // Register identity services.
-        builder.Services.AddIdentityCore<UserEntity>(options =>
-        {
-            options.Password.RequireNonAlphanumeric = false;
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<DataContext>();
+        //// Register identity services.
+        //builder.Services.AddIdentityCore<UserEntity>(options =>
+        //{
+        //    options.Password.RequireNonAlphanumeric = false;
+        //    options.User.RequireUniqueEmail = true;
+        //})
+        //.AddRoles<IdentityRole>()
+        //.AddEntityFrameworkStores<DataContext>()
+        //.AddSignInManager();
 
         //// Authentication
         //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -31,6 +28,15 @@ public static class IdentityServices
         //    };
         //});
 
-        //builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization();
+        builder.Services.AddIdentityApiEndpoints<UserEntity>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.Password.RequireNonAlphanumeric = false;
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<DataContext>()
+        .AddSignInManager();
     }
 }

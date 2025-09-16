@@ -290,7 +290,7 @@ public class BasketEntityUnitTests
         var basket = new BasketEntity();
 
         // Act
-        basket.AttachPaymentIntent("pi_123", "cs_123");
+        basket.AttachPaymentIntentInfo("pi_123", "cs_123");
 
         // Assert
         basket.PaymentIntentId.Should().Be("pi_123");
@@ -310,7 +310,7 @@ public class BasketEntityUnitTests
         var basket = new BasketEntity();
         
         // Act
-        Action act = () => basket.AttachPaymentIntent(pi!, cs!);
+        Action act = () => basket.AttachPaymentIntentInfo(pi!, cs!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -321,7 +321,7 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        basket.AttachPaymentIntent("pi_123", "cs_123");
+        basket.AttachPaymentIntentInfo("pi_123", "cs_123");
 
         // Act
         basket.ClearPaymentIntent();
@@ -350,7 +350,7 @@ public class BasketEntityUnitTests
     {
         // Arrange
         var basket = new BasketEntity();
-        basket.AttachPaymentIntent("pi_123", "sec_abc");
+        basket.AttachPaymentIntentInfo("pi_123", "sec_abc");
 
         // Act
         basket.ClearPaymentIntent();

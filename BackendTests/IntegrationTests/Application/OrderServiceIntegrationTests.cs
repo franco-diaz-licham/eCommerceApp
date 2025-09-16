@@ -14,7 +14,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
         var product = await CreateProductAsync();
         var order = new OrderEntity(
-            userEmail: "user@example.com",
+            userFullName: "user@example.com",
             shipping: new ShippingAddress("L1", "L2", "City", "State", "2000", "AU"),
             paymentIntentId: "piX",
             deliveryFee: 5m,
@@ -111,7 +111,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var orderCreateDto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserEmail = "user@x.com",
+            UserFullName = "user@x.com",
             ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
@@ -136,7 +136,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserEmail = "user@x.com",
+            UserFullName = "user@x.com",
             ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
@@ -164,7 +164,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserEmail = "user@x.com",
+            UserFullName = "user@x.com",
             ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
@@ -199,7 +199,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var orderCreateDto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserEmail = "user@x.com",
+            UserFullName = "user@x.com",
             ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
@@ -241,7 +241,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserEmail = "user@x.com",
+            UserFullName = "user@x.com",
             ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };

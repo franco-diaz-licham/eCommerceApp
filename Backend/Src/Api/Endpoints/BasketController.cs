@@ -22,6 +22,13 @@ public class BasketController(IBasketService basketService, IMapper mapper) : Co
         return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<bool>> DeleteBasketAsaync(int id)
+    {
+        var result = await _basketService.DeleteBasketAsync(id);
+        return result.ToActionResult();
+    }
+
     [HttpPost("add-item")]
     public async Task<ActionResult<BasketResponse>> AddBasketItemAsync(BasketItemAddRequest request)
     {

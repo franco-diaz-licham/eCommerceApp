@@ -3,6 +3,6 @@
 public class CreateOrderRequest
 {
     [Required] public int BasketId { get; set; }
-    [Required] public AddressResponse ShippingAddress { get; set; } = null!;
-    [Required] public PaymentSummaryResponse PaymentSummary { get; set; } = null!;
+    [Required] public CreateShippingAddressRequest ShippingAddress { get; set; } = null!;
+    [Required] public CreatePaymentSummaryRequest PaymentSummary { get; set; } = null!;
 }

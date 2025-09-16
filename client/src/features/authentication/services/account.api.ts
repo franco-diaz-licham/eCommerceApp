@@ -4,20 +4,23 @@ import type { LoginSchema } from "../types/loginSchema";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 import type { Address, UserResponse } from "../types/user.type";
 import { Routes } from "../../../app/routes/Routes";
+import type { ApiSingleResponse } from "../../../types/api.types";
 
 export const accountApi = createApi({
     reducerPath: "accountApi",
     baseQuery: baseQueryWithErrorHandling,
     tagTypes: ["UserInfo"],
     endpoints: (builder) => ({
-        login: builder.mutation<void, LoginSchema>({
+        // LOGIN user with username/email and password.
+        login: builder.mutation<UserResponse, LoginSchema>({
             query: (creds) => {
                 return {
-                    url: "login?useCookies=true",
+                    url: "account/login?useCookies=true",
                     method: "POST",
                     body: creds,
                 };
             },
+            transformResponse: (response: ApiSingleResponse<UserResponse>) => response.data,
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
@@ -27,6 +30,7 @@ export const accountApi = createApi({
                 }
             },
         }),
+        // REGISTER user with username/password
         register: builder.mutation<void, object>({
             query: (creds) => {
                 return {
@@ -46,10 +50,13 @@ export const accountApi = createApi({
                 }
             },
         }),
+        // GET logged in user information.
         userInfo: builder.query<UserResponse, void>({
-            query: () => "account/user-info",
+            query: () => "account/user",
+            transformResponse: (response: ApiSingleResponse<UserResponse>) => response.data,
             providesTags: ["UserInfo"],
         }),
+        // SIGNOUT currenly logged in user.
         logout: builder.mutation({
             query: () => ({
                 url: "account/logout",
@@ -61,6 +68,7 @@ export const accountApi = createApi({
                 Routes.navigate("/");
             },
         }),
+        
         fetchAddress: builder.query<Address, void>({
             query: () => ({
                 url: "account/address",
@@ -78,7 +86,6 @@ export const accountApi = createApi({
                         Object.assign(draft, { ...address });
                     })
                 );
-
                 try {
                     await queryFulfilled;
                 } catch (error) {

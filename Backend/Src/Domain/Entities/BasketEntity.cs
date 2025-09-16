@@ -78,13 +78,10 @@ public class BasketEntity : BaseEntity
         ClearDiscount();
     }
 
-    public void AttachPaymentIntent(string paymentIntentId, string clientSecret)
+    public void AttachPaymentIntentInfo(string paymentIntentId, string clientSecret)
     {
-        if (string.IsNullOrWhiteSpace(paymentIntentId)) throw new ArgumentNullException($"{nameof(paymentIntentId)} required.");
-        if (string.IsNullOrWhiteSpace(clientSecret)) throw new ArgumentNullException($"{nameof(clientSecret)} required.");
-        
-        PaymentIntentId = paymentIntentId;
-        ClientSecret = clientSecret;
+        SetPaymentIntentId(paymentIntentId);
+        SetClientSecret(clientSecret);
     }
 
     public void ClearPaymentIntent()

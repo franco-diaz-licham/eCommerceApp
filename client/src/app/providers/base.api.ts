@@ -7,6 +7,7 @@ import { StatusCode, type ErrorApiResponse } from "../../types/api.types";
 /** Create custom base query */
 const customBaseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
+    credentials: "include",
     paramsSerializer: (params) => {
         const usp = new URLSearchParams();
         

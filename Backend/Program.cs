@@ -4,5 +4,5 @@ builder.AddServices();
 
 // build app, configure pipeline and run
 var app = builder.Build();
-await app.Config(builder);
+await app.ConfigPipeline(builder);
 await app.RunAsync();

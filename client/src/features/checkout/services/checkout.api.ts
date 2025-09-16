@@ -1,27 +1,31 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { BasketResponse } from "../../basket/types/basket.type";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 import { basketApi } from "../../basket/services/basket.api";
+import type { PaymentIntentResponse } from "../types/checkout.type";
+import type { ApiSingleResponse } from "../../../types/api.types";
 
 export const checkoutApi = createApi({
     reducerPath: "checkoutApi",
     baseQuery: baseQueryWithErrorHandling,
     endpoints: (builder) => ({
-        createPaymentIntent: builder.mutation<BasketResponse, void>({
-            query: () => {
+        // CREATE paymentintent with stripe.
+        createPaymentIntent: builder.mutation<PaymentIntentResponse, number>({
+            query: (basketId) => {
                 return {
-                    url: "payments",
+                    url: `payment?basketId=${basketId}`,
                     method: "POST",
                 };
             },
+            transformResponse: (response: ApiSingleResponse<PaymentIntentResponse>) => response.data,
             onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
                 try {
-                    const { data } = await queryFulfilled;
+                    const { data: response } = await queryFulfilled;
                     const basketId = localStorage.getItem("basketId");
                     if (!basketId) return;
                     dispatch(
                         basketApi.util.updateQueryData("fetchBasket", Number(basketId), (draft) => {
-                            draft.clientSecret = data.clientSecret;
+                            draft.clientSecret = response.clientSecret;
+                            draft.paymentIntentId = response.paymentIntent;
                         })
                     );
                 } catch (error) {

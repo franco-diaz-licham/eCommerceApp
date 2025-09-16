@@ -1,4 +1,4 @@
-import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation } from "../features/basket/services/basket.api";
+import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation, useDeleteBasketMutation } from "../features/basket/services/basket.api";
 import type { BasketItemResponse } from "../features/basket/types/basket.type";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useAppDispatch, useAppSelector } from "../app/store/store";
@@ -8,6 +8,7 @@ export const useBasket = () => {
     const [addBasketItem, { isLoading: isAdding }] = useAddBasketItemMutation();
     const [removeItemMutation] = useRemoveBasketItemMutation();
     const [clearBasketMutation] = useClearBasketMutation();
+    const [deleteBasketMutation] = useDeleteBasketMutation();
     const dispatch = useAppDispatch();
     const currentId = useAppSelector((s) => s.basketSession.id); // get current session
     const { data: fetched, isLoading } = useFetchBasketQuery(currentId ?? skipToken); // get data from query
@@ -15,14 +16,20 @@ export const useBasket = () => {
 
     // Use the correct key from your response
     const items: BasketItemResponse[] = basket?.basketItems ?? [];
+
+    /** Individual items costs. */
     const subtotal = items.reduce((s, i) => s + i.lineTotal, 0);
+
+    /** Delivery fee costs. */
     const deliveryFee = subtotal > 100 ? 0 : 5;
+
+    /** Calculates the actual item count in the basket. */
     const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
     let discount = 0;
-    if (basket?.coupon) {
-        discount = basket.coupon.amountOff ? basket.coupon.amountOff : Math.round(subtotal * ((basket.coupon.percentOff ?? 0) / 100) * 100) / 100;
-    }
+    if (basket?.coupon)  discount = basket.coupon.amountOff ? basket.coupon.amountOff : Math.round(subtotal * ((basket.coupon.percentOff ?? 0) / 100) * 100) / 100;
+
+    /** Calculates basket total. */
     const total = Math.round((subtotal - discount + deliveryFee) * 100) / 100;
 
     /** Adds new item to a basket. If basket does not exist, server will create a new basket. */
@@ -36,6 +43,12 @@ export const useBasket = () => {
 
     /** Clears the entire basket. */
     const clearBasket = async () => await clearBasketMutation().unwrap();
+
+    /** Deletes local basket cache. */
+    const deleteBasket = async () => {
+        if (!basket?.id) return;
+        await deleteBasketMutation(basket?.id).unwrap();
+    };
 
     /** Get basketItem from current basket. */
     const getbasketItem = (productId: number) => {
@@ -64,5 +77,6 @@ export const useBasket = () => {
         getbasketItem,
         removeItemEnsuringBasket,
         addItemEnsuringBasket,
+        deleteBasket,
     };
 };

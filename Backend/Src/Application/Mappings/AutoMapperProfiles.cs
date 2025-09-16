@@ -72,7 +72,7 @@ public class AutoMapperProfiles : Profile
         // Order
         CreateMap<OrderEntity, OrderDto>().ForMember(d => d.Total, opt => opt.MapFrom(s => s.Total));
         CreateMap<OrderDto, OrderResponse>();
-        CreateMap<CreateOrderRequest, OrderCreateDto>().ForMember(x => x.UserEmail, o => o.Ignore());
+        CreateMap<CreateOrderRequest, OrderCreateDto>();
 
         // Order Item
         CreateMap<OrderItemEntity, OrderItemDto>();
@@ -87,13 +87,26 @@ public class AutoMapperProfiles : Profile
             .ForMember(d => d.Id, opt => opt.Ignore());
 
         // Address
-        CreateMap<ShippingAddress, AddressDto>();
-        CreateMap<AddressDto, ShippingAddress>();
+        CreateMap<ShippingAddress, ShippingAddressDto>();
         CreateMap<AddressDto, AddressResponse>().ReverseMap();
         CreateMap<AddressDto, AddressEntity>().ConstructUsing(s => new AddressEntity(s.Line1, s.Line2, s.City, s.State, s.PostalCode, s.Country)).ForAllMembers(o => o.Ignore());
+        CreateMap<ShippingAddressDto, ShippingAddress>().ConstructUsing(s => new ShippingAddress(s.RecipientName, s.Line1, s.Line2, s.City, s.State, s.PostalCode, s.Country)).ForAllMembers(o => o.Ignore());
+        CreateMap<CreateShippingAddressRequest, ShippingAddressDto>();
+        CreateMap<ShippingAddressDto, ShippingAddressResponse>();
 
         // Payment Summary
         CreateMap<PaymentSummary, PaymentSummaryDto>().ReverseMap();
         CreateMap<PaymentSummaryDto, PaymentSummaryResponse>().ReverseMap();
+        CreateMap<CreatePaymentSummaryRequest, PaymentSummaryDto>();
+
+        // User
+        CreateMap<UserEntity, UserDto>()
+                .ForMember(x => x.IsAuthenticated, opt => opt.Ignore())
+                .ForMember(x => x.Roles, opt => opt.Ignore())
+                .ForMember(x => x.Address, opt => opt.Ignore())
+                .ForMember(x => x.AddressId, opt => opt.Ignore())
+                .ForMember(x => x.IsActive, opt => opt.Ignore());
+        CreateMap<UserRegisterRequest, UserRegisterDto>();
+        CreateMap<UserDto, UserResponse>();
     }
 }

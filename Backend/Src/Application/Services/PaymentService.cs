@@ -13,26 +13,22 @@ public class PaymentService(DataContext db, IPaymentGateway payments, IMapper ma
         var basket = await _db.Baskets.Where(x => x.Id == basketId).FirstOrDefaultAsync();
         if (basket is null) return Result<BasketDto>.Fail("Basket not found.", ResultTypeEnum.NotFound);
 
-        // Calculate total
+        if (basket.Coupon != null)
+        {
+            var discount = await _payments.CalculateDiscountFromAmount(basket.Coupon.RemoteId!, basket.Subtotal);
+            basket.SetDiscount(discount);
+        }
+
+        var info = await _payments.CreateOrUpdateAsync(basket.TotalToMinorUnits(), "aud", basket.PaymentIntentId);
+
+        if(basket.PaymentIntentId != info.IntentId || basket.ClientSecret != info.ClientSecret)
+        {
+            basket.AttachPaymentIntentInfo(info.IntentId, info.ClientSecret!);
+            var saved = await _db.SaveChangesAsync() > 0;
+            if (!saved) return Result<BasketDto>.Fail("Basket could not be updated...", ResultTypeEnum.Invalid);
+        }
+
         var basketDto = _mapper.Map<BasketDto>(basket);
-        decimal subtotal = basketDto.Subtotal;
-        decimal deliveryFee = subtotal > 10000 ? 0 : 500;
-        decimal discount = 0;
-
-        if (basketDto.Coupon != null) discount = await _payments.CalculateDiscountFromAmount(basketDto.Coupon.RemoteId, (long)subtotal);
-        var total = subtotal - discount + deliveryFee;
-
-        // Call gateway with final amount (minor units) & currency
-        var info = await _payments.CreateOrUpdateAsync((long)total, "aud", basket.PaymentIntentId);
-
-        // Update domain + DTO to preserve existing outward behavior
-        basket.AttachPaymentIntent(info.IntentId, info.ClientSecret ?? "");
-        basketDto.PaymentIntentId = info.IntentId;
-        basketDto.ClientSecret = info.ClientSecret;
-
-        // Save changes
-        var saved = await _db.SaveChangesAsync() > 0;
-        if (!saved) return Result<BasketDto>.Fail("Basket could not be updated...", ResultTypeEnum.Invalid);
         return Result<BasketDto>.Success(basketDto, ResultTypeEnum.Accepted);
     }
 

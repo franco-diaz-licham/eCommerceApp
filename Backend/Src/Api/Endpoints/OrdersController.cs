@@ -20,7 +20,7 @@ public class OrdersController(IMapper mapper, IOrderService orderService) : Cont
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderResponse>> GetOrderAsync(int id)
     {
-        var result = await _orderService.GetAsync(id, User.GetUsername());
+        var result = await _orderService.GetAsync(id);
         return _mapper.Map<Result<OrderResponse>>(result).ToActionResult();
     }
 

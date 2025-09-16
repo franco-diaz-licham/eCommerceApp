@@ -7,10 +7,10 @@ public class PaymentController(IPaymentService paymentService, IMapper mapper) :
     private readonly IPaymentService _paymentService = paymentService;
     private readonly IMapper _mapper = mapper;
 
-    [HttpPost("{id:int}")]
-    public async Task<ActionResult<BasketResponse>> CreateOrUpdatePaymentIntent(int id)
+    [HttpPost]
+    public async Task<ActionResult<BasketResponse>> CreateOrUpdatePaymentIntent(int basketId)
     {
-        var result = await _paymentService.CreateOrUpdatePaymentIntent(id);
+        var result = await _paymentService.CreateOrUpdatePaymentIntent(basketId);
         return _mapper.Map<Result<BasketResponse>>(result).ToActionResult();
     }
 

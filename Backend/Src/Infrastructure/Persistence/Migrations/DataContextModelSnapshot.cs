@@ -263,13 +263,19 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("PaymentIntentId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -493,6 +499,9 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -521,9 +530,6 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -714,6 +720,12 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Backend.Src.Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("Backend.Src.Domain.ValueObjects.PaymentSummary", "PaymentSummary", b1 =>
                         {
                             b1.Property<int>("OrderEntityId")
@@ -772,6 +784,11 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
                                 .HasMaxLength(4)
                                 .HasColumnType("nvarchar(4)");
 
+                            b1.Property<string>("RecipientName")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)");
+
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(12)
@@ -792,6 +809,8 @@ namespace Backend.Src.Infrastructure.Persistence.Migrations
 
                     b.Navigation("ShippingAddress")
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Src.Domain.Entities.OrderItemEntity", b =>

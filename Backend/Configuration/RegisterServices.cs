@@ -17,7 +17,6 @@ public static class RegisterServices
             opt.LogTo(Console.WriteLine, LogLevel.Information);
         });
         builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-        //builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         builder.Services.AddMappingService();
         builder.Services.AddMemoryCache();
         builder.AddAppServices();
@@ -26,7 +25,10 @@ public static class RegisterServices
         {
             options.AddPolicy("AllowAll", policy =>
             {
-                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                policy.WithOrigins("https://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
 

@@ -1,16 +1,11 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
-import type { Pagination } from "../../../types/pagination.type";
 import { createFormData } from "../../../lib/utils";
-import type { ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../types/product.types";
+import type { PaginatedProductsData, ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../types/product.types";
 import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 
 /** Base url resource endpoint. */
 const baseUrl: string = "products";
-interface mainProductsData {
-    response: ProductResponse[];
-    pagination: Pagination;
-}
 
 /** Response list handler. */
 const transformPaginatedResponse = (response: ApiResponse<ProductResponse>, meta: FetchBaseQueryMeta) => {
@@ -20,75 +15,60 @@ const transformPaginatedResponse = (response: ApiResponse<ProductResponse>, meta
     return { response: data, pagination };
 };
 
-/** Response single handler. */
-const transformPaginatedSingleResponse = (response: ApiSingleResponse<ProductResponse>) => response.data;
-
-/** Get products handler. */
-const getProducts = (productParams: ProductQueryParams) => {
-    return {
-        url: baseUrl,
-        params: productParams,
-    };
-};
-
-/** Get product filters handler. */
-const getProduct = (productId: number) => `${baseUrl}/${productId}`;
-
-/** Get product filters handler. */
-const getProductFilters = () => `${baseUrl}/filters`;
-
-/** Creates a product. */
-const createProduct = (data: ProductCreate) => {
-    const formData = createFormData(data);
-    return {
-        url: baseUrl,
-        method: "POST",
-        body: formData,
-    };
-};
-
-/** Updates a product. */
-const updateProduct = (data: ProductUpdate) => {
-    const formData = createFormData(data);
-    return {
-        url: baseUrl,
-        method: "PUT",
-        body: formData,
-    };
-};
-
-/** Deletes a product. */
-const deleteProduct = (id: number) => {
-    return {
-        url: `${baseUrl}/${id}`,
-        method: "DELETE",
-    };
-};
-
 /** Product reducer configuration. */
 export const productApi = createApi({
     reducerPath: "productApi",
     baseQuery: baseQueryWithErrorHandling,
     endpoints: (builder) => ({
-        fetchProducts: builder.query<mainProductsData, ProductQueryParams>({
-            query: getProducts,
+        /** GET all products. */
+        fetchProducts: builder.query<PaginatedProductsData, ProductQueryParams>({
+            query: (productParams: ProductQueryParams) => {
+                return {
+                    url: baseUrl,
+                    params: productParams,
+                };
+            },
             transformResponse: transformPaginatedResponse,
         }),
+        /** GET product filters handler. */
         fetchProductDetails: builder.query<ProductResponse, number>({
-            query: getProduct,
-            transformResponse: transformPaginatedSingleResponse,
+            query: (productId: number) => `${baseUrl}/${productId}`,
+            transformResponse: (response: ApiSingleResponse<ProductResponse>) => response.data,
         }),
+        /** GET product filters handler. */
         fetchFilters: builder.query<ProductFilters, void>({
-            query: getProductFilters,
+            query: () => `${baseUrl}/filters`,
         }),
+        /** CREATE a product. */
         createProduct: builder.mutation<ProductResponse, ProductCreate>({
-            query: (data) => createProduct(data),
+            query: (data: ProductCreate) => {
+                const formData = createFormData(data);
+                return {
+                    url: baseUrl,
+                    method: "POST",
+                    body: formData,
+                };
+            },
         }),
+        /** UPDATE a product. */
         updateProduct: builder.mutation<ProductResponse, ProductUpdate>({
-            query: (data) => updateProduct(data),
+            query: (data: ProductUpdate) => {
+                const formData = createFormData(data);
+                return {
+                    url: baseUrl,
+                    method: "PUT",
+                    body: formData,
+                };
+            },
         }),
+        /** DELETE a product. */
         deleteProduct: builder.mutation<void, number>({
-            query: (id: number) => deleteProduct(id),
+            query: (id: number) => {
+                return {
+                    url: `${baseUrl}/${id}`,
+                    method: "DELETE",
+                };
+            },
         }),
     }),
 });

@@ -4,6 +4,8 @@ import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import { setDarkMode } from "./uiSlice";
 import { useBasket } from "../../hooks/useBasket";
+import UserMenu from "./UserMenu";
+import { useUserInfoQuery } from "../../features/authentication/services/account.api";
 
 const midLinks = [
     { title: "products", path: "/products" },
@@ -31,7 +33,7 @@ const navStyles = {
 };
 
 export default function NavBar() {
-    // const { data: user } = useUserInfoQuery();
+    const { data: user } = useUserInfoQuery();
     const { itemCount } = useBasket();
     const { isLoading, darkMode } = useAppSelector((state) => state.ui);
     const dispatch = useAppDispatch();
@@ -55,13 +57,13 @@ export default function NavBar() {
                 </List>
 
                 <Box display="flex" alignItems="center">
-                    <IconButton component={Link} to='/basket' size="large" sx={{ color: 'inherit' }}>
+                    <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
                         <Badge badgeContent={itemCount} color="secondary">
                             <ShoppingCart />
                         </Badge>
                     </IconButton>
 
-                    {/* {user ? (
+                    {user ? (
                         <UserMenu user={user} />
                     ) : (
                         <List sx={{ display: "flex" }}>
@@ -71,7 +73,7 @@ export default function NavBar() {
                                 </ListItem>
                             ))}
                         </List>
-                    )} */}
+                    )}
                 </Box>
             </Toolbar>
             {isLoading && (

@@ -1,18 +1,18 @@
-import type { PaymentSummary, ShippingAddress } from "../features/basket/types/order.type";
+import type { PaymentSummaryDto, ShippingAddressDto } from "../features/order/types/order.type";
 
 /** Formats currency. */
 export function currencyFormat(amount: number) {
     return "$" + amount.toFixed(2);
 }
 
-export const formatAddressString = (address: ShippingAddress) => {
-    return `${address?.name}, ${address?.line1}, ${address?.city}, ${address?.state}, 
-            ${address?.postal_code}, ${address?.country}`;
+export const formatAddressString = (address: ShippingAddressDto) => {
+    return `${address?.line1}, ${address?.city}, ${address?.state}, 
+            ${address?.postalCode}, ${address?.country}`;
 };
 
-export const formatPaymentString = (card: PaymentSummary) => {
+export const formatPaymentString = (card: PaymentSummaryDto) => {
     return `${card?.brand?.toUpperCase()}, **** **** **** ${card?.last4}, 
-            Exp: ${card?.exp_month}/${card?.exp_year}`;
+            Exp: ${card?.expMonth}/${card?.expYear}`;
 };
 
 export function formatDate(date: string): string {
