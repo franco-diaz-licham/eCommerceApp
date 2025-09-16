@@ -2,9 +2,9 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithForm } from "../utilities/RenderWithForm";
 import { TestForm } from "../utilities/TestForm";
-import { Field } from "../utilities/Field";
+import TextInput from "../../src/components/ui/TextInput";
 
-type FormShape = {
+type SampleFormShape = {
     title: string;
     qty: number | undefined;
     notes: string;
@@ -14,7 +14,7 @@ describe("<TextInput />", () => {
     it("should bind value and update form state when user types", async () => {
         // Arrange
         const user = userEvent.setup();
-        const { methods } = renderWithForm<FormShape>(<Field name="title" label="Title" />, { defaultValues: { title: "", qty: undefined, notes: "" } });
+        const { methods } = renderWithForm<SampleFormShape>(<TextInput name="title" label="Title" />, { defaultValues: { title: "", qty: undefined, notes: "" } });
         const input = screen.getByRole("textbox", { name: /title/i });
 
         // Act
@@ -28,7 +28,7 @@ describe("<TextInput />", () => {
     it("should convert to a number when the user types digits", async () => {
         // Arrange
         const user = userEvent.setup();
-        const { methods } = renderWithForm<FormShape>(<Field name="qty" label="Quantity" type="number" />, { defaultValues: { title: "", qty: undefined, notes: "" } });
+        const { methods } = renderWithForm<SampleFormShape>(<TextInput name="qty" label="Quantity" type="number" />, { defaultValues: { title: "", qty: undefined, notes: "" } });
         const spin = screen.getByRole("spinbutton", { name: /quantity/i });
 
         // Act
@@ -43,7 +43,7 @@ describe("<TextInput />", () => {
     it("should set undefined when the input is cleared", async () => {
         // Arrange (start with a non-empty value to prove it changes)
         const user = userEvent.setup();
-        const { methods } = renderWithForm<FormShape>(<Field name="qty" label="Quantity" type="number" />, { defaultValues: { title: "", qty: 10, notes: "" } });
+        const { methods } = renderWithForm(<TextInput name="qty" label="Quantity" type="number" />, { defaultValues: { title: "", qty: 10, notes: "" } });
         const spin = screen.getByRole("spinbutton", { name: /quantity/i });
 
         // Act
@@ -54,33 +54,9 @@ describe("<TextInput />", () => {
         expect(methods.getValues("qty")).toBeUndefined();
     });
 
-    it("should show helper text when submitted without a required value and hide after fixing", async () => {
-        // Arrange
-        const user = userEvent.setup();
-        renderWithForm<FormShape>(
-            <TestForm>
-                <Field name="title" label="Title" rules={{ required: "Title is required" }} />
-            </TestForm>,
-            { defaultValues: { title: "", qty: undefined, notes: "" } }
-        );
-
-        // Act
-        await user.click(screen.getByRole("button", { name: /submit/i }));
-
-        // Assert
-        expect(await screen.findByText(/title is required/i)).toBeInTheDocument();
-
-        // Act (fix and resubmit)
-        await user.type(screen.getByRole("textbox", { name: /title/i }), "Ok");
-        await user.click(screen.getByRole("button", { name: /submit/i }));
-
-        // Assert
-        expect(screen.queryByText(/title is required/i)).not.toBeInTheDocument();
-    });
-
     it("should render a textarea with the given rows when multiline is true", () => {
         // Arrange & Act
-        renderWithForm<FormShape>(<Field name="notes" label="Notes" multiline rows={5} />);
+        renderWithForm<SampleFormShape>(<TextInput name="notes" label="Notes" multiline rows={5} />);
         const area = screen.getByRole("textbox", { name: /notes/i });
 
         // Assert
@@ -90,7 +66,7 @@ describe("<TextInput />", () => {
 
     it("should render with the provided label when label prop is set", () => {
         // Arrange & Act
-        renderWithForm<FormShape>(<Field name="title" label="My Label" />);
+        renderWithForm<SampleFormShape>(<TextInput name="title" label="My Label" />);
         const input = screen.getByRole("textbox", { name: /my label/i });
 
         // Assert
@@ -100,7 +76,7 @@ describe("<TextInput />", () => {
 
     it("should render an empty string when value is undefined", () => {
         // Arrange (omit `title` in defaults to simulate undefined)
-        renderWithForm<FormShape>(<Field name="title" label="Title" />, { defaultValues: { /* title omitted */ qty: undefined, notes: "" } });
+        renderWithForm<SampleFormShape>(<TextInput name="title" label="Title" />, { defaultValues: { /* title omitted */ qty: undefined, notes: "" } });
         const input = screen.getByRole("textbox", { name: /title/i });
 
         // Assert
@@ -109,10 +85,49 @@ describe("<TextInput />", () => {
 
     it("should render the preset value when defaultValues provides it", () => {
         // Arrange
-        renderWithForm<FormShape>(<Field name="title" label="Title" />, { defaultValues: { title: "Preset", qty: undefined, notes: "" } });
+        renderWithForm<SampleFormShape>(<TextInput name="title" label="Title" />, { defaultValues: { title: "Preset", qty: undefined, notes: "" } });
 
         // Assert
         const input = screen.getByRole("textbox", { name: /title/i });
         expect(input).toHaveValue("Preset");
+    });
+
+    it("should show helper text when submitted without a required value", async () => {
+        // Arrange
+        const user = userEvent.setup();
+
+        renderWithForm<SampleFormShape>(
+            <TestForm>
+                <TextInput name="title" label="Title" rules={{ required: "Title is required" }} />
+            </TestForm>,
+            { defaultValues: { title: "", qty: undefined, notes: "" } }
+        );
+
+        // Act
+        await user.click(screen.getByRole("button", { name: /submit/i }));
+
+        // Assert
+        expect(await screen.findByText(/title is required/i)).toBeInTheDocument();
+    });
+
+    it("should not show helper text when submitted with a required value", async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const onSubmit = vi.fn();
+
+        renderWithForm<SampleFormShape>(
+            <TestForm onSubmit={onSubmit} submitLabel="Submit">
+                <TextInput name="title" label="Title" rules={{ required: "Title is required" }} />
+            </TestForm>,
+            { defaultValues: { title: "", qty: undefined, notes: "" } }
+        );
+
+        // Act
+        await user.type(screen.getByRole("textbox", { name: /title/i }), "Ok");
+        await user.click(screen.getByRole("button", { name: /submit/i }));
+        
+        // Assert
+        expect(screen.queryByText(/title is required/i)).not.toBeInTheDocument();
+        expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ title: "Ok" }), expect.anything());
     });
 });

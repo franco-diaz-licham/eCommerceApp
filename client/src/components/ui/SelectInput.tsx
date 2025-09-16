@@ -5,13 +5,13 @@ import { type FieldValues, useController, type UseControllerProps } from "react-
 /** Option model for selector */
 type Option = { value: number; label: string };
 
-/** Functional props. */
+/** Functional props. Add base RHF and MUI props. */
 type SelectInputProps<T extends FieldValues> = {
     items: Option[];
 } & UseControllerProps<T> &
     Partial<SelectProps>;
 
-export default function SelectInput<TFieldValues extends FieldValues>(props: SelectInputProps<TFieldValues>) {
+export default function SelectInput<T extends FieldValues>(props: SelectInputProps<T>) {
     const { items, ...controllerProps } = props;
     const { field, fieldState } = useController(controllerProps);
 
@@ -23,11 +23,13 @@ export default function SelectInput<TFieldValues extends FieldValues>(props: Sel
 
     // Convert Select value is a string for MUI and convert from number
     const value = field.value == null ? "" : String(field.value);
+    const labelId = `${props.name}-label`;
+    const selectId = `${props.name}-select`;
 
     return (
         <FormControl fullWidth error={!!fieldState.error}>
-            <InputLabel>{props.label}</InputLabel>
-            <Select label={props.label} value={value} onChange={handleChange}>
+            <InputLabel id={labelId}>{props.label}</InputLabel>
+            <Select id={selectId} labelId={labelId} label={props.label} value={value} onChange={handleChange} displayEmpty>
                 <MenuItem value="">
                     <em>Select {props.label}</em>
                 </MenuItem>

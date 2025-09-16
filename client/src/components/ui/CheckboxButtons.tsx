@@ -1,5 +1,6 @@
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { useEffect, useState } from "react";
+import type { UseControllerProps } from "react-hook-form";
 
 /** Option model for selector */
 type Option = { value: number; label: string };
@@ -8,7 +9,7 @@ type CheckboxButtonsProps = {
     items: Option[];
     checked: Option[];
     onChange: (items: Option[]) => void;
-};
+} & UseControllerProps;
 
 export default function CheckboxButtons(props: CheckboxButtonsProps) {
     const [checkedItems, setCheckedItems] = useState(props.checked);

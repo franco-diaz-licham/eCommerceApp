@@ -11,7 +11,7 @@ function App() {
         palette: {
             mode: palleteType,
             background: {
-                default: palleteType === "light" ? "#eaeaea" : "#121212",
+                default: palleteType === "dark" ? "#070d27ff" : "#e2f6ffff",
             },
         },
     });
@@ -24,8 +24,8 @@ function App() {
             <Box
                 sx={{
                     minHeight: "100vh",
-                    background: darkMode ? "radial-gradient(circle, #1e3aBa, #111B27)" : "radial-gradient(circle, #baecf9, #f0f9ff)",
-                    py: 6,
+                    background: darkMode ? "#070d27ff" : "#f6fcffff",
+                    py: 4,
                 }}
             >
                 <Container maxWidth="xl" sx={{ mt: 8 }}>

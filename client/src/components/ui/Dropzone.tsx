@@ -1,14 +1,16 @@
 import { UploadFile } from "@mui/icons-material";
 import { FormControl, FormHelperText, Typography } from "@mui/material";
 import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type DropzoneProps } from "react-dropzone";
 import { type FieldValues, useController, type UseControllerProps } from "react-hook-form";
 
-type Props<T extends FieldValues> = {
+/** Functional props. Add base RHF and MUI props. */
+type DropZoneProps<T extends FieldValues> = {
     name: keyof T;
-} & UseControllerProps<T>;
+} & UseControllerProps<T> &
+    Partial<DropzoneProps>;
 
-export default function Dropzone<T extends FieldValues>(props: Props<T>) {
+export default function Dropzone<T extends FieldValues>(props: DropZoneProps<T>) {
     const { fieldState, field } = useController({ ...props });
 
     const onDrop = useCallback(

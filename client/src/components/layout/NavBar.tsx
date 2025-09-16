@@ -1,4 +1,4 @@
-import { AppBar, Badge, Box, IconButton, LinearProgress, List, ListItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, Container, IconButton, LinearProgress, List, ListItem, Toolbar, Typography } from "@mui/material";
 import { DarkMode, LightMode, ShoppingCart } from "@mui/icons-material";
 import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
@@ -6,13 +6,13 @@ import { setDarkMode } from "./uiSlice";
 import { useBasket } from "../../hooks/useBasket";
 import UserMenu from "./UserMenu";
 import { useUserInfoQuery } from "../../features/authentication/services/account.api";
+import logo from "../../assets/logo.png";
 
-const midLinks = [
+const leftLinks = [
+    { title: "home", path: "/" },
     { title: "products", path: "/products" },
-    { title: "Inventory", path: "/inventory" },
-    { title: "about", path: "/about" },
+    { title: "inventory", path: "/inventory" },
     { title: "contact", path: "/contact" },
-    { title: "errors", path: "/errors" },
 ];
 
 const rightLinks = [
@@ -39,43 +39,52 @@ export default function NavBar() {
     const dispatch = useAppDispatch();
 
     return (
-        <AppBar position="fixed">
-            <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Box display="flex" alignItems="center">
-                    <Typography component={NavLink} sx={navStyles} to="/" variant="h6">
-                        LOGO
-                    </Typography>
-                    <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <DarkMode /> : <LightMode sx={{ color: "yellow" }} />}</IconButton>
-                </Box>
-
-                <List sx={{ display: "flex" }}>
-                    {midLinks.map(({ title, path }) => (
-                        <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
-                            {title.toUpperCase()}
-                        </ListItem>
-                    ))}
-                </List>
-
-                <Box display="flex" alignItems="center">
-                    <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
-                        <Badge badgeContent={itemCount} color="secondary">
-                            <ShoppingCart />
-                        </Badge>
-                    </IconButton>
-
-                    {user ? (
-                        <UserMenu user={user} />
-                    ) : (
+        <AppBar position="fixed" color="primary">
+            <Container maxWidth="xl">
+                <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} disableGutters>
+                    <Box display="flex" alignItems="center">
+                        <Typography component={NavLink} to="/">
+                            <Box
+                                component="img"
+                                sx={{
+                                    height: 50,
+                                    width: 160,
+                                }}
+                                alt="ego store logo."
+                                src={logo}
+                            />
+                        </Typography>
                         <List sx={{ display: "flex" }}>
-                            {rightLinks.map(({ title, path }) => (
+                            {leftLinks.map(({ title, path }) => (
                                 <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
                                     {title.toUpperCase()}
                                 </ListItem>
                             ))}
                         </List>
-                    )}
-                </Box>
-            </Toolbar>
+                    </Box>
+
+                    <Box display="flex" alignItems="center">
+                        <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
+                            <Badge badgeContent={itemCount} color="secondary">
+                                <ShoppingCart />
+                            </Badge>
+                        </IconButton>
+                        <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "yellow" }} /> : <DarkMode sx={{ color: "darkgray" }} />}</IconButton>
+                        {user ? (
+                            <UserMenu user={user} />
+                        ) : (
+                            <List sx={{ display: "flex" }}>
+                                {rightLinks.map(({ title, path }) => (
+                                    <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
+                                        {title.toUpperCase()}
+                                    </ListItem>
+                                ))}
+                            </List>
+                        )}
+                    </Box>
+                </Toolbar>
+            </Container>
+
             {isLoading && (
                 <Box sx={{ width: "100%" }}>
                     <LinearProgress color="secondary" />
