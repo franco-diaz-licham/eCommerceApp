@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 
-const baseUrl: string = "buggy";
+const baseUrl: string = "errors";
 
 export const errorApi = createApi({
     reducerPath: "errorApi",

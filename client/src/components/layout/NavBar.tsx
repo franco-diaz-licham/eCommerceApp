@@ -7,19 +7,27 @@ import { useBasket } from "../../hooks/useBasket";
 import UserMenu from "./UserMenu";
 import { useUserInfoQuery } from "../../features/authentication/services/account.api";
 import Whitelogo from "../../assets/white-logo.png";
+import { useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
+import NavBarDraw from "./NavBarDraw";
 
-const leftLinks = [
+export interface NavBarLink {
+    title: string;
+    path: string;
+}
+
+const LEFT_LINKS = [
     { title: "Home", path: "/" },
     { title: "Products", path: "/products" },
     { title: "Contact", path: "/contact" },
 ];
 
-const rightLinks = [
+const RIGHT_LINKS = [
     { title: "Login", path: "/login" },
     { title: "Register", path: "/register" },
 ];
 
-const navStyles = {
+const NAV_STYLES = {
     color: "inherit",
     typography: "",
     textDecoration: "none",
@@ -36,54 +44,66 @@ export default function NavBar() {
     const { itemCount } = useBasket();
     const { isLoading, darkMode } = useAppSelector((state) => state.ui);
     const dispatch = useAppDispatch();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const handleDrawerToggle = () => setDrawerOpen((prevState) => !prevState);
 
     return (
-        <AppBar position="sticky" color="primary" elevation={0}>
-            <Container maxWidth="xl">
-                <Toolbar sx={{ gap: 2 }} disableGutters>
-                    <Typography component={NavLink} to="/">
-                        <Box
-                            component="img"
-                            sx={{
-                                height: 50,
-                                width: 160,
-                            }}
-                            alt="ego store logo."
-                            src={Whitelogo}
-                        />
-                    </Typography>
-                    <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", md: "flex" } }}>
-                        {leftLinks.map(({ title, path }) => (
-                            <MuiLink component={NavLink} to={path} key={path} sx={navStyles}>
-                                {title}
-                            </MuiLink>
-                        ))}
-                    </Stack>
+        <>
+            <AppBar position="sticky" color="primary" elevation={0} sx={{ height: 64 }}>
+                <Container maxWidth="xl">
+                    <Toolbar sx={{ gap: 2 }} disableGutters>
+                        <IconButton color="default" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} sx={{ ml: 1, display: { sm: "none" } }}>
+                            <MenuIcon fontSize="large" sx={{ color: "white" }} />
+                        </IconButton>
+                        <Typography component={NavLink} to="/">
+                            <Box
+                                component="img"
+                                sx={{
+                                    height: 50,
+                                    width: 160,
+                                    display: { xs: "none", sm: "block" },
+                                }}
+                                alt="ego store logo."
+                                src={Whitelogo}
+                            />
+                        </Typography>
+                        <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", sm: "initial" } }}>
+                            {LEFT_LINKS.map(({ title, path }) => (
+                                <MuiLink component={NavLink} to={path} key={path} sx={NAV_STYLES}>
+                                    {title}
+                                </MuiLink>
+                            ))}
+                        </Stack>
 
-                    <Box sx={{ flexGrow: 1 }} />
-                    <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "white" }} /> : <DarkMode sx={{ color: "white" }} />}</IconButton>
-                    <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
-                        <Badge badgeContent={itemCount} color="secondary">
-                            <ShoppingCart />
-                        </Badge>
-                    </IconButton>
-                    {user ? (
-                        <UserMenu user={user} />
-                    ) : (
-                        rightLinks.map(({ title, path }) => (
-                            <MuiLink component={NavLink} to={path} key={path} sx={navStyles}>
-                                {title}
-                            </MuiLink>
-                        ))
-                    )}
-                </Toolbar>
-            </Container>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "white" }} /> : <DarkMode sx={{ color: "white" }} />}</IconButton>
+                        <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
+                            <Badge badgeContent={itemCount} color="secondary">
+                                <ShoppingCart />
+                            </Badge>
+                        </IconButton>
+                        <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", md: "flex" } }}>
+                            {user ? (
+                                <UserMenu user={user} />
+                            ) : (
+                                RIGHT_LINKS.map(({ title, path }) => (
+                                    <MuiLink component={NavLink} to={path} key={path} sx={NAV_STYLES}>
+                                        {title}
+                                    </MuiLink>
+                                ))
+                            )}
+                        </Stack>
+                    </Toolbar>
+                </Container>
 
-            {isLoading && (
-                <Box sx={{ width: "100%" }} position={"fixed"} marginTop={8}>
-                    <LinearProgress color="secondary" sx={{height: 10}} />
-                </Box>
-            )}
-        </AppBar>
+                {isLoading && (
+                    <Box sx={{ width: "100%" }} position={"fixed"} marginTop={8}>
+                        <LinearProgress color="secondary" sx={{ height: 10 }} />
+                    </Box>
+                )}
+            </AppBar>
+            {/* Drawer */}
+            <NavBarDraw drawerOpen={drawerOpen} closeDraw={handleDrawerToggle} links={LEFT_LINKS.concat(RIGHT_LINKS)} />
+        </>
     );
 }

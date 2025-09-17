@@ -1,23 +1,23 @@
-// ProductDetailsPage.tsx
 import { useParams } from "react-router-dom";
 import { useFetchProductDetailsQuery } from "../services/product.api";
-import { Box, Grid, Button, Chip, Divider, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Grid, Button, Chip, Divider, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { currencyFormat } from "../../../lib/utils";
 import { useBasket } from "../../../hooks/useBasket";
 import type { BasketItemResponse } from "../../basket/types/basket.type";
+import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
     const productId = id ? Number.parseInt(id) : 0;
-
     const { getbasketItem, addItemEnsuringBasket, removeItemEnsuringBasket, items } = useBasket();
     const { data: product, isLoading } = useFetchProductDetailsQuery(productId);
-
     const [item, setItem] = useState<BasketItemResponse | undefined>();
     const [quantity, setQuantity] = useState(1);
     const quantitySetRef = useRef(false);
-
+    const inBasketQty = item?.quantity ?? 0;
+    const ctaIsDisabled = quantity === inBasketQty || (!item && quantity === 0);
+    
     useEffect(() => {
         if (!items) return;
         const basketItem = getbasketItem(productId);
@@ -30,13 +30,8 @@ export default function ProductDetailsPage() {
 
     const handleUpdateBasket = async () => {
         const updatedQuantity = item ? Math.abs(quantity - item.quantity) : quantity;
-
-        if (!item || quantity > item.quantity) {
-            await addItemEnsuringBasket(productId, updatedQuantity);
-        } else {
-            await removeItemEnsuringBasket(productId, updatedQuantity);
-        }
-
+        if (!item || quantity > item.quantity) await addItemEnsuringBasket(productId, updatedQuantity);
+        else await removeItemEnsuringBasket(productId, updatedQuantity);
         if (quantity === 0) setQuantity(1);
     };
 
@@ -46,33 +41,7 @@ export default function ProductDetailsPage() {
     };
 
     // --- Skeleton while loading ---
-    if (isLoading || !product) {
-        return (
-            <Grid container spacing={{ xs: 3, md: 6 }} sx={{ mx: "auto", pt: 4 }}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Paper variant="outlined" sx={{ borderRadius: 3, overflow: "hidden" }}>
-                        <Skeleton variant="rectangular" sx={{ width: "100%", height: { xs: 360, md: 800, xl: 800 } }} />
-                    </Paper>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Skeleton width="70%" height={48} sx={{ mb: 1 }} />
-                    <Skeleton width={160} height={36} sx={{ mb: 2 }} />
-
-                    <Stack spacing={1}>
-                        <Skeleton height={24} width="90%" />
-                        <Skeleton height={24} width="80%" />
-                        <Skeleton height={24} width="75%" />
-                    </Stack>
-
-                    <Stack spacing={2} sx={{ mt: 4 }}>
-                        <Skeleton variant="rectangular" height={56} />
-                        <Skeleton variant="rectangular" height={56} />
-                    </Stack>
-                </Grid>
-            </Grid>
-        );
-    }
+    if (isLoading || !product) return <ProductDetailsSkeleton />;
 
     // --- Data ready ---
     const productDetails = [
@@ -82,9 +51,6 @@ export default function ProductDetailsPage() {
         { label: "Brand", value: product.brand?.name },
         { label: "Quantity in stock", value: product.quantityInStock },
     ];
-
-    const inBasketQty = item?.quantity ?? 0;
-    const ctaIsDisabled = quantity === inBasketQty || (!item && quantity === 0);
 
     return (
         <Grid container spacing={{ xs: 3, md: 6 }} sx={{ mx: "auto", pt: 4 }}>

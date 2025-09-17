@@ -13,10 +13,10 @@ export default function CheckoutSuccessPage() {
         <Container maxWidth="md">
             <>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
-                    Thanks for your fake order!
+                    Thanks for your order!
                 </Typography>
                 <Typography variant="body1" color="textSecondary" gutterBottom>
-                    Your order <strong>#{order.id}</strong> will never be processed as this is a fake shop.
+                    Your order number is: <strong>#{order.id}</strong>.
                 </Typography>
 
                 <Paper elevation={1} sx={{ p: 2, mb: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>

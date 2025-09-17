@@ -12,7 +12,7 @@ export default function AppPagination({ metadata, onPageChange }: AppPaginationP
     const endItem = Math.min(pageNumber * pageSize, totalCount);
 
     return (
-        <Box display="flex" justifyContent="space-between" alignItems="center" marginTop={3}>
+        <Box display="flex" justifyContent="center" alignItems="center" marginTop={3} flexWrap={"wrap"}>
             <Typography>
                 Displaying {startItem}-{endItem} of {totalCount} items
             </Typography>

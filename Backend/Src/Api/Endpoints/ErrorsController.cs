@@ -3,7 +3,7 @@
 [Route("api/[controller]")]
 [ApiController]
 [Tags("Errors")]
-public class BuggyController : ControllerBase   
+public class ErrorsController : ControllerBase   
 {
     [HttpGet("not-found")]
     public IActionResult GetNotFound() => NotFound(new ApiResponse(404, "Not found..."));
