@@ -27,7 +27,7 @@ export default function OrdersPage() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {orders.map((order) => (
+                        {orders.response.map((order) => (
                             <TableRow key={order.id} hover onClick={() => navigate(`/orders/${order.id}`)} style={{ cursor: "pointer" }}>
                                 <TableCell align="center"># {order.id}</TableCell>
                                 <TableCell>{formatDate(order.orderDate)}</TableCell>

@@ -1,16 +1,16 @@
 import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import { useState } from "react";
-import { History, Inventory, Logout, Person } from "@mui/icons-material";
+import { History,  Inventory,  Logout, Person } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import type { UserResponse } from "../../features/authentication/types/user.type";
-import { useLogoutMutation } from "../../features/authentication/services/account.api";
+import { useSignOutMutation } from "../../features/authentication/services/account.api";
 
-type Props = {
+type UserMenuProps = {
     user: UserResponse
 }
 
-export default function UserMenu({ user }: Props) {
-    const [logout] = useLogoutMutation();
+export default function UserMenu({ user }: UserMenuProps) {
+    const [signOut] = useSignOutMutation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,8 +25,8 @@ export default function UserMenu({ user }: Props) {
             <Button
                 onClick={handleClick}
                 color='inherit'
-                size='large'
-                sx={{fontSize: '1.1rem'}}
+                variant="text"
+                sx={{fontSize: '1.1rem', textTransform: "none"}}
             >
                 {user.email}
             </Button>
@@ -37,7 +37,7 @@ export default function UserMenu({ user }: Props) {
                 }}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
+                onClose={handleClose} disableScrollLock
                 TransitionComponent={Fade}
             >
                 <MenuItem>
@@ -46,7 +46,7 @@ export default function UserMenu({ user }: Props) {
                     </ListItemIcon>
                     <ListItemText>My profile</ListItemText>
                 </MenuItem>
-                <MenuItem component={Link} to='/orders'>
+                <MenuItem component={Link} to=''>
                     <ListItemIcon>
                         <History />
                     </ListItemIcon>
@@ -60,7 +60,7 @@ export default function UserMenu({ user }: Props) {
                     <ListItemText>Inventory</ListItemText>
                 </MenuItem>}
                 <Divider />
-                <MenuItem onClick={logout}>
+                <MenuItem onClick={signOut}>
                     <ListItemIcon>
                         <Logout />
                     </ListItemIcon>

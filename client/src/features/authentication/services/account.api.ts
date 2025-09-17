@@ -5,6 +5,7 @@ import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 import type { Address, UserResponse } from "../types/user.type";
 import { Routes } from "../../../app/routes/Routes";
 import type { ApiSingleResponse } from "../../../types/api.types";
+import { nothing } from "immer";
 
 export const accountApi = createApi({
     reducerPath: "accountApi",
@@ -13,11 +14,11 @@ export const accountApi = createApi({
     endpoints: (builder) => ({
         // LOGIN user with username/email and password.
         login: builder.mutation<UserResponse, LoginSchema>({
-            query: (creds) => {
+            query: (credentials) => {
                 return {
                     url: "account/login?useCookies=true",
                     method: "POST",
-                    body: creds,
+                    body: credentials,
                 };
             },
             transformResponse: (response: ApiSingleResponse<UserResponse>) => response.data,
@@ -57,18 +58,22 @@ export const accountApi = createApi({
             providesTags: ["UserInfo"],
         }),
         // SIGNOUT currenly logged in user.
-        logout: builder.mutation({
+        signOut: builder.mutation({
             query: () => ({
-                url: "account/logout",
+                url: "account/signout",
                 method: "POST",
             }),
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                await queryFulfilled;
-                dispatch(accountApi.util.invalidateTags(["UserInfo"]));
-                Routes.navigate("/");
+                dispatch(accountApi.util.updateQueryData("userInfo", undefined, () => nothing as unknown as UserResponse));
+
+                try {
+                    await queryFulfilled;
+                } finally {
+                    Routes.navigate("/");
+                }
             },
         }),
-        
+
         fetchAddress: builder.query<Address, void>({
             query: () => ({
                 url: "account/address",
@@ -97,4 +102,4 @@ export const accountApi = createApi({
     }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useUserInfoQuery, useLazyUserInfoQuery, useFetchAddressQuery, useUpdateUserAddressMutation } = accountApi;
+export const { useLoginMutation, useRegisterMutation, useSignOutMutation, useUserInfoQuery, useLazyUserInfoQuery, useFetchAddressQuery, useUpdateUserAddressMutation } = accountApi;

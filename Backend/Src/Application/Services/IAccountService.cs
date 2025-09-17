@@ -5,4 +5,5 @@ public interface IAccountService
 {
     Task<Result<UserDto>> GetUserInfoAsync();
     Task<Result<UserDto>> RegisterUser(UserRegisterDto dto);
+    Task<Result<bool>> SignoutAsync();
 }

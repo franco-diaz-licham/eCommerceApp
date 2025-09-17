@@ -1,4 +1,4 @@
-import { AppBar, Badge, Box, Container, IconButton, LinearProgress, List, ListItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, Container, IconButton, LinearProgress, Stack, Toolbar, Typography, Link as MuiLink } from "@mui/material";
 import { DarkMode, LightMode, ShoppingCart } from "@mui/icons-material";
 import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
@@ -6,23 +6,22 @@ import { setDarkMode } from "./uiSlice";
 import { useBasket } from "../../hooks/useBasket";
 import UserMenu from "./UserMenu";
 import { useUserInfoQuery } from "../../features/authentication/services/account.api";
-import logo from "../../assets/logo.png";
+import Whitelogo from "../../assets/white-logo.png";
 
 const leftLinks = [
-    { title: "home", path: "/" },
-    { title: "products", path: "/products" },
-    { title: "inventory", path: "/inventory" },
-    { title: "contact", path: "/contact" },
+    { title: "Home", path: "/" },
+    { title: "Products", path: "/products" },
+    { title: "Contact", path: "/contact" },
 ];
 
 const rightLinks = [
-    { title: "login", path: "/login" },
-    { title: "register", path: "/register" },
+    { title: "Login", path: "/login" },
+    { title: "Register", path: "/register" },
 ];
 
 const navStyles = {
     color: "inherit",
-    typography: "h6",
+    typography: "",
     textDecoration: "none",
     "&:hover": {
         color: "grey.500",
@@ -39,55 +38,50 @@ export default function NavBar() {
     const dispatch = useAppDispatch();
 
     return (
-        <AppBar position="fixed" color="primary">
+        <AppBar position="sticky" color="primary" elevation={0}>
             <Container maxWidth="xl">
-                <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} disableGutters>
-                    <Box display="flex" alignItems="center">
-                        <Typography component={NavLink} to="/">
-                            <Box
-                                component="img"
-                                sx={{
-                                    height: 50,
-                                    width: 160,
-                                }}
-                                alt="ego store logo."
-                                src={logo}
-                            />
-                        </Typography>
-                        <List sx={{ display: "flex" }}>
-                            {leftLinks.map(({ title, path }) => (
-                                <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
-                                    {title.toUpperCase()}
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Box>
+                <Toolbar sx={{ gap: 2 }} disableGutters>
+                    <Typography component={NavLink} to="/">
+                        <Box
+                            component="img"
+                            sx={{
+                                height: 50,
+                                width: 160,
+                            }}
+                            alt="ego store logo."
+                            src={Whitelogo}
+                        />
+                    </Typography>
+                    <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", md: "flex" } }}>
+                        {leftLinks.map(({ title, path }) => (
+                            <MuiLink component={NavLink} to={path} key={path} sx={navStyles}>
+                                {title}
+                            </MuiLink>
+                        ))}
+                    </Stack>
 
-                    <Box display="flex" alignItems="center">
-                        <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
-                            <Badge badgeContent={itemCount} color="secondary">
-                                <ShoppingCart />
-                            </Badge>
-                        </IconButton>
-                        <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "yellow" }} /> : <DarkMode sx={{ color: "darkgray" }} />}</IconButton>
-                        {user ? (
-                            <UserMenu user={user} />
-                        ) : (
-                            <List sx={{ display: "flex" }}>
-                                {rightLinks.map(({ title, path }) => (
-                                    <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
-                                        {title.toUpperCase()}
-                                    </ListItem>
-                                ))}
-                            </List>
-                        )}
-                    </Box>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "white" }} /> : <DarkMode sx={{ color: "white" }} />}</IconButton>
+                    <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
+                        <Badge badgeContent={itemCount} color="secondary">
+                            <ShoppingCart />
+                        </Badge>
+                    </IconButton>
+                    {user ? (
+                        <UserMenu user={user} />
+                    ) : (
+                        rightLinks.map(({ title, path }) => (
+                            <MuiLink component={NavLink} to={path} key={path} sx={navStyles}>
+                                {title}
+                            </MuiLink>
+                        ))
+                    )}
                 </Toolbar>
             </Container>
 
             {isLoading && (
-                <Box sx={{ width: "100%" }}>
-                    <LinearProgress color="secondary" />
+                <Box sx={{ width: "100%" }} position={"fixed"} marginTop={8}>
+                    <LinearProgress color="secondary" sx={{height: 10}} />
                 </Box>
             )}
         </AppBar>

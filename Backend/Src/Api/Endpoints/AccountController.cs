@@ -28,24 +28,7 @@ public class AccountController(IAccountService accountService, IMapper mapper) :
     [HttpPost("signout")]
     public async Task<ActionResult> SignoutAsync()
     {
-
-
-        return NoContent();
-    }
-
-    [Authorize]
-    [HttpPost("address")]
-    public async Task<ActionResult<Address>> CreateOrUpdateAddressAsync(Address address)
-    {
-
-        return Ok();
-    }
-
-    [Authorize]
-    [HttpGet("address")]
-    public async Task<ActionResult<Address>> GetSavedAddressAsync()
-    {
-
-        return Ok();
+        var output = await _accountService.SignoutAsync();
+        return output.ToActionResult();
     }
 }

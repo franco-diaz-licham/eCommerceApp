@@ -33,7 +33,11 @@ public class AccountService : IAccountService
         return Result<UserDto>.Success(output, ResultTypeEnum.Success);
     }
 
-    public async Task SignoutAsync() => await _userRepo.SignOutUserAsync();
+    public async Task<Result<bool>> SignoutAsync()
+    {
+        await _userRepo.SignOutUserAsync();
+        return Result<bool>.Success(ResultTypeEnum.Success);
+    }
 
     public async Task UpdateAysnc()
     {

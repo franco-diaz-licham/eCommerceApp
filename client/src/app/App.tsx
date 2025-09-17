@@ -3,6 +3,7 @@ import "./styles/App.css";
 import { useAppSelector } from "./store/store";
 import { Box, Container, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import NavBar from "../components/layout/NavBar";
+import Footer from "../components/layout/Footer";
 
 function App() {
     const { darkMode } = useAppSelector((state) => state.ui);
@@ -23,15 +24,16 @@ function App() {
             <NavBar />
             <Box
                 sx={{
-                    minHeight: "100vh",
+                    minHeight: "calc(100vh - 190px)",
                     background: darkMode ? "#070d27ff" : "#f6fcffff",
-                    py: 4,
+                    pb: 4,
                 }}
             >
-                <Container maxWidth="xl" sx={{ mt: 8 }}>
+                <Container maxWidth="xl">
                     <Outlet />
                 </Container>
             </Box>
+            <Footer />
         </ThemeProvider>
     );
 }

@@ -133,11 +133,14 @@ public static class SeedData
     private static async Task Users(UserManager<UserEntity> userManager) 
     {
         if (await userManager.Users.AnyAsync()) return;
-        var user = new UserEntity("admin@admin.com", "admin@admin.com");
+        // standard user
+        var user = new UserEntity("user@ego.com", "user@ego.com");
         await userManager.CreateAsync(user, "Welcome1$");
         await userManager.AddToRoleAsync(user, "Member");
-        var admin = new UserEntity("admin@admin.com", "admin@admin.com");
-        await userManager.CreateAsync(user, "Welcome1$");
+        
+        // admin user
+        var admin = new UserEntity("admin@ego.com", "admin@ego.com");
+        await userManager.CreateAsync(admin, "Welcome1$");
         await userManager.AddToRolesAsync(admin, ["Member", "Admin"]);
     }
 }

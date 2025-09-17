@@ -1,4 +1,4 @@
-import { UploadFile } from "@mui/icons-material";
+import { UploadFile, WidthFull, WidthWide } from "@mui/icons-material";
 import { FormControl, FormHelperText, Typography } from "@mui/material";
 import { useCallback } from "react";
 import { useDropzone, type DropzoneProps } from "react-dropzone";
@@ -30,13 +30,11 @@ export default function Dropzone<T extends FieldValues>(props: DropZoneProps<T>)
 
     const dzStyles = {
         display: "flex",
-        border: "dashed 2px #767676",
-        borderColor: "#767676",
+        border: "dashed 2px #c7c7c7ff",
         borderRadius: "5px",
         paddingTop: "30px",
         alignItems: "center",
-        height: 200,
-        width: 500,
+        height: 100,
     };
 
     const dzActive = {
@@ -44,11 +42,11 @@ export default function Dropzone<T extends FieldValues>(props: DropZoneProps<T>)
     };
 
     return (
-        <div {...getRootProps()}>
+        <div {...getRootProps()} style={{marginTop: 20}}>
             <FormControl style={isDragActive ? { ...dzStyles, ...dzActive } : dzStyles} error={!!fieldState.error}>
                 <input {...getInputProps()} />
-                <UploadFile sx={{ fontSize: "100px" }} />
-                <Typography variant="h4">Drop image here</Typography>
+                <UploadFile sx={{ fontSize: "30px" }} />
+                <Typography >Drop photo here</Typography>
                 <FormHelperText>{fieldState.error?.message}</FormHelperText>
             </FormControl>
         </div>

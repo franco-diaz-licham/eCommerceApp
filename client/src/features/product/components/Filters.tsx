@@ -1,4 +1,4 @@
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../app/store/store";
 import RadioButtonGroup from "../../../components/ui/RadioButtonGroup";
 import CheckboxButtons from "../../../components/ui/CheckboxButtons";
@@ -26,18 +26,37 @@ export default function Filters(props: FiltersProps) {
     const checkedTypes = props.filtersData.types.filter((x) => productTypeIds?.some((id) => id === x.id)).map((x) => ({ value: x.id, label: x.name }));
 
     return (
-        <Box display="flex" flexDirection="column" gap={3}>
-            <Paper>
+        <Box display="flex" flexDirection="column" gap={1}>
+            <Box sx={{ display: "inline-block", position: "relative", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                    Filters
+                </Typography>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        bottom: -4,
+                        left: 0,
+                        width: 32,
+                        height: 3,
+                        bgcolor: "primary.main",
+                        borderRadius: 2,
+                    }}
+                />
+            </Box>
+
+            <Paper sx={{ p: 0 }} elevation={0}>
                 <SearchField />
             </Paper>
-            <Paper sx={{ p: 3 }}>
-                <RadioButtonGroup selectedValue={orderBy ?? ""} options={sortOptions} onChange={(e) => dispatch(setOrderBy(e.target.value))} />
+            <Paper sx={{ p: 1 }} elevation={0}>
+                <RadioButtonGroup selectedValue={orderBy ?? ""} options={sortOptions} onChange={(e) => dispatch(setOrderBy(e.target.value))} name="order-by" />
             </Paper>
-            <Paper sx={{ p: 3 }}>
-                <CheckboxButtons items={allBrands} checked={checkedBrands} onChange={(items) => dispatch(setBrands(items.map((x) => x.value)))} />
+            <Divider />
+            <Paper sx={{ p: 1 }} elevation={0}>
+                <CheckboxButtons items={allBrands} checked={checkedBrands} onChange={(items) => dispatch(setBrands(items.map((x) => x.value)))} name="brands" />
             </Paper>
-            <Paper sx={{ p: 3 }}>
-                <CheckboxButtons items={allTypes} checked={checkedTypes} onChange={(items) => dispatch(setTypes(items.map((x) => x.value)))} />
+            <Divider />
+            <Paper sx={{ p: 1 }} elevation={0}>
+                <CheckboxButtons items={allTypes} checked={checkedTypes} onChange={(items) => dispatch(setTypes(items.map((x) => x.value)))} name="types" />
             </Paper>
             <Button onClick={() => dispatch(resetParams())}>Reset filters</Button>
         </Box>

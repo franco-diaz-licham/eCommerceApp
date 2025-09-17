@@ -1,13 +1,8 @@
-import * as React from "react";
-import { AppBar, Toolbar, Container, Box, Typography, Button, IconButton, Badge, Grid, Card, CardMedia, CardContent, CardActions, Chip, Stack, Divider, Paper, TextField, Link as MuiLink } from "@mui/material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { Container, Box, Typography, Button, Grid, Card, CardMedia, CardContent, CardActions, Chip, Stack, Paper } from "@mui/material";
+import Hero from "../features/home/components/Hero";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import NewsLetter from "../features/home/components/NewLetters";
 
-// ---------------------- Mock Data ----------------------
 type Product = {
     id: number;
     title: string;
@@ -31,8 +26,6 @@ const CATEGORIES = [
     { label: "Dresses", image: "https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=1200&q=60" },
     { label: "Shirts", image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=1200&q=60" },
 ];
-
-const BRANDS = ["Nike", "Uniqlo", "H&M", "Zara", "Levi’s", "Calvin Klein", "Ralph Lauren", "Patagonia"];
 
 // ---------------------- Small Components ----------------------
 function ProductCard({ product }: { product: Product }) {
@@ -68,130 +61,12 @@ function ProductCard({ product }: { product: Product }) {
     );
 }
 
-function ValueProp({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
-    return (
-        <Stack direction="row" spacing={2} alignItems="center">
-            <Box sx={{ p: 1, borderRadius: 2, bgcolor: "action.hover" }}>{icon}</Box>
-            <Box>
-                <Typography fontWeight={700}>{title}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                    {subtitle}
-                </Typography>
-            </Box>
-        </Stack>
-    );
-}
-
 // ---------------------- Main Page ----------------------
 export default function HomePage() {
-    // Pretend cart size from state
-    const cartCount = 2;
-
     return (
-        <Box>
-            {/* Top App Bar */}
-            <AppBar position="sticky" color="primary" elevation={0}>
-                <Toolbar sx={{ gap: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: 1 }}>
-                        e<span style={{ fontStyle: "italic" }}>go</span>
-                    </Typography>
-
-                    <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", md: "flex" } }}>
-                        <MuiLink href="#" color="inherit" underline="none">
-                            Products
-                        </MuiLink>
-                        <MuiLink href="#" color="inherit" underline="none">
-                            Inventory
-                        </MuiLink>
-                        <MuiLink href="#" color="inherit" underline="none">
-                            About
-                        </MuiLink>
-                        <MuiLink href="#" color="inherit" underline="none">
-                            Contact
-                        </MuiLink>
-                    </Stack>
-
-                    <Box sx={{ flexGrow: 1 }} />
-                    <IconButton color="inherit" aria-label="toggle dark mode">
-                        <DarkModeIcon />
-                    </IconButton>
-                    <IconButton color="inherit" aria-label="cart">
-                        <Badge badgeContent={cartCount} color="secondary">
-                            <ShoppingCartIcon />
-                        </Badge>
-                    </IconButton>
-                    <Button color="inherit" size="small" sx={{ textTransform: "none" }}>
-                        test@test.com
-                    </Button>
-                </Toolbar>
-            </AppBar>
-
+        <>
             {/* Hero */}
-            <Box
-                sx={(t) => ({
-                    background: `linear-gradient(135deg, ${t.palette.primary.light} 0%, ${t.palette.info.light} 45%, ${t.palette.background.default} 100%)`,
-                    py: { xs: 8, md: 12 },
-                    borderBottom: `1px solid ${t.palette.divider}`,
-                })}
-            >
-                <Container maxWidth="lg">
-                    <Grid container spacing={6} alignItems="center">
-                        <Grid >
-                            <Typography variant="h2" fontWeight={800} gutterBottom>
-                                Bring your style to life
-                            </Typography>
-                            <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-                                Discover curated essentials for every season. Quality pieces, sharp prices, fast delivery.
-                            </Typography>
-                            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                                <Button variant="contained" size="large" endIcon={<ArrowForwardIcon />}>
-                                    Shop new in
-                                </Button>
-                                <Button variant="outlined" size="large">
-                                    Explore all products
-                                </Button>
-                            </Stack>
-
-                            <Stack direction={{ xs: "column", sm: "row" }} spacing={3} sx={{ mt: 5 }}>
-                                <ValueProp icon={<LocalShippingIcon />} title="Free Shipping" subtitle="On orders over $75" />
-                                <ValueProp icon={<RestartAltIcon />} title="Free Returns" subtitle="30-day policy" />
-                                <ValueProp icon={<SupportAgentIcon />} title="Support" subtitle="7 days a week" />
-                            </Stack>
-                        </Grid>
-
-                        <Grid>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: 2,
-                                    borderRadius: 3,
-                                    border: (t) => `1px solid ${t.palette.divider}`,
-                                    bgcolor: "background.paper",
-                                }}
-                            >
-                                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                                    Trending brands
-                                </Typography>
-                                <Stack direction="row" flexWrap="wrap" gap={1.2}>
-                                    {BRANDS.map((b) => (
-                                        <Chip key={b} label={b} clickable />
-                                    ))}
-                                </Stack>
-                                <Divider sx={{ my: 2 }} />
-                                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                                    Quick search
-                                </Typography>
-                                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                                    <TextField fullWidth placeholder="Search products" size="small" />
-                                    <Button variant="contained" sx={{ whiteSpace: "nowrap" }}>
-                                        Search
-                                    </Button>
-                                </Stack>
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
+            <Hero />
 
             {/* Featured Categories */}
             <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
@@ -206,7 +81,7 @@ export default function HomePage() {
 
                 <Grid container spacing={2.5}>
                     {CATEGORIES.map((cat) => (
-                        <Grid key={cat.label} >
+                        <Grid key={cat.label}>
                             <Paper
                                 variant="outlined"
                                 sx={{
@@ -268,7 +143,7 @@ export default function HomePage() {
                                 Limited time offers on essentials. Free shipping over $75.
                             </Typography>
                         </Grid>
-                        <Grid >
+                        <Grid>
                             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="flex-end">
                                 <Button variant="contained" color="inherit">
                                     Shop Men
@@ -283,55 +158,7 @@ export default function HomePage() {
             </Container>
 
             {/* Newsletter */}
-            <Container maxWidth="lg" sx={{ pb: { xs: 6, md: 10 } }}>
-                <Paper variant="outlined" sx={{ p: { xs: 3, md: 5 }, borderRadius: 3 }}>
-                    <Grid container spacing={3} alignItems="center">
-                        <Grid >
-                            <Typography variant="h6" fontWeight={800}>
-                                Get 10% off your first order
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Join our newsletter for exclusive drops and early access.
-                            </Typography>
-                        </Grid>
-                        <Grid >
-                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                                <TextField fullWidth placeholder="Enter your email" />
-                                <Button variant="contained">Subscribe</Button>
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Container>
-
-            {/* Footer */}
-            <Box sx={{ bgcolor: "background.paper", borderTop: (t) => `1px solid ${t.palette.divider}` }}>
-                <Container maxWidth="lg" sx={{ py: 4 }}>
-                    <Grid container spacing={3}>
-                        <Grid >
-                            <Typography variant="h6" fontWeight={800}>
-                                e<span style={{ fontStyle: "italic" }}>go</span>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                Designed with Material UI. © {new Date().getFullYear()} eGo Store. All rights reserved.
-                            </Typography>
-                        </Grid>
-                        <Grid>
-                            <Stack direction="row" spacing={3} justifyContent={{ xs: "flex-start", md: "flex-end" }}>
-                                <MuiLink href="#" color="text.secondary" underline="hover">
-                                    Privacy
-                                </MuiLink>
-                                <MuiLink href="#" color="text.secondary" underline="hover">
-                                    Terms
-                                </MuiLink>
-                                <MuiLink href="#" color="text.secondary" underline="hover">
-                                    Support
-                                </MuiLink>
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
-        </Box>
+            <NewsLetter />
+        </>
     );
 }

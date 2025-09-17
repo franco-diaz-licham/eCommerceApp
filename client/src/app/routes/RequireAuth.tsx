@@ -5,9 +5,9 @@ export default function RequireAuth() {
     const { data: user, isLoading } = useUserInfoQuery();
     const location = useLocation();
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return;
     if (!user) return <Navigate to="/login" state={{ from: location }} />;
-    const adminRoutes = ["/inventory", "/admin-dashboard"];
+    const adminRoutes = ["/inventory", "/dashboard"];
     if (adminRoutes.includes(location.pathname) && !user.roles.includes("Admin")) return <Navigate to="/" replace />;
     return <Outlet />;
 }

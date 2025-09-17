@@ -18,11 +18,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Card
             elevation={3}
             sx={{
+                borderRadius: 3,
+                border: (t) => `1px solid ${t.palette.divider}`,
+                "&:hover": { boxShadow: 4, transform: "translateY(-2px)" },
+                transition: "all .18s ease",
                 width: 280,
-                borderRadius: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
             }}
         >
             <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.photo?.publicUrl} title={product.name} />
@@ -30,12 +30,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <Typography gutterBottom sx={{ textTransform: "uppercase" }} variant="subtitle2">
                     {product.name}
                 </Typography>
-                <Typography variant="h6" sx={{ color: "secondary.main" }}>
+                <Typography variant="h6" sx={{ color: "secondary.main" }} fontWeight={700}>
                     {currencyFormat(product.unitPrice)}
                 </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: "space-between" }}>
-                <Button disabled={isAdding} onClick={() => handleAddItem()}>
+                <Button disabled={isAdding} onClick={() => handleAddItem()} variant="contained" size="small">
                     Add to cart
                 </Button>
                 <Button component={Link} to={`/product/${product.id}`}>

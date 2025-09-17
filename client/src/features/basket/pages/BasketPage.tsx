@@ -20,7 +20,6 @@ export default function BasketPage() {
                         </Typography>
                     </Grid>
                     <Grid size={2}>
-                        {" "}
                         {!location.pathname.includes("checkout") && (
                             <Button variant="contained" color="primary" onClick={() => clearBasket()} fullWidth sx={{ mb: 1 }}>
                                 Clear All
