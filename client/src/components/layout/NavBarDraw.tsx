@@ -2,15 +2,16 @@ import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Typ
 import DarkLogo from "../../assets/dark-logo.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import type { NavBarLink } from "./NavBar";
+import type { UserResponse } from "../../features/authentication/types/user.type";
 
 interface NavBarDrawProps {
     links: NavBarLink[];
+    authLinks: NavBarLink[];
     drawerOpen: boolean;
+    user?: UserResponse;
     window?: () => Window;
     closeDraw: () => void;
 }
-
-const drawerWidth = 240;
 
 export default function NavBarDraw(props: NavBarDrawProps) {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function NavBarDraw(props: NavBarDrawProps) {
             }}
             sx={{
                 display: { xs: "block", sm: "none" },
-                "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+                "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
             }}
         >
             <Box onClick={props.closeDraw} sx={{ textAlign: "center" }}>
@@ -52,6 +53,14 @@ export default function NavBarDraw(props: NavBarDrawProps) {
                             </ListItemButton>
                         </ListItem>
                     ))}
+                    {!props.user &&
+                        props.links.map((item, index) => (
+                            <ListItem key={index} disablePadding>
+                                <ListItemButton sx={{ textAlign: "center" }} onClick={() => navigate(item.path)}>
+                                    <ListItemText primary={item.title} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
                 </List>
             </Box>
         </Drawer>

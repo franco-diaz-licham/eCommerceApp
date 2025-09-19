@@ -1,6 +1,6 @@
-import { useForm, useFormState, useWatch } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Grid, Paper, Skeleton, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import { useEffect, useRef } from "react";
 import type { FileWithPreview, ProductFormData } from "../types/product.types";
@@ -10,12 +10,14 @@ import TextInput from "../../../components/ui/TextInput";
 import SelectInput from "../../../components/ui/SelectInput";
 import Dropzone from "../../../components/ui/Dropzone";
 import { toProductFormData } from "../../../lib/mapper";
+import ProductFormSkeleton from "./ProductFormSkeleton";
 
 /** Functional props. */
 type ProductFormProps = {
     product: ProductFormData | null;
     onFormCancel: () => void;
     onFormSubmit: (data: ProductFormData) => void;
+    onDisabledChanged: (disabled: boolean) => void;
 };
 
 /** Reusable, nice-looking image placeholder */
@@ -71,6 +73,10 @@ export default function ProductForm(props: ProductFormProps) {
     const watchFile = watch("photo") as FileWithPreview | undefined;
     const { data, isLoading } = useFetchFiltersQuery();
 
+    useEffect(() => {
+        props.onDisabledChanged(isSubmitting || !isValid);
+    }, [isSubmitting, isValid, props]);
+
     // On edit, reset form with product values
     useEffect(() => {
         if (initialized.current) return;
@@ -110,125 +116,30 @@ export default function ProductForm(props: ProductFormProps) {
     };
 
     // --- Layout-accurate Skeleton while filters load ---
-    if (isLoading || !data) {
-        return (
-            <Box sx={{ pt: 4 }}>
-                <Box component={Paper} sx={{ p: 4, maxWidth: "lg", mx: "auto" }}>
-                    {/* Heading + actions (skeleton) */}
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 3,
-                        }}
-                    >
-                        <Box sx={{ display: "inline-block", position: "relative", mb: 2 }}>
-                            <Skeleton width={260} height={40} />
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    bottom: -4,
-                                    left: 0,
-                                    width: 40,
-                                    height: 3,
-                                    bgcolor: "grey.300",
-                                    borderRadius: 2,
-                                }}
-                            />
-                        </Box>
-                        <Box sx={{ display: "flex", gap: 2 }}>
-                            <Skeleton variant="rectangular" width={100} height={40} />
-                            <Skeleton variant="rectangular" width={120} height={40} />
-                        </Box>
-                    </Box>
-
-                    {/* Two-column body */}
-                    <Grid container spacing={3}>
-                        {/* Left form column */}
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            {/* Mimic stacked inputs */}
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <Skeleton key={i} height={56} sx={{ mb: 3 }} />
-                            ))}
-                            {/* Multiline description */}
-                            <Skeleton variant="rectangular" height={120} sx={{ mb: 3, borderRadius: 1 }} />
-                            {/* Dropzone */}
-                            <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 1 }} />
-                        </Grid>
-
-                        {/* Right image column */}
-                        <Grid size={{ xs: 12, md: 6 }} display={"flex"} justifyContent="center" alignItems="center">
-                            <Box sx={{ width: "100%" }}>
-                                <Skeleton variant="rectangular" height={650} sx={{ borderRadius: 2 }} />
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Box>
-        );
-    }
+    if (isLoading || !data) return <ProductFormSkeleton />;
 
     // --- Form ready ---
     const previewSrc = watchFile?.preview || props.product?.pictureUrl;
 
     return (
-        <Box sx={{ pt: 4 }}>
-            <Box component={Paper} sx={{ p: 4, maxWidth: "lg", mx: "auto" }}>
-                {/* Accent heading */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 3,
-                    }}
-                >
-                    <Box sx={{ display: "inline-block", position: "relative", mb: 2 }}>
-                        <Typography variant="h4" sx={{ fontWeight: 800 }}>
-                            Product Details
-                        </Typography>
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                bottom: -4,
-                                left: 0,
-                                width: 40,
-                                height: 3,
-                                bgcolor: "primary.main",
-                                borderRadius: 2,
-                            }}
-                        />
-                    </Box>
-
-                    <Box>
-                        <Button onClick={props.onFormCancel} variant="contained" color="inherit" sx={{ mr: 2 }}>
-                            Cancel
-                        </Button>
-                        <Button form="submit-button" variant="contained" color="success" type="submit" disabled={isSubmitting || !isValid}>
-                            {isSubmitting ? "Saving..." : "Submit"}
-                        </Button>
-                    </Box>
-                </Box>
-
-                <form onSubmit={handleSubmit(handleOnSubmit)} noValidate id="submit-button">
-                    <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <TextInput control={control} name="name" label="Product name" />
-                            <SelectInput sx={{ mt: 3 }} items={data.brands.map((x) => ({ value: x.id, label: x.name }))} control={control} name="brand" label="Brand" />
-                            <SelectInput sx={{ mt: 3 }} items={data.productTypes.map((x) => ({ value: x.id, label: x.name }))} control={control} name="type" label="Type" />
-                            <TextInput sx={{ mt: 3 }} type="number" control={control} name="price" label="Price in cents" />
-                            <TextInput sx={{ mt: 3 }} type="number" control={control} name="quantityInStock" label="Quantity in stock" />
-                            <TextInput sx={{ mt: 3 }} control={control} multiline rows={4} name="description" label="Description" />
-                            <Dropzone name="photo" control={control} />
-                        </Grid>
-
-                        <Grid size={{ xs: 12, md: 6 }} display={"flex"} justifyContent="center" alignItems="center" >
-                            {previewSrc ? <Box component="img" src={previewSrc} alt="product preview" sx={{ borderRadius: 5, maxHeight: 650, maxWidth: 500, objectFit: "cover" }} /> : <NoImagePlaceholder />}
-                        </Grid>
+        <Box component={Paper} sx={{ p: 4 }}>
+            <form onSubmit={handleSubmit(handleOnSubmit)} noValidate id="submit-button">
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <TextInput control={control} name="name" label="Product name" />
+                        <SelectInput sx={{ mt: 3 }} items={data.brands.map((x) => ({ value: x.id, label: x.name }))} control={control} name="brand" label="Brand" />
+                        <SelectInput sx={{ mt: 3 }} items={data.productTypes.map((x) => ({ value: x.id, label: x.name }))} control={control} name="type" label="Type" />
+                        <TextInput sx={{ mt: 3 }} type="number" control={control} name="price" label="Price in cents" />
+                        <TextInput sx={{ mt: 3 }} type="number" control={control} name="quantityInStock" label="Quantity in stock" />
+                        <TextInput sx={{ mt: 3 }} control={control} multiline rows={4} name="description" label="Description" />
+                        <Dropzone name="photo" control={control} />
                     </Grid>
-                </form>
-            </Box>
+
+                    <Grid size={{ xs: 12, md: 6 }} display={"flex"} justifyContent="center" alignItems="center">
+                        {previewSrc ? <Box component="img" src={previewSrc} alt="product preview" sx={{ borderRadius: 5, maxHeight: 650, maxWidth: 500, objectFit: "cover" }} /> : <NoImagePlaceholder />}
+                    </Grid>
+                </Grid>
+            </form>
         </Box>
     );
 }

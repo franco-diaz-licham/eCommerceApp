@@ -1,13 +1,13 @@
-import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
+import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider, IconButton, Avatar } from "@mui/material";
 import { useState } from "react";
-import { History,  Inventory,  Logout, Person } from "@mui/icons-material";
+import { History, Inventory, Logout, Person } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import type { UserResponse } from "../../features/authentication/types/user.type";
 import { useSignOutMutation } from "../../features/authentication/services/account.api";
 
 type UserMenuProps = {
-    user: UserResponse
-}
+    user: UserResponse;
+};
 
 export default function UserMenu({ user }: UserMenuProps) {
     const [signOut] = useSignOutMutation();
@@ -21,44 +21,31 @@ export default function UserMenu({ user }: UserMenuProps) {
     };
 
     return (
-        <div>
-            <Button
-                onClick={handleClick}
-                color='inherit'
-                variant="text"
-                sx={{fontSize: '1.1rem', textTransform: "none"}}
-            >
-                {user.email}
-            </Button>
-            <Menu
-                id="fade-menu"
-                MenuListProps={{
-                    'aria-labelledby': 'fade-button',
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose} disableScrollLock
-                TransitionComponent={Fade}
-            >
+        <>
+            <IconButton onClick={handleClick} size="large" sx={{ color: "inherit" }}>
+                <Person />
+            </IconButton>
+            <Menu id="fade-menu" anchorEl={anchorEl} open={open} onClose={handleClose} disableScrollLock>
                 <MenuItem>
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
                     <ListItemText>My profile</ListItemText>
                 </MenuItem>
-                <MenuItem component={Link} to=''>
+                <MenuItem component={Link} to="">
                     <ListItemIcon>
                         <History />
                     </ListItemIcon>
                     <ListItemText>My orders</ListItemText>
                 </MenuItem>
-                {user.roles?.includes('Admin') &&
-                <MenuItem component={Link} to='/inventory'>
-                    <ListItemIcon>
-                        <Inventory />
-                    </ListItemIcon>
-                    <ListItemText>Inventory</ListItemText>
-                </MenuItem>}
+                {user.roles?.includes("Admin") && (
+                    <MenuItem component={Link} to="/inventory">
+                        <ListItemIcon>
+                            <Inventory />
+                        </ListItemIcon>
+                        <ListItemText>Inventory</ListItemText>
+                    </MenuItem>
+                )}
                 <Divider />
                 <MenuItem onClick={signOut}>
                     <ListItemIcon>
@@ -67,6 +54,6 @@ export default function UserMenu({ user }: UserMenuProps) {
                     <ListItemText>Logout</ListItemText>
                 </MenuItem>
             </Menu>
-        </div>
+        </>
     );
 }

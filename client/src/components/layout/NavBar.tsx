@@ -16,13 +16,13 @@ export interface NavBarLink {
     path: string;
 }
 
-const LEFT_LINKS = [
+const LINKS = [
     { title: "Home", path: "/" },
     { title: "Products", path: "/products" },
     { title: "Contact", path: "/contact" },
 ];
 
-const RIGHT_LINKS = [
+const AUTH_LINKS = [
     { title: "Login", path: "/login" },
     { title: "Register", path: "/register" },
 ];
@@ -68,31 +68,31 @@ export default function NavBar() {
                             />
                         </Typography>
                         <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", sm: "initial" } }}>
-                            {LEFT_LINKS.map(({ title, path }) => (
+                            {LINKS.map(({ title, path }) => (
                                 <MuiLink component={NavLink} to={path} key={path} sx={NAV_STYLES}>
                                     {title}
                                 </MuiLink>
                             ))}
+                            {!user &&
+                                AUTH_LINKS.map(({ title, path }) => (
+                                    <MuiLink component={NavLink} to={path} key={path} sx={NAV_STYLES}>
+                                        {title}
+                                    </MuiLink>
+                                ))}
                         </Stack>
 
                         <Box sx={{ flexGrow: 1 }} />
-                        <IconButton onClick={() => dispatch(setDarkMode())}>{darkMode ? <LightMode sx={{ color: "white" }} /> : <DarkMode sx={{ color: "white" }} />}</IconButton>
+
+                        <IconButton onClick={() => dispatch(setDarkMode())} size="large" sx={{ color: "inherit" }}>
+                            {darkMode ? <LightMode sx={{ color: "white" }} /> : <DarkMode sx={{ color: "white" }} />}
+                        </IconButton>
+
                         <IconButton component={Link} to="/basket" size="large" sx={{ color: "inherit" }}>
                             <Badge badgeContent={itemCount} color="secondary">
                                 <ShoppingCart />
                             </Badge>
                         </IconButton>
-                        <Stack direction="row" spacing={2} sx={{ ml: 3, display: { xs: "none", md: "flex" } }}>
-                            {user ? (
-                                <UserMenu user={user} />
-                            ) : (
-                                RIGHT_LINKS.map(({ title, path }) => (
-                                    <MuiLink component={NavLink} to={path} key={path} sx={NAV_STYLES}>
-                                        {title}
-                                    </MuiLink>
-                                ))
-                            )}
-                        </Stack>
+                        {user && <UserMenu user={user} />}
                     </Toolbar>
                 </Container>
 
@@ -103,7 +103,7 @@ export default function NavBar() {
                 )}
             </AppBar>
             {/* Drawer */}
-            <NavBarDraw drawerOpen={drawerOpen} closeDraw={handleDrawerToggle} links={LEFT_LINKS.concat(RIGHT_LINKS)} />
+            <NavBarDraw drawerOpen={drawerOpen} closeDraw={handleDrawerToggle} links={LINKS} authLinks={AUTH_LINKS} user={user} />
         </>
     );
 }

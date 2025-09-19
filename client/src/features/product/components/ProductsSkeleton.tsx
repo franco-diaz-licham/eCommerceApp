@@ -17,9 +17,9 @@ export default function ProductSkeleton() {
                     }}
                 >
                     <Stack spacing={2}>
-                        <Skeleton variant="text" width="60%" height={32} />
+                        <Skeleton variant="text" width="60%" height={32} animation="wave" />
                         {[...Array(24)].map((_, i) => (
-                            <Skeleton key={i} variant="rectangular" height={32} />
+                            <Skeleton key={i} variant="rectangular" height={32} animation="wave" />
                         ))}
                     </Stack>
                 </Paper>
@@ -38,10 +38,10 @@ export default function ProductSkeleton() {
                                     p: 1.5,
                                 }}
                             >
-                                <Skeleton variant="rectangular" height={230} />
-                                <Skeleton variant="text" width="80%" sx={{ mt: 2 }} />
-                                <Skeleton variant="text" width="60%" sx={{ mb: 4 }} />
-                                <Skeleton variant="rectangular" height={32} sx={{ mt: 1 }} />
+                                <Skeleton variant="rectangular" height={230} animation="wave" />
+                                <Skeleton variant="text" width="80%" sx={{ mt: 2 }} animation="wave" />
+                                <Skeleton variant="text" width="60%" sx={{ mb: 4 }} animation="wave" />
+                                <Skeleton variant="rectangular" height={32} sx={{ mt: 1 }} animation="wave" />
                             </Paper>
                         </Grid>
                     ))}

@@ -6,6 +6,7 @@ import { currencyFormat } from "../../../lib/utils";
 import { useBasket } from "../../../hooks/useBasket";
 import type { BasketItemResponse } from "../../basket/types/basket.type";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
@@ -17,7 +18,7 @@ export default function ProductDetailsPage() {
     const quantitySetRef = useRef(false);
     const inBasketQty = item?.quantity ?? 0;
     const ctaIsDisabled = quantity === inBasketQty || (!item && quantity === 0);
-    
+
     useEffect(() => {
         if (!items) return;
         const basketItem = getbasketItem(productId);
@@ -28,6 +29,7 @@ export default function ProductDetailsPage() {
         quantitySetRef.current = true;
     }, [items, productId, getbasketItem]);
 
+    /** Add or deletes item from the cart. */
     const handleUpdateBasket = async () => {
         const updatedQuantity = item ? Math.abs(quantity - item.quantity) : quantity;
         if (!item || quantity > item.quantity) await addItemEnsuringBasket(productId, updatedQuantity);
@@ -35,6 +37,7 @@ export default function ProductDetailsPage() {
         if (quantity === 0) setQuantity(1);
     };
 
+    /** Update the number of items to be changed in the cart. */
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = Number(event.currentTarget.value);
         if (value >= 0) setQuantity(value);
@@ -111,7 +114,7 @@ export default function ProductDetailsPage() {
                                     <TableRow
                                         key={d.label}
                                         sx={{
-                                            bgcolor: i % 2 === 0 ? "grey.50" : "inherit",
+                                            bgcolor: i % 2 === 0 ? "#dadada41" : "inherit",
                                         }}
                                     >
                                         <TableCell sx={{ width: 200, fontWeight: 700 }}>{d.label}</TableCell>
@@ -129,7 +132,7 @@ export default function ProductDetailsPage() {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Button onClick={handleUpdateBasket} disabled={ctaIsDisabled} color="primary" size="large" variant="contained" fullWidth sx={{ height: 56, textTransform: "none" }}>
-                                {item && quantity < inBasketQty ? "Update quantity" : "Add to basket"}
+                                {item && quantity < inBasketQty ? "Update quantity" : "Add to basket"} <ShoppingCartIcon sx={{ml: 1}}/>
                             </Button>
                         </Grid>
                     </Grid>

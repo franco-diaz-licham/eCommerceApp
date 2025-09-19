@@ -43,7 +43,6 @@ export default function Filters(props: FiltersProps) {
                     }}
                 />
             </Box>
-
             <Paper sx={{ p: 0 }} elevation={0}>
                 <SearchField />
             </Paper>

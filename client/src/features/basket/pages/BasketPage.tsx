@@ -1,41 +1,70 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 import BasketItem from "../components/BasketItem";
 import OrderSummary from "../../order/components/OrderSummary";
 import { useBasket } from "../../../hooks/useBasket";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Header from "../../../components/ui/Header";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 export default function BasketPage() {
-    const { basket, isLoading, clearBasket } = useBasket();
+    const { basket, isLoading, clearBasket, removeItemEnsuringBasket, addItemEnsuringBasket } = useBasket();
 
-    if (isLoading) return <Typography>Loading basket...</Typography>;
+    const handleAddItem = async (itemId: number, numb: number): Promise<void> => {
+        await addItemEnsuringBasket(itemId, numb);
+    };
 
-    if (!basket || basket.basketItems.length === 0) return <Typography variant="h3">Your basket is empty</Typography>;
+    const handleRemoveItem = async (itemId: number, numb: number): Promise<void> => {
+        removeItemEnsuringBasket(itemId, numb);
+    };
+
+    if (!basket || basket.basketItems.length === 0) {
+        return (
+            <Box
+                sx={{
+                    height: "calc(100vh - 300px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <ShoppingCartOutlinedIcon sx={{ fontSize: 100 }} color="primary" />
+                <Typography gutterBottom variant="h3">
+                    Your basket is empty
+                </Typography>
+                <Button component={Link} to="/products" size="large" variant="contained">
+                    Go back to shop
+                </Button>
+            </Box>
+        );
+    }
 
     return (
-        <Grid container spacing={2}>
-            <Grid size={12}>
+        <Box sx={{ pt: 4 }}>
+            {/* Header */}
+            <Header title="Basket">
+                {!location.pathname.includes("checkout") && (
+                    <Button onClick={() => clearBasket()} variant="contained" sx={{ textTransform: "none" }} color="error" size="small" disabled={basket && basket.basketItems.length > 0 ? false : true}>
+                        Clear All
+                        <DeleteForeverIcon sx={{ ml: 1 }} />
+                    </Button>
+                )}
+            </Header>
+
+            {/* Content */}
+            {!isLoading && (
                 <Grid container spacing={2}>
-                    <Grid size={6}>
-                        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                            Basket
-                        </Typography>
+                    <Grid size={8}>
+                        {basket?.basketItems.map((item) => (
+                            <BasketItem item={item} key={item.productId} onAdditemChanged={(numb) => handleAddItem(item.productId, numb)} onRemoveItem={(numb) => handleRemoveItem(item.productId, numb)} />
+                        ))}
                     </Grid>
-                    <Grid size={2}>
-                        {!location.pathname.includes("checkout") && (
-                            <Button variant="contained" color="primary" onClick={() => clearBasket()} fullWidth sx={{ mb: 1 }}>
-                                Clear All
-                            </Button>
-                        )}
+                    <Grid size={4}>
+                        <OrderSummary />
                     </Grid>
                 </Grid>
-            </Grid>
-            <Grid size={8}>
-                {basket.basketItems.map((item) => (
-                    <BasketItem item={item} key={item.productId} />
-                ))}
-            </Grid>
-            <Grid size={4}>
-                <OrderSummary />
-            </Grid>
-        </Grid>
+            )}
+        </Box>
     );
 }

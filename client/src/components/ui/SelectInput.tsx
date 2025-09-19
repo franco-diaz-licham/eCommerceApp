@@ -29,7 +29,7 @@ export default function SelectInput<T extends FieldValues>(props: SelectInputPro
     return (
         <FormControl fullWidth error={!!fieldState.error} sx={props.sx}>
             <InputLabel id={labelId}>{props.label}</InputLabel>
-            <Select id={selectId} labelId={labelId} label={props.label} value={value} onChange={handleChange} displayEmpty>
+            <Select id={selectId} labelId={labelId} label={props.label} value={value} onChange={handleChange}>
                 <MenuItem value="">
                     <em>Select {props.label}</em>
                 </MenuItem>

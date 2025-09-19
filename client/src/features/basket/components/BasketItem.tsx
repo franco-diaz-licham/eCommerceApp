@@ -1,16 +1,15 @@
 import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
-import { Add, Close, Remove } from "@mui/icons-material";
+import { Add, DeleteOutline, Remove } from "@mui/icons-material";
 import { currencyFormat } from "../../../lib/utils";
 import type { BasketItemResponse } from "../types/basket.type";
-import { useBasket } from "../../../hooks/useBasket";
 
 interface BasketItemProps {
     item: BasketItemResponse;
+    onRemoveItem: (numb: number) => Promise<void>;
+    onAdditemChanged: (number: number) => Promise<void>;
 }
 
-export default function BasketItem({ item }: BasketItemProps) {
-    const { removeItemEnsuringBasket, addItemEnsuringBasket } = useBasket();
-
+export default function BasketItem(props: BasketItemProps) {
     return (
         <Paper
             sx={{
@@ -25,8 +24,8 @@ export default function BasketItem({ item }: BasketItemProps) {
             <Box display="flex" alignItems="center">
                 <Box
                     component="img"
-                    src={item.publicUrl}
-                    alt={item.name}
+                    src={props.item.publicUrl}
+                    alt={props.item.name}
                     sx={{
                         width: 100,
                         height: 100,
@@ -38,30 +37,31 @@ export default function BasketItem({ item }: BasketItemProps) {
                 />
 
                 <Box display="flex" flexDirection="column" gap={1}>
-                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography variant="h6">{props.item.name}</Typography>
 
                     <Box display="flex" alignItems="center" gap={3}>
                         <Typography sx={{ fontSize: "1.1rem" }}>
-                            {currencyFormat(item.unitPrice)} x {item.quantity}
+                            {currencyFormat(props.item.unitPrice)} x {props.item.quantity}
                         </Typography>
+                        <Typography sx={{ fontSize: "1.1rem" }}>=</Typography>
                         <Typography sx={{ fontSize: "1.1rem" }} color="primary">
-                            {currencyFormat(item.lineTotal)}
+                            {currencyFormat(props.item.lineTotal)}
                         </Typography>
                     </Box>
 
                     <Grid container spacing={1} alignItems="center">
-                        <IconButton onClick={() => removeItemEnsuringBasket(item.productId, 1)} color="error" size="small" sx={{ border: 1, borderRadius: 1, minWidth: 0 }}>
+                        <IconButton onClick={() => props.onRemoveItem(1)} color="error" size="small" sx={{ border: 1, borderRadius: 1, minWidth: 0 }}>
                             <Remove />
                         </IconButton>
-                        <Typography variant="h6">{item.quantity}</Typography>
-                        <IconButton onClick={() => addItemEnsuringBasket(item.productId, 1)} color="success" size="small" sx={{ border: 1, borderRadius: 1, minWidth: 0 }}>
+                        <Typography variant="h6">{props.item.quantity}</Typography>
+                        <IconButton onClick={() => props.onAdditemChanged(1)} color="success" size="small" sx={{ border: 1, borderRadius: 1, minWidth: 0 }}>
                             <Add />
                         </IconButton>
                     </Grid>
                 </Box>
             </Box>
             <IconButton
-                onClick={() => removeItemEnsuringBasket(item.productId, item.quantity)}
+                onClick={() => props.onRemoveItem(props.item.quantity)}
                 color="error"
                 size="small"
                 sx={{
@@ -73,7 +73,7 @@ export default function BasketItem({ item }: BasketItemProps) {
                     mt: 1,
                 }}
             >
-                <Close />
+                <DeleteOutline />
             </IconButton>
         </Paper>
     );

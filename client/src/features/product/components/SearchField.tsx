@@ -23,5 +23,5 @@ export default function SearchField() {
         debouncedSearch(e);
     };
 
-    return <TextField label="Search products" variant="outlined" fullWidth type="search" value={term} onChange={handleOnChange} />;
+    return <TextField label="Search products" variant="outlined" fullWidth type="search" value={term} onChange={handleOnChange} size="small"/>;
 }

@@ -69,7 +69,7 @@ export default function OrderSummary() {
                     </Button>}
                     <Button
                         component={Link}
-                        to='/catalog'
+                        to='/products'
                         fullWidth
                     >
                         Continue Shopping
