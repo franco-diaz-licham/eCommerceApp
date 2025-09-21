@@ -1,4 +1,4 @@
-<h1>🛒 E‑Commerce Web App</h1>
+<h1>🛒 e‑Commerce Web App</h1>
 
 <p><strong>E‑Commerce Web App</strong> is a full‑stack shopping application built with a <strong>.NET 8 Web API</strong> backend and a <strong>React + Vite + TypeScript</strong> frontend. 
 It follows <strong>Clean Architecture</strong> to keep controllers thin, business logic isolated in services, and infrastructure concerns neatly separated. 
@@ -7,6 +7,24 @@ Core use cases include browsing products with rich filtering, managing a basket,
 <blockquote>⚠️ <em>Note: CI/CD & containerization are on the roadmap.</em></blockquote>
 
 <hr />
+
+<h2>Walk through</h2>
+
+These videos give a quick overview of the project’s development and progress so far—covering key features, architecture decisions, and what’s coming next.
+
+<!-- Full playlist -->
+[![YouTube – Walkthrough](https://img.shields.io/badge/YouTube-Walkthrough-red?logo=youtube)](https://www.youtube.com/playlist?list=PLyQ3IWUkVS6mQWDVjUjp8jKrMoNhpbpK2)
+
+<!-- Overview video (single) -->
+<p><strong>App overview</strong></p>
+<a href="https://www.youtube.com/watch?v=AQ8l8nVyC_I&list=PLyQ3IWUkVS6mQWDVjUjp8jKrMoNhpbpK2&index=3&t=6s">
+  <img
+    src="https://img.youtube.com/vi/AQ8l8nVyC_I/hqdefault.jpg"
+    alt="Watch the app overview on YouTube"
+    width="720"
+  />
+</a>
+
 
 <h2>🚀 Features</h2>
 <ul>
