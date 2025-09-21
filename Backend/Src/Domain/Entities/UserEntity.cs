@@ -44,6 +44,12 @@ public class UserEntity : IdentityUser
         AddressId = address.Id;
     }
 
+    public void AddNewAddress(AddressEntity address)
+    {
+        if (address == null) throw new ArgumentNullException(nameof(address));
+        Address = address;
+    }
+
     public void ClearAddress()
     {
         Address = null;

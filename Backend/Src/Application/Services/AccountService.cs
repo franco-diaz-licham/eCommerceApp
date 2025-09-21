@@ -39,8 +39,30 @@ public class AccountService : IAccountService
         return Result<bool>.Success(ResultTypeEnum.Success);
     }
 
-    public async Task UpdateAysnc()
-    {
 
+    public async Task<Result<UserDto>> CreateAddressAsync(AddressCreateDto dto)
+    {
+        if (_currentUser.UserId is null) return Result<UserDto>.Fail("User does not have an id.", ResultTypeEnum.Invalid);
+        var user = await _userRepo.FindByIdAsync(_currentUser.UserId);
+
+        if (user is null) return Result<UserDto>.Fail("User does not exist.", ResultTypeEnum.Invalid);
+
+        user.AddNewAddress(_mapper.Map<AddressEntity>(dto));
+        await _userRepo.UpdateAsync(user);
+
+        var output = _mapper.Map<UserDto>(user);
+        return Result<UserDto>.Success(output, ResultTypeEnum.Success);
+    }
+
+    public async Task<Result<bool>> UpdateAddressAysnc(AddressUpdateDto dto)
+    {
+        if (_currentUser.UserId is null) return Result<bool>.Fail("User does not hasve an id.", ResultTypeEnum.Invalid);
+        var user = await _userRepo.ReadUserProfileByIdAsync(_currentUser.UserId);
+
+        if (user is null) return Result<bool>.Fail("Userdoes not exist.", ResultTypeEnum.Invalid);
+        _mapper.Map(dto, user.Address);
+        await _userRepo.UpdateAsync(user);
+        
+        return Result<bool>.Success(ResultTypeEnum.Success);
     }
 }

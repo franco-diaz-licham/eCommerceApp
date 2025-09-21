@@ -1,4 +1,4 @@
-﻿namespace Backend.Src.Infrastructure;
+﻿namespace Backend.Src.Infrastructure.Persistence;
 
 public class DataContext : IdentityDbContext<UserEntity>
 {

@@ -2,8 +2,8 @@ import { Box, Button, Container, Paper, TextField, Typography } from "@mui/mater
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { useRegisterMutation } from "../services/account.api";
-import { registerSchema, type RegisterSchema } from "../types/registerSchema";
+import { useRegisterMutation } from "../api/account.api";
+import { registerSchema, type RegisterSchema } from "../models/registerSchema";
 import { useAppSelector } from "../../../app/store/store";
 import DarkLogo from "../../../assets/dark-logo.png";
 import WhiteLogo from "../../../assets/white-logo.png";

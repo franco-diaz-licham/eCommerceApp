@@ -1,14 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { productApi } from "../../features/product/services/product.api";
+import { productApi } from "../../features/product/api/product.api";
 import { uiSlice } from "../../components/layout/uiSlice";
-import { errorApi } from "../../features/error/services/error.api";
-import { productSlice } from "../../features/product/services/productSlice";
-import { accountApi } from "../../features/authentication/services/account.api";
-import { orderApi } from "../../features/order/services/orderApi";
-import { basketApi } from "../../features/basket/services/basket.api";
-import { basketSessionSlice } from "../../features/basket/services/basketSlice";
-import { checkoutApi } from "../../features/checkout/services/checkout.api";
+import { errorApi } from "../../features/error/api/error.api";
+import { productSlice } from "../../features/product/api/productSlice";
+import { accountApi } from "../../features/authentication/api/account.api";
+import { orderApi } from "../../features/order/api/orderApi";
+import { basketApi } from "../../features/basket/api/basket.api";
+import { basketSessionSlice } from "../../features/basket/api/basketSlice";
+import { checkoutApi } from "../../features/checkout/api/checkout.api";
 
 export const store = configureStore({
     reducer: {

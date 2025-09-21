@@ -1,4 +1,6 @@
-import type { PaymentSummaryDto, ShippingAddressDto } from "../features/order/types/order.type";
+import type { PaymentSummaryDto, ShippingAddressDto } from "../features/order/models/order.type";
+import type { ApiError, ApiValidationError } from "../types/api.types";
+
 
 /** Formats currency. */
 export function currencyFormat(amount: number) {
@@ -30,4 +32,21 @@ export function createFormData<T extends object>(data: T) {
         else formData.append(key, String(value));
     });
     return formData;
+}
+
+/** Handle validation errors and returns a message. */
+export function getErrorMessage(error: unknown, fallback = "Operation failed") {
+    if(error === null) return fallback;
+    if (typeof error === "string") return error;
+    if (error && typeof error === "object") {
+        if ("validationErrors" in error) {
+            const e = error as ApiValidationError;
+            return e.validationErrors!.flat().join(" ") ?? fallback;
+        } else if ("message" in error) {
+            const e = error as ApiError;
+            return e.message ?? e.details ?? fallback;
+        }
+    }
+
+    return fallback;
 }

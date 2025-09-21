@@ -1,27 +1,23 @@
 import { debounce, TextField } from "@mui/material";
-import { useEffect, useState, type ChangeEvent } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/store/store";
-import { setSearchTerm } from "../services/productSlice";
+import { useMemo, useState, type ChangeEvent } from "react";
 
-export default function SearchField() {
-    const { searchTerm } = useAppSelector((state) => state.products);
-    const dispatch = useAppDispatch();
-    const [term, setTerm] = useState(searchTerm);
 
-    useEffect(() => {
-        setTerm(searchTerm);
-    }, [searchTerm]);
+export type SearchFieldProps = {
+    value: string;
+    onSearchChange: (value: string) => void;
+};
 
-    /** Wait every 500ms for next search. */
-    const debouncedSearch = debounce((event) => {
-        dispatch(setSearchTerm(event.target.value));
-    }, 500);
+export default function SearchField({ value, onSearchChange }: SearchFieldProps) {
+    const [term, setTerm] = useState(value);
 
-    /** Handle on search box. */
+    // stable debounced handler
+    const debouncedSearch = useMemo(() => debounce((nextValue: string) => onSearchChange(nextValue), 500), [onSearchChange]);
+
     const handleOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setTerm(e.target.value);
-        debouncedSearch(e);
+        const nextValue = e.target.value;
+        setTerm(nextValue);
+        debouncedSearch(nextValue);
     };
 
-    return <TextField label="Search products" variant="outlined" fullWidth type="search" value={term} onChange={handleOnChange} size="small"/>;
+    return <TextField label="Search products" variant="outlined" fullWidth type="search" size="small" value={term} onChange={handleOnChange} />;
 }

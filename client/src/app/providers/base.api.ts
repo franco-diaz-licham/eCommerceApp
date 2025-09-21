@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import { fetchBaseQuery, type BaseQueryApi, type FetchArgs } from "@reduxjs/toolkit/query/react";
 import { Routes } from "../routes/Routes";
 import { startLoading, stopLoading } from "../../components/layout/uiSlice";
-import { StatusCode, type ErrorApiResponse } from "../../types/api.types";
+import { StatusCode } from "../../types/api.types";
 
 /** Create custom base query */
 const customBaseQuery = fetchBaseQuery({
@@ -10,7 +10,7 @@ const customBaseQuery = fetchBaseQuery({
     credentials: "include",
     paramsSerializer: (params) => {
         const usp = new URLSearchParams();
-        
+
         // go through params and clean query
         for (const [k, v] of Object.entries(params)) {
             if (v === null || v === undefined || v === "") continue;
@@ -43,21 +43,13 @@ export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: 
     if (result.error) {
         const originalStatus = result.error.status === "PARSING_ERROR" && result.error.originalStatus ? result.error.originalStatus : result.error.status;
         const responseData = result.error.data as ErrorApiResponse;
-        console.log(responseData);
 
         switch (originalStatus) {
-            case StatusCode.BadRequest:
-                if ("validationErrors" in responseData) toast.error(responseData.validationErrors!.flat().join(" "));
-                else toast.error(responseData.message);
-                break;
             case StatusCode.Unauthorized:
-                if (typeof responseData === "object" && "message" in responseData) toast.error(responseData.message);
+                if (responseData && typeof responseData === "object" && "message" in responseData) toast.error(responseData.message);
                 break;
             case StatusCode.Forbidden:
                 if (typeof responseData === "object") toast.error("403 Forbidden");
-                break;
-            case StatusCode.NotFound:
-                if (typeof responseData === "object" && "message" in responseData) toast.error(responseData.message);
                 break;
             case StatusCode.ServerError:
                 if (typeof responseData === "object") Routes.navigate("/server-error", { state: { error: responseData } });
@@ -65,10 +57,6 @@ export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: 
             default:
                 break;
         }
-    }
-    else{
-        if(result.meta?.request.method === "POST" || result.meta?.request.method === "PUT") toast.success("Saved successful");
-        else if(result.meta?.request.method === "DELETE")toast.warning("Deletion successful");
     }
 
     return result;

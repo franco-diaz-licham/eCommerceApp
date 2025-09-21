@@ -47,8 +47,9 @@ public class OrderEntity : BaseEntity
     public void SetUserId(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentNullException($"{nameof(userId)} is ivalid.");
-        if (userId.Length > 450) throw new ArgumentException($"{nameof(userId)} is too long.");
-        UserId = userId;
+        var userIdTrimmed = userId.Trim();
+        if (userIdTrimmed.Length > 450) throw new ArgumentException($"{nameof(userId)} is too long.");
+        UserId = userIdTrimmed.ToLowerInvariant();
     }
 
     public void SetShippingAddress(ShippingAddress address)

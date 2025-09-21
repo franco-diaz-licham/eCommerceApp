@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import { setDarkMode } from "./uiSlice";
 import { useBasket } from "../../hooks/useBasket";
 import UserMenu from "./UserMenu";
-import { useUserInfoQuery } from "../../features/authentication/services/account.api";
+import { useUserInfoQuery } from "../../features/authentication/api/account.api";
 import Whitelogo from "../../assets/white-logo.png";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";

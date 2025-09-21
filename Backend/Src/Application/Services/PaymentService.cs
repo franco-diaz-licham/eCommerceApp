@@ -1,4 +1,6 @@
-﻿namespace Backend.Src.Application.Services;
+﻿using Backend.Src.Infrastructure.Persistence;
+
+namespace Backend.Src.Application.Services;
 
 public class PaymentService(DataContext db, IPaymentGateway payments, IMapper mapper, ILogger<PaymentService> logger) : IPaymentService
 {

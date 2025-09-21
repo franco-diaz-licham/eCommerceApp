@@ -1,6 +1,4 @@
-﻿using Backend.Src.Application.Models;
-
-namespace Backend.Src.Application.Services;
+﻿namespace Backend.Src.Application.Services;
 
 public class BasketService(DataContext db, IMapper mapper, ILogger<BasketService> logger, IPaymentGateway payments) : IBasketService
 {
@@ -79,12 +77,12 @@ public class BasketService(DataContext db, IMapper mapper, ILogger<BasketService
     public async Task<Result<BasketDto>> AddCouponAsync(BasketCouponDto dto)
     {
         // Get and validate
-        if (string.IsNullOrWhiteSpace(dto.Code)) return Result<BasketDto>.Fail("Coupon code is required.", ResultTypeEnum.Invalid);
+        if (string.IsNullOrWhiteSpace(dto.PromotionCode)) return Result<BasketDto>.Fail("Coupon code is required.", ResultTypeEnum.Invalid);
         var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).Include(b => b.Coupon).FirstOrDefaultAsync();
         if (basket == null || string.IsNullOrEmpty(basket.ClientSecret)) return Result<BasketDto>.Fail("Unable to apply voucher.", ResultTypeEnum.Invalid);
 
         // Get coupon info
-        var couponInfo = await _payments.TryGetCouponByPromoCodeAsync(dto.Code);
+        var couponInfo = await _payments.TryGetCouponByPromoCodeAsync(dto.PromotionCode);
         if (couponInfo is null) return Result<BasketDto>.Fail("Unable to apply coupon.", ResultTypeEnum.Invalid);
         var couponDto = _mapper.Map<CouponDto>(couponInfo);
 

@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useUserInfoQuery } from "../../features/authentication/services/account.api";
+import { useUserInfoQuery } from "../../features/authentication/api/account.api";
 
 export default function RequireAuth() {
     const { data: user, isLoading } = useUserInfoQuery();

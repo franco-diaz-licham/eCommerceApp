@@ -1,4 +1,6 @@
-﻿namespace Backend.Src.Application.Services;
+﻿using Backend.Src.Infrastructure.Persistence;
+
+namespace Backend.Src.Application.Services;
 
 public class FilterService(DataContext db, IMapper mapper) : IFilterService
 {

@@ -3,5 +3,5 @@
 public class BasketCouponRequest
 {
     [Required] public int BasketId { get; set; }
-    [Required] public required string Code { get; set; }
+    [Required] public required string PromotionCode { get; set; }
 }

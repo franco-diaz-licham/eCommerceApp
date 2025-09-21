@@ -1,6 +1,6 @@
 import { Container, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useFetchOrdersQuery } from "../services/orderApi";
+import { useFetchOrdersQuery } from "../api/orderApi";
 import { currencyFormat, formatDate } from "../../../lib/utils";
 
 export default function OrdersPage() {

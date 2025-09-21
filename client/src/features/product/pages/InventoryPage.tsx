@@ -1,11 +1,11 @@
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/store/store";
-import { useCreateProductMutation, useDeleteProductMutation, useFetchProductsQuery, useUpdateProductMutation } from "../services/product.api";
-import ProductForm from "../components/ProductForm";
-import type { ProductFormData, ProductResponse } from "../types/product.types";
-import { mapToProductCreate, mapToProductFormData, mapToProductUpdate } from "../../../lib/mapper";
-import { setPageNumber } from "../services/productSlice";
+import { useCreateProductMutation, useDeleteProductMutation, useFetchProductsQuery, useUpdateProductMutation } from "../api/product.api";
+import ProductForm from "../components/productForm/ProductForm";
+import type { ProductFormData, ProductResponse } from "../models/product.types";
+import { mapToProductCreate, mapToProductFormData, mapToProductUpdate } from "../api/mapper";
+import { setPageNumber, setSearchTerm } from "../api/productSlice";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SearchField from "../components/SearchField";
 import Header from "../../../components/ui/Header";
@@ -14,8 +14,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function InventoryPage() {
-    const productParams = useAppSelector((state) => state.products);
-    const { data, refetch } = useFetchProductsQuery(productParams);
+    const params = useAppSelector((state) => state.products);
+    const { data, refetch } = useFetchProductsQuery(params);
     const dispatch = useAppDispatch();
     const [editMode, setEditMode] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
@@ -83,7 +83,7 @@ export default function InventoryPage() {
         <Box sx={{ pt: 4 }}>
             {/* Header */}
             <Header title="Inventory">
-                <SearchField />
+                <SearchField value={params.searchTerm ?? ""} onSearchChange={(value) => dispatch(setSearchTerm(value))} />
                 <Button onClick={() => setEditMode(true)} variant="contained" sx={{ textTransform: "none", px: 3, ml: 2 }} color="primary" size="small">
                     Create <AddCircleIcon sx={{ ml: 1 }} />
                 </Button>

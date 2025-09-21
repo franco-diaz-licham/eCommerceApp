@@ -1,19 +1,21 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-// import { useAddBasketItemMutation } from "../basket/basketApi";
-import type { ProductResponse } from "../types/product.types";
 import { currencyFormat } from "../../../lib/utils";
-import { useBasket } from "../../../hooks/useBasket";
 
-/** Functional props. */
-interface ProductCardProps {
-    product: ProductResponse;
-}
+export type ProductCardDto = {
+    id: number;
+    name: string;
+    unitPrice: number;
+    photoUrl?: string | null;
+};
 
-export default function ProductCard({ product }: ProductCardProps) {
-    const { isAdding, addItemEnsuringBasket } = useBasket();
-    const handleAddItem = () => addItemEnsuringBasket(product.id, 1);
+type ProductCardProps = {
+    product: ProductCardDto;
+    isAdding?: boolean;
+    onAddToCart: (productId: number) => void;
+};
 
+export default function ProductCard({ product, isAdding, onAddToCart }: ProductCardProps) {
     return (
         <Card
             elevation={3}
@@ -25,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 width: 280,
             }}
         >
-            <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.photo?.publicUrl} title={product.name} />
+            <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.photoUrl || undefined} title={product.name} />
             <CardContent>
                 <Typography gutterBottom sx={{ textTransform: "uppercase" }} variant="subtitle2">
                     {product.name}
@@ -35,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: "space-between" }}>
-                <Button disabled={isAdding} onClick={() => handleAddItem()} variant="contained" size="small">
+                <Button disabled={!!isAdding} onClick={() => onAddToCart(product.id)} variant="contained" size="small">
                     Add to cart
                 </Button>
                 <Button component={Link} to={`/product/${product.id}`}>

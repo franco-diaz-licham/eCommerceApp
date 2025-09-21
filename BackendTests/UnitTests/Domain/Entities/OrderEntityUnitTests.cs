@@ -5,7 +5,7 @@ public class OrderEntityUnitTests
     private static OrderEntity NewOrder(int id = 0, string email = "USER@EXAMPLE.COM", decimal delivery = 5m, decimal subtotal = 20m,decimal discount = 0m, List<OrderItemEntity>? items = null)
     {
         items ??= new List<OrderItemEntity> { new OrderItemEntity(1, "P", 10m, 2) };
-        var address = new ShippingAddress("12 Main", null, "Sydney", "NSW", "2000", "AU");
+        var address = new ShippingAddress("Test", "12 Main", null, "Sydney", "NSW", "2000", "AU");
         return new OrderEntity(email, address, "pi_123", delivery, subtotal, discount, new(), items);
     }
 
@@ -15,13 +15,13 @@ public class OrderEntityUnitTests
         // Arrange
         var now = DateTime.UtcNow;
         var items = new List<OrderItemEntity> { new OrderItemEntity(1, "P", 10m, 2) };
-        var address = new ShippingAddress("12 Main", null, "Sydney", "NSW", "2000", "AU");
+        var address = new ShippingAddress("Test", "12 Main", null, "Sydney", "NSW", "2000", "AU");
 
         // Act
-        var order = new OrderEntity("USER@X.COM", address, "pi_123", 5m, 20m, 2m, new(), items);
+        var order = new OrderEntity("test123", address, "pi_123", 5m, 20m, 2m, new(), items);
 
         // Assert
-        order.UserFullName.Should().Be("user@x.com");
+        order.UserId.Should().Be("test123");
         order.PaymentIntentId.Should().Be("pi_123");
         order.ShippingAddress.Should().NotBeNull();
         order.PaymentSummary.Should().NotBeNull();
@@ -38,16 +38,16 @@ public class OrderEntityUnitTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void SetUserEmail_ShouldThrowError_WhenInputIsMissing(string? userEmail)
+    public void SetUserId_ShouldThrowError_WhenInputIsMissing(string? userId)
     {
         // Arrange
         var entity = NewOrder();
         
         // Act
-        Action act = () => entity.SetUserFullName(userEmail!);
+        Action act = () => entity.SetUserId(userId!);
         
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(userEmail)} is ivalid.*");
+        act.Should().Throw<ArgumentNullException>().WithMessage($"*{nameof(userId)} is ivalid.*");
     }
 
     [Theory]
@@ -58,29 +58,29 @@ public class OrderEntityUnitTests
     {
         // Arrange
         var entity = NewOrder();
-        var userEmail = new string('a', length);
+        var userId = new string('a', length);
         
         // Act
-        Action act = () => entity.SetUserFullName(userEmail);
+        Action act = () => entity.SetUserId(userId);
         
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage($"*{nameof(userEmail)} is too long.*");
+        act.Should().Throw<ArgumentException>().WithMessage($"*{nameof(userId)} is too long.*");
     }
 
     [Theory]
-    [InlineData("   test@nwc.so  ", "test@nwc.so")]
-    [InlineData("A@B.COM   ", "a@b.com")]
-    [InlineData("    ElsO@mL.coM ", "elso@ml.com")]
-    public void SetUserEmail_ShouldLowercaseAndTrimEmail_WhenInputIsValid(string userEmail, string expected)
+    [InlineData("   test1  ", "test1")]
+    [InlineData("AM233   ", "am233")]
+    [InlineData("    ESlsas1s ", "eslsas1s")]
+    public void SetUserId_ShouldLowercaseAndTrimId_WhenInputIsValid(string userId, string expected)
     {
         // Arrange
         var entity = NewOrder(10, email: "X");
 
         // Act
-        entity.SetUserFullName(userEmail);
+        entity.SetUserId(userId);
 
         // Assert
-        entity.UserFullName.Should().Be(expected);
+        entity.UserId.Should().Be(expected);
     }
 
     [Fact]

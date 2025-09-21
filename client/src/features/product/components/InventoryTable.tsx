@@ -2,7 +2,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { currencyFormat } from "../../../lib/utils";
 import AppPagination from "../../../components/ui/AppPagination";
-import type { PaginatedProductsData, ProductResponse } from "../types/product.types";
+import type { PaginatedProductsData, ProductResponse } from "../models/product.types";
 
 interface InventoryPropsTable {
     data?: PaginatedProductsData;

@@ -6,12 +6,12 @@ export interface ApiResponse<T> {
 }
 
 /** Api validatio error and contains validation error information. */
-export interface ApiResponseValidationError extends ApiBaseError {
+export interface ApiValidationError extends ApiBaseError {
     validationErrors?: string[];
 }
 
 /** Api problem response model. All errors different from validation. e.g. 500 */
-export interface ApiResponseError extends ApiBaseError {
+export interface ApiError extends ApiBaseError {
     details: string;
 }
 
@@ -22,7 +22,7 @@ export interface ApiBaseError {
 }
 
 /** Master error api model. */
-export type ErrorApiResponse = ApiResponseValidationError | ApiResponseError;
+export type ApiErrorResponse = ApiValidationError | ApiError | null;
 
 /** API response wrapper, handles a singular data response. */
 export interface ApiSingleResponse<T> {

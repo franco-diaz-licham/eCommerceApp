@@ -1,80 +1,130 @@
-import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
+import { Box, Button, Container, Divider, Paper, Typography, Stack } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import { currencyFormat, formatAddressString, formatPaymentString } from "../../../lib/utils";
-import type { OrderResponse } from "../../order/types/order.type";
+import type { OrderResponse } from "../../order/models/order.type";
+
+/** Helper method to get order response. */
+function useOrderFromLocation(): OrderResponse | undefined {
+    const { state } = useLocation();
+    const s = state as unknown;
+
+    if (s && typeof s === "object") {
+        if ("id" in (s as Record<string, unknown>) && "shippingAddress" in (s as Record<string, unknown>)) {
+            return s as OrderResponse;
+        }
+    }
+    return undefined;
+}
 
 export default function CheckoutSuccessPage() {
-    const { state } = useLocation();
-    const order = state.data as OrderResponse;
+    const order = useOrderFromLocation();
 
-    if (!order) return <Typography>Problem accessing the order</Typography>;
-
-    return (
-        <Container maxWidth="md">
-            <>
-                <Typography variant="h4" gutterBottom fontWeight="bold">
-                    Thanks for your order!
-                </Typography>
-                <Typography variant="body1" color="textSecondary" gutterBottom>
-                    Your order number is: <strong>#{order.id}</strong>.
-                </Typography>
-
-                <Paper elevation={1} sx={{ p: 2, mb: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
-                    <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" color="textSecondary">
-                            Order date
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                            {order.orderDate}
-                        </Typography>
-                    </Box>
-                    <Divider />
-                    <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" color="textSecondary">
-                            Payment method
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                            {formatPaymentString(order.paymentSummary)}
-                        </Typography>
-                    </Box>
-                    <Divider />
-                    <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" color="textSecondary">
-                            Recipient
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                            {order.shippingAddress.recipientName}
-                        </Typography>
-                    </Box>
-                    <Divider />
-                    <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" color="textSecondary">
-                            Shipping address
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                            {formatAddressString(order.shippingAddress)}
-                        </Typography>
-                    </Box>
-                    <Divider />
-                    <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" color="textSecondary">
-                            Amount
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                            {currencyFormat(order.total)}
-                        </Typography>
-                    </Box>
-                </Paper>
-
-                <Box display="flex" justifyContent="flex-start" gap={2}>
-                    <Button variant="contained" color="primary" component={Link} to={`/orders/${order.id}`}>
-                        View your order
-                    </Button>
-                    <Button component={Link} to="/catalog" variant="outlined" color="primary">
-                        Continue shopping
+    if (!order) {
+        return (
+            <Container maxWidth="sm" sx={{ py: 8 }}>
+                <Box
+                    sx={{
+                        height: "calc(100vh - 300px)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                        gap: 2,
+                    }}
+                >
+                    <ReceiptLongOutlinedIcon sx={{ fontSize: 96 }} color="error" />
+                    <Typography variant="h4" fontWeight={700}>
+                        Oops — we couldn’t find your order
+                    </Typography>
+                    <Typography color="text.secondary">Try returning to the shop and checking out again.</Typography>
+                    <Button component={Link} to="/products" size="large" variant="contained" sx={{ mt: 1 }}>
+                        Go back to shop
                     </Button>
                 </Box>
-            </>
+            </Container>
+        );
+    }
+
+    return (
+        <Container
+            sx={{
+                height: "calc(100vh - 300px)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                gap: 2,
+            }}
+        >
+            {/* Hero */}
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    mb: 3,
+                    justifyContent: "center",
+                    textAlign: "center",
+                    flexDirection: "column",
+                }}
+            >
+                <CheckCircleOutlineRoundedIcon sx={{ fontSize: 96 }} color="success" />
+                <Stack spacing={0.5}>
+                    <Typography variant="h4" fontWeight={800}>
+                        Thanks for your order!
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        Order <strong>#{order.id}</strong> was placed on <strong>{order.orderDate}</strong>.
+                    </Typography>
+                </Stack>
+            </Box>
+
+            {/* Summary card */}
+            <Paper
+                elevation={1}
+                sx={{
+                    p: { xs: 2, md: 3, lg: 5 },
+                    mb: 4,
+                    borderRadius: 3,
+                    minWidth: 600,
+                }}
+            >
+                <Stack spacing={2}>
+                    <Row label="Payment method" value={formatPaymentString(order.paymentSummary)} />
+                    <Divider />
+                    <Row label="Recipient" value={order.shippingAddress.recipientName} />
+                    <Divider />
+                    <Row label="Shipping address" value={formatAddressString(order.shippingAddress)} />
+                    <Divider />
+                    <Row label="Amount paid" value={currencyFormat(order.total)} />
+                </Stack>
+            </Paper>
+
+            {/* Actions */}
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <Button variant="contained" color="primary" component={Link} to={`/orders/${order.id}`} size="large">
+                    View your order
+                </Button>
+                <Button component={Link} to="/products" variant="outlined" color="primary" size="large">
+                    Continue shopping
+                </Button>
+            </Stack>
         </Container>
+    );
+}
+
+/** Tiny helper row */
+function Row({ label, value }: { label: string; value: React.ReactNode }) {
+    return (
+        <Box display="flex" justifyContent="space-between" gap={2} flexWrap="wrap">
+            <Typography color="text.secondary">{label}</Typography>
+            <Typography fontWeight={700} textAlign="right">
+                {value}
+            </Typography>
+        </Box>
     );
 }

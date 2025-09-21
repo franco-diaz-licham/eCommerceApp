@@ -2,7 +2,7 @@
 
 public sealed class UserRepository(SignInManager<UserEntity> signInManager) : IUserRepository
 {
-    public async Task<UserEntity?> FindByIdAsync(string userId) => await signInManager.UserManager.FindByIdAsync(userId);
+    public async Task<UserEntity?> FindByIdAsync(string userId) => await signInManager.UserManager.Users.Where(x => x.Id == userId).Include(x => x.Address).FirstOrDefaultAsync();
 
     public async Task<IReadOnlyCollection<string>> GetRolesAsync(UserEntity user) => (await signInManager.UserManager.GetRolesAsync(user)).ToList();
 
@@ -26,9 +26,18 @@ public sealed class UserRepository(SignInManager<UserEntity> signInManager) : IU
         return user;
     }
 
+    public async Task<UserEntity?> ReadUserProfileByIdAsync(string id)
+    {
+        var user = await signInManager.UserManager.Users.Where(x => x.Id == id).Include(x => x.Address).FirstOrDefaultAsync();
+        return user;
+    }
+
     public async Task<bool> SignOutUserAsync()
     {
         await signInManager.SignOutAsync();
         return true;
     }
+
+    public async Task UpdateAsync(UserEntity user)  => await signInManager.UserManager.UpdateAsync(user);
+
 }

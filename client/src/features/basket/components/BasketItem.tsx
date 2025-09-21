@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { Add, DeleteOutline, Remove } from "@mui/icons-material";
 import { currencyFormat } from "../../../lib/utils";
-import type { BasketItemResponse } from "../types/basket.type";
+import type { BasketItemResponse } from "../models/basket.type";
 
 interface BasketItemProps {
     item: BasketItemResponse;

@@ -1,11 +1,12 @@
 import { Box, Button, Divider, Paper, Typography } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../../app/store/store";
 import RadioButtonGroup from "../../../components/ui/RadioButtonGroup";
 import CheckboxButtons from "../../../components/ui/CheckboxButtons";
-import { resetParams, setBrands, setOrderBy, setTypes } from "../services/productSlice";
-import type { BrandResponse } from "../../../entities/brand/brand.types";
-import type { ProductTypeResponse } from "../../../entities/productType/productTypeResponse.type";
 import SearchField from "./SearchField";
+
+export type FilterOptionDto = {
+    value: number;
+    label: string;
+};
 
 const sortOptions = [
     { value: "nameAsc", label: "Alphabetical" },
@@ -13,17 +14,24 @@ const sortOptions = [
     { value: "priceAsc", label: "Price: Low to high" },
 ];
 
-type FiltersProps = {
-    filtersData: { brands: BrandResponse[]; types: ProductTypeResponse[] };
+export type FiltersProps = {
+    brandOptions: FilterOptionDto[];
+    typeOptions: FilterOptionDto[];
+    selectedBrandIds: number[];
+    selectedTypeIds: number[];
+    orderBy: string | null | undefined;
+    searchTerm: string;
+
+    onOrderByChange: (value: string) => void;
+    onBrandsChange: (ids: number[]) => void;
+    onTypesChange: (ids: number[]) => void;
+    onSearchChange: (value: string) => void;
+    onReset: () => void;
 };
 
-export default function Filters(props: FiltersProps) {
-    const { orderBy, productTypeIds, brandIds } = useAppSelector((state) => state.products);
-    const dispatch = useAppDispatch();
-    const allBrands = props.filtersData.brands.map((x) => ({ value: x.id, label: x.name }));
-    const allTypes = props.filtersData.types.map((x) => ({ value: x.id, label: x.name }));
-    const checkedBrands = props.filtersData.brands.filter((x) => brandIds?.some((id) => id === x.id)).map((x) => ({ value: x.id, label: x.name }));
-    const checkedTypes = props.filtersData.types.filter((x) => productTypeIds?.some((id) => id === x.id)).map((x) => ({ value: x.id, label: x.name }));
+export default function Filters({ brandOptions, typeOptions, selectedBrandIds, selectedTypeIds, orderBy, searchTerm, onOrderByChange, onBrandsChange, onTypesChange, onSearchChange, onReset }: FiltersProps) {
+    const checkedBrands = brandOptions.filter((x) => selectedBrandIds.includes(x.value));
+    const checkedTypes = typeOptions.filter((x) => selectedTypeIds.includes(x.value));
 
     return (
         <Box display="flex" flexDirection="column" gap={1}>
@@ -43,21 +51,28 @@ export default function Filters(props: FiltersProps) {
                     }}
                 />
             </Box>
+
             <Paper sx={{ p: 0 }} elevation={0}>
-                <SearchField />
+                <SearchField value={searchTerm} onSearchChange={onSearchChange} />
             </Paper>
+
             <Paper sx={{ p: 1 }} elevation={0}>
-                <RadioButtonGroup selectedValue={orderBy ?? ""} options={sortOptions} onChange={(e) => dispatch(setOrderBy(e.target.value))} name="order-by" />
+                <RadioButtonGroup name="order-by" selectedValue={orderBy ?? ""} options={sortOptions} onChange={(e) => onOrderByChange(e.target.value)} />
             </Paper>
+
             <Divider />
+
             <Paper sx={{ p: 1 }} elevation={0}>
-                <CheckboxButtons items={allBrands} checked={checkedBrands} onChange={(items) => dispatch(setBrands(items.map((x) => x.value)))} name="brands" />
+                <CheckboxButtons name="brands" items={brandOptions} checked={checkedBrands} onChange={(items) => onBrandsChange(items.map((x) => x.value))} />
             </Paper>
+
             <Divider />
+
             <Paper sx={{ p: 1 }} elevation={0}>
-                <CheckboxButtons items={allTypes} checked={checkedTypes} onChange={(items) => dispatch(setTypes(items.map((x) => x.value)))} name="types" />
+                <CheckboxButtons name="types" items={typeOptions} checked={checkedTypes} onChange={(items) => onTypesChange(items.map((x) => x.value))} />
             </Paper>
-            <Button onClick={() => dispatch(resetParams())}>Reset filters</Button>
+
+            <Button onClick={onReset}>Reset filters</Button>
         </Box>
     );
 }

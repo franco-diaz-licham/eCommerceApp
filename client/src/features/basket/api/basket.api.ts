@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
-import type { BasketCouponDto, BasketItemDto, BasketResponse } from "../types/basket.type";
+import type { BasketCouponDto, BasketItemDto, BasketResponse } from "../models/basket.type";
 import type { ApiSingleResponse } from "../../../types/api.types";
 import { nothing } from "immer";
 

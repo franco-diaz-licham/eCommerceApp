@@ -95,7 +95,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         // Arrange
         using var context = CreateContext();
         var service = Service(context);
-        var dto = new BasketItemDto{ BasketId = 1, ProductId = 1, Quantity = 0 };
+        var dto = new BasketItemCreateDto { BasketId = 1, ProductId = 1, Quantity = 0 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -113,7 +113,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         using var context = CreateContext();
         var service = Service(context);
         var product = await CreateProductAsync();
-        var dto = new BasketItemDto{ BasketId = 123456, ProductId = product.Id, Quantity = 1 };
+        var dto = new BasketItemCreateDto{ BasketId = 123456, ProductId = product.Id, Quantity = 1 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -131,7 +131,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         using var context = CreateContext();
         var service = Service(context);
         var basketId = await CreateBasketAsync(new BasketEntity(), context);
-        var dto = new BasketItemDto{ BasketId = basketId, ProductId = 999999, Quantity = 1 };
+        var dto = new BasketItemCreateDto { BasketId = basketId, ProductId = 999999, Quantity = 1 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -150,7 +150,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
         var product = await CreateProductAsync();
         var basketId = await CreateBasketAsync(new BasketEntity(), context);
-        var dto = new BasketItemDto { BasketId = basketId, ProductId = product.Id, Quantity = 3 };
+        var dto = new BasketItemCreateDto { BasketId = basketId, ProductId = product.Id, Quantity = 3 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -169,7 +169,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity();
         basket.AddItem(product.Id, product.UnitPrice, 1);
         var basketId = await CreateBasketAsync(basket, context);
-        var dto = new BasketItemDto{ BasketId = basketId, ProductId = product.Id, Quantity = 2 };
+        var dto = new BasketItemCreateDto { BasketId = basketId, ProductId = product.Id, Quantity = 2 };
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -187,7 +187,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var ctxMock = new Mock<DataContext>(Options) { CallBase = true };
         ctxMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
         var service = Service(ctxMock.Object);
-        var dto = new Mock<BasketItemDto>().Object;
+        var dto = new Mock<BasketItemCreateDto>().Object;
 
         // Act
         var result = await service.AddItemAsync(dto);
@@ -269,7 +269,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basketId = await CreateBasketAsync(new BasketEntity ("cs_any", "pi_any"), context);
 
         // Act
-        var res = await service.AddCouponAsync(new BasketCouponDto{ BasketId = basketId, Code = "" });
+        var res = await service.AddCouponAsync(new BasketCouponDto{ BasketId = basketId, PromotionCode = "" });
 
         // Assert
         res.IsSuccess.Should().BeFalse();
@@ -285,7 +285,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
 
         // Act
-        var res = await service.AddCouponAsync(new BasketCouponDto { BasketId = 999, Code = "SAVE10" });
+        var res = await service.AddCouponAsync(new BasketCouponDto { BasketId = 999, PromotionCode = "SAVE10" });
         
         // Assert
         res.IsSuccess.Should().BeFalse();
@@ -302,7 +302,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
 
         // Act
-        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, Code = "SAVE10" });
+        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10" });
         
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -319,10 +319,10 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity("cs_existing", "pi_existing");
         basket.AddItem(product.Id, product.UnitPrice, 2);
         var basketId = await CreateBasketAsync(basket, context);
-        var dto = new BasketCouponDto { BasketId = basketId, Code = "SAVE10" };
+        var dto = new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10" };
 
         var paymentGateway = new Mock<IPaymentGateway>(MockBehavior.Strict);
-        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(dto.Code)).ReturnsAsync((CouponInfoModel?)null);
+        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(dto.PromotionCode)).ReturnsAsync((CouponInfoModel?)null);
         var service = Service(context, paymentGateway);
 
         // Act
@@ -343,12 +343,12 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity("cs_existing", "pi_existing");
         basket.AddItem(product.Id, product.UnitPrice, 2);
         var basketId = await CreateBasketAsync(basket, context);
-        var basketCouponDto = new BasketCouponDto { BasketId = basketId, Code = "SAVE10" };
+        var basketCouponDto = new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10" };
         var couponInfo = new CouponInfoModel("c_123", "Save Ten", "promoCodeId", "SAVE10", 1000, null);
         var piModel = new PaymentIntentModel("pi_123", "cs_123");
 
         var paymentGateway = new Mock<IPaymentGateway>(MockBehavior.Strict);
-        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(basketCouponDto.Code)).ReturnsAsync(couponInfo);
+        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(basketCouponDto.PromotionCode)).ReturnsAsync(couponInfo);
         paymentGateway.Setup(x => x.CreateOrUpdateAsync(It.IsAny<long>(), "aud", It.IsAny<string?>())).ReturnsAsync(piModel);
 
         var ctxMock = CreateMockContext();
@@ -356,7 +356,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var service = Service(ctxMock.Object, paymentGateway);
 
         // Act
-        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, Code = "SAVE10"});
+        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10"});
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -375,17 +375,17 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity("cs_existing", "pi_existing");
         basket.AddItem(product.Id, product.UnitPrice, 2);
         var basketId = await CreateBasketAsync(basket, context);
-        var basketCouponDto = new BasketCouponDto { BasketId = basketId, Code = "SAVE10" };
+        var basketCouponDto = new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10" };
         var couponInfo = new CouponInfoModel("c_123", "Save Ten", "promoCodeId", "SAVE10", 1000, null);
         var piModel = new PaymentIntentModel("pi_123", "cs_123");
 
         var paymentGateway = new Mock<IPaymentGateway>(MockBehavior.Strict);
-        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(basketCouponDto.Code)).ReturnsAsync(couponInfo);
+        paymentGateway.Setup(x => x.TryGetCouponByPromoCodeAsync(basketCouponDto.PromotionCode)).ReturnsAsync(couponInfo);
         paymentGateway.Setup(x => x.CreateOrUpdateAsync(It.IsAny<long>(), "aud", It.IsAny<string?>())).ReturnsAsync(piModel);
         var service = Service(context, paymentGateway);
 
         // Act
-        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, Code = "SAVE10" });
+        var result = await service.AddCouponAsync(new BasketCouponDto { BasketId = basketId, PromotionCode = "SAVE10" });
 
         // Assert
         paymentGateway.VerifyAll();
@@ -406,7 +406,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var basket = new BasketEntity ("cs_existing", "pi_existing");
         basket.AddCoupon(CouponEntity.CreateOnAmountOff("Any", "cup_1", "ANY", 10m));
         var basketId = await CreateBasketAsync(basket, context);
-        var basketItemDto = new BasketCouponDto{ BasketId = basketId, Code = "ANY" };
+        var basketItemDto = new BasketCouponDto{ BasketId = basketId, PromotionCode = "ANY" };
 
         // Act
         var result = await service.RemoveCouponAsync(basketItemDto);
@@ -425,7 +425,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         using var context = CreateContext();
         var service = Service(context);
         var basketId = await CreateBasketAsync(new BasketEntity ("cs_existing", "pi_existing"), context);
-        var basketCouponDto = new BasketCouponDto { BasketId = basketId, Code = "ANY" };
+        var basketCouponDto = new BasketCouponDto { BasketId = basketId, PromotionCode = "ANY" };
 
         // Act
         var result = await service.RemoveCouponAsync(basketCouponDto);
@@ -442,7 +442,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         // Arrange
         using var context = CreateContext();
         var service = Service(context);
-        var basketCouponDto = new BasketCouponDto { BasketId = 9999, Code = "ANY" };
+        var basketCouponDto = new BasketCouponDto { BasketId = 9999, PromotionCode = "ANY" };
 
         // Act
         var result = await service.RemoveCouponAsync(basketCouponDto);
@@ -462,7 +462,7 @@ public class BasketServiceIntegrationTests : SqlDbTestBase
         var coupon = new CouponEntity("Any", "cup_1", "ANY", 10m);
         basket.AddCoupon(coupon);
         var basketId = await CreateBasketAsync(basket, context);
-        var basketCouponDto = new BasketCouponDto { BasketId = basket.Id, Code = "ANY" };
+        var basketCouponDto = new BasketCouponDto { BasketId = basket.Id, PromotionCode = "ANY" };
 
         var ctxMock = CreateMockContext();
         ctxMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);

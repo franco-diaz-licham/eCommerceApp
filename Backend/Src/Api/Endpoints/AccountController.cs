@@ -31,4 +31,23 @@ public class AccountController(IAccountService accountService, IMapper mapper) :
         var output = await _accountService.SignoutAsync();
         return output.ToActionResult();
     }
+
+
+    [HttpPost("address")]
+    public async Task<ActionResult> CreateAddressAsync(CreateAddressRequest request)
+    {
+        var dto = _mapper.Map<AddressCreateDto>(request);
+        var userDto = await _accountService.CreateAddressAsync(dto);
+        var output = _mapper.Map<Result<UserResponse>>(userDto);
+        return output.ToActionResult();
+    }
+
+    [HttpPut("address")]
+    public async Task<ActionResult<bool>> UpdateAddressAsync(UpdateAddressRequest request)
+    {
+        var dto = _mapper.Map<AddressUpdateDto>(request);
+        var userDto = await _accountService.UpdateAddressAysnc(dto);
+        var output = _mapper.Map<Result<bool>>(userDto);
+        return output.ToActionResult();
+    }
 }

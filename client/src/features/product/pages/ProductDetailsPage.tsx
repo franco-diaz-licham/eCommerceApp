@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import { useFetchProductDetailsQuery } from "../services/product.api";
+import { useFetchProductDetailsQuery } from "../api/product.api";
 import { Box, Grid, Button, Chip, Divider, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { currencyFormat } from "../../../lib/utils";
 import { useBasket } from "../../../hooks/useBasket";
-import type { BasketItemResponse } from "../../basket/types/basket.type";
+import type { BasketItemResponse } from "../../basket/models/basket.type";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
@@ -132,7 +132,7 @@ export default function ProductDetailsPage() {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Button onClick={handleUpdateBasket} disabled={ctaIsDisabled} color="primary" size="large" variant="contained" fullWidth sx={{ height: 56, textTransform: "none" }}>
-                                {item && quantity < inBasketQty ? "Update quantity" : "Add to basket"} <ShoppingCartIcon sx={{ml: 1}}/>
+                                {item && quantity < inBasketQty ? "Update quantity" : "Add to basket"} <ShoppingCartIcon sx={{ ml: 1 }} />
                             </Button>
                         </Grid>
                     </Grid>

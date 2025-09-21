@@ -1,5 +1,5 @@
-import type { CreateProductSchema } from "../features/product/types/createProductSchema";
-import type { ProductCreate, ProductFormData, ProductResponse, ProductUpdate } from "../features/product/types/product.types";
+import type { CreateProductSchema } from "../components/productForm/createProductSchema";
+import type { ProductCreate, ProductFormData, ProductResponse, ProductUpdate } from "../models/product.types";
 
 /** Maps product reponse to a product form data DTO. */
 export function mapToProductFormData(data: ProductResponse) {

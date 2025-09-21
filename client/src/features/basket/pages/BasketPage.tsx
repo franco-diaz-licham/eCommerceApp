@@ -8,7 +8,7 @@ import Header from "../../../components/ui/Header";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 export default function BasketPage() {
-    const { basket, isLoading, clearBasket, removeItemEnsuringBasket, addItemEnsuringBasket } = useBasket();
+    const { basket, subtotal, discount, deliveryFee, total, isLoading, clearBasket, removeItemEnsuringBasket, addItemEnsuringBasket } = useBasket();
 
     const handleAddItem = async (itemId: number, numb: number): Promise<void> => {
         await addItemEnsuringBasket(itemId, numb);
@@ -17,6 +17,8 @@ export default function BasketPage() {
     const handleRemoveItem = async (itemId: number, numb: number): Promise<void> => {
         removeItemEnsuringBasket(itemId, numb);
     };
+
+    if (isLoading) return;
 
     if (!basket || basket.basketItems.length === 0) {
         return (
@@ -61,7 +63,7 @@ export default function BasketPage() {
                         ))}
                     </Grid>
                     <Grid size={4}>
-                        <OrderSummary />
+                        <OrderSummary subtotal={subtotal} discount={discount} deliveryFee={deliveryFee} total={total} inCheckout={false} />
                     </Grid>
                 </Grid>
             )}

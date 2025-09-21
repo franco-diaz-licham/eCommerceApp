@@ -2,8 +2,8 @@ import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider, Icon
 import { useState } from "react";
 import { History, Inventory, Logout, Person } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import type { UserResponse } from "../../features/authentication/types/user.type";
-import { useSignOutMutation } from "../../features/authentication/services/account.api";
+import type { UserResponse } from "../../features/authentication/models/user.type";
+import { useSignOutMutation } from "../../features/authentication/api/account.api";
 
 type UserMenuProps = {
     user: UserResponse;

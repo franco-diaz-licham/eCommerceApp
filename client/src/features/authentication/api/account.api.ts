@@ -1,8 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
-import type { LoginSchema } from "../types/loginSchema";
+import type { LoginSchema } from "../models/loginSchema";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
-import type { Address, UserResponse } from "../types/user.type";
+import type { AddressCreateDto, AddressResponse, AddressUpdateDto, UserResponse } from "../models/user.type";
 import { Routes } from "../../../app/routes/Routes";
 import type { ApiSingleResponse } from "../../../types/api.types";
 import { nothing } from "immer";
@@ -73,13 +73,32 @@ export const accountApi = createApi({
                 }
             },
         }),
-
-        fetchAddress: builder.query<Address, void>({
+        fetchAddress: builder.query<AddressResponse, void>({
             query: () => ({
                 url: "account/address",
             }),
         }),
-        updateUserAddress: builder.mutation<Address, Address>({
+        updateUserAddress: builder.mutation<AddressResponse, AddressUpdateDto>({
+            query: (address) => ({
+                url: "account/address",
+                method: "PUT",
+                body: address,
+            }),
+            onQueryStarted: async (address, { dispatch, queryFulfilled }) => {
+                const patchResult = dispatch(
+                    accountApi.util.updateQueryData("fetchAddress", undefined, (draft) => {
+                        Object.assign(draft, { ...address });
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch (error) {
+                    patchResult.undo();
+                    console.log(error);
+                }
+            },
+        }),
+        createUserAddress: builder.mutation<AddressResponse, AddressCreateDto>({
             query: (address) => ({
                 url: "account/address",
                 method: "POST",
@@ -102,4 +121,4 @@ export const accountApi = createApi({
     }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useSignOutMutation, useUserInfoQuery, useLazyUserInfoQuery, useFetchAddressQuery, useUpdateUserAddressMutation } = accountApi;
+export const { useLoginMutation, useRegisterMutation, useSignOutMutation, useUserInfoQuery, useLazyUserInfoQuery, useFetchAddressQuery, useUpdateUserAddressMutation, useCreateUserAddressMutation } = accountApi;

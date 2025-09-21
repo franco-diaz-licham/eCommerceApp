@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
-import { basketApi } from "../../basket/services/basket.api";
-import type { PaymentIntentResponse } from "../types/checkout.type";
+import { basketApi } from "../../basket/api/basket.api";
+import type { PaymentIntentResponse } from "../models/checkout.type";
 import type { ApiSingleResponse } from "../../../types/api.types";
 
 export const checkoutApi = createApi({

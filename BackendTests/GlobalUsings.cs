@@ -17,6 +17,7 @@ global using Microsoft.Extensions.Logging;
 global using Backend.Src.Application.DTOs;
 global using Backend.Src.Application.Interfaces;
 global using Moq;
+global using Backend.Src.Infrastructure.Persistence;
 
 
 

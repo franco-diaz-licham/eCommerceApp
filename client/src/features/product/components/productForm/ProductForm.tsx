@@ -3,14 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import { useEffect, useRef } from "react";
-import type { FileWithPreview, ProductFormData } from "../types/product.types";
-import { createProductSchema, type CreateProductSchema } from "../types/createProductSchema";
-import { useFetchFiltersQuery } from "../services/product.api";
-import TextInput from "../../../components/ui/TextInput";
-import SelectInput from "../../../components/ui/SelectInput";
-import Dropzone from "../../../components/ui/Dropzone";
-import { toProductFormData } from "../../../lib/mapper";
-import ProductFormSkeleton from "./ProductFormSkeleton";
+import type { FileWithPreview, ProductFormData } from "../../models/product.types";
+import { createProductSchema, type CreateProductSchema } from "./createProductSchema";
+import { useFetchFiltersQuery } from "../../api/product.api";
+import TextInput from "../../../../components/ui/TextInput";
+import SelectInput from "../../../../components/ui/SelectInput";
+import Dropzone from "../../../../components/ui/Dropzone";
+import { toProductFormData } from "../../api/mapper";
+import ProductFormSkeleton from "../ProductFormSkeleton";
 
 /** Functional props. */
 type ProductFormProps = {

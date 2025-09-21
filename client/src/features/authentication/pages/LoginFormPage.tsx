@@ -2,8 +2,8 @@ import { Box, Button, Container, Paper, TextField, Typography } from "@mui/mater
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLazyUserInfoQuery, useLoginMutation } from "../services/account.api";
-import { loginSchema, type LoginSchema } from "../types/loginSchema";
+import { useLazyUserInfoQuery, useLoginMutation } from "../api/account.api";
+import { loginSchema, type LoginSchema } from "../models/loginSchema";
 import DarkLogo from "../../../assets/dark-logo.png";
 import WhiteLogo from "../../../assets/white-logo.png";
 import { useAppSelector } from "../../../app/store/store";

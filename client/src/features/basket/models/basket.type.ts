@@ -33,5 +33,5 @@ export type BasketClearDto = {
 
 export type BasketCouponDto = {
     basketId: number;
-    couponId: number;
+    promotionCode: string;
 };

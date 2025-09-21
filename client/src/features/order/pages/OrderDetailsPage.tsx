@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { Box, Button, Card, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import { currencyFormat, formatAddressString, formatDate, formatPaymentString } from "../../../lib/utils";
-import { useFetchOrderDetailedQuery } from "../services/orderApi";
+import { useFetchOrderDetailedQuery } from "../api/orderApi";
 
 export default function OrderDetailedPage() {
     const { id } = useParams();
@@ -58,7 +58,7 @@ export default function OrderDetailedPage() {
                         Email address
                     </Typography>
                     <Typography component="dd" variant="body2" fontWeight="300">
-                        {order.buyerEmail}
+                        {order.userId}
                     </Typography>
                 </Box>
                 <Box component="dl">

@@ -1,4 +1,6 @@
-﻿namespace Backend.Configuration;
+﻿using Backend.Src.Infrastructure.Persistence;
+
+namespace Backend.Configuration;
 
 public static class IdentityServices
 {

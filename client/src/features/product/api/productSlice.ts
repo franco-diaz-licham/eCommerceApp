@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { ProductQueryParams } from "../types/product.types";
+import type { ProductQueryParams } from "../models/product.types";
 
 const initialState: ProductQueryParams = {
     pageNumber: 1,

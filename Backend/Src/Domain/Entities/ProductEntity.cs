@@ -1,3 +1,5 @@
+using Stripe;
+
 namespace Backend.Src.Domain.Entities;
 
 public sealed class ProductEntity : BaseEntity
@@ -107,6 +109,18 @@ public sealed class ProductEntity : BaseEntity
     {
         if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException($"{nameof(description)} is required.");
         Description = description.Trim();
+    }
+
+    public void SetBrandId(int id)
+    {
+        if (id <= 0) throw new ArgumentException($"{nameof(id)} must be positive.");
+        BrandId = id;
+    }
+
+    public void SetProductTypeId(int id)
+    {
+        if (id <= 0) throw new ArgumentException($"{nameof(id)} must be positive.");
+        ProductTypeId = id;
     }
 
     private static string CollapseSpaces(string s) => Regex.Replace(s, @"\s+", " ");

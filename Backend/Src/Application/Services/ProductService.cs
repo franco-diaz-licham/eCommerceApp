@@ -12,7 +12,7 @@ public class ProductService(DataContext db, IMapper mapper, IPhotoService photoS
         var query = _db.Products.AsNoTracking();
         var queryContext = new QueryStrategyContext<ProductEntity>(
             new SearchEvaluatorStrategy<ProductEntity>(specs.SearchTerm, new ProductSearchProvider()),
-            new FilterEvaluatorStrategy<ProductEntity, bool>(new ProductFilterProvider().BuildFilter(specs)),
+            new FilterEvaluatorStrategy<ProductEntity>(specs, new ProductFilterProvider()),
             new SortEvaluatorStrategy<ProductEntity>(specs.OrderBy, new ProductSortProvider()), 
             new SelectEvaluatorStrategy<ProductEntity>(specs.PageNumber, specs.PageSize)
         );

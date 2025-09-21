@@ -1,7 +1,6 @@
-﻿namespace Backend.Src.Application.Queries.Interfaces
+﻿namespace Backend.Src.Application.Queries.Interfaces;
+
+public interface IFilterExpressionProvider<T>
 {
-    public interface IFilterExpressionProvider<T, TSpecs>
-    {
-        IEnumerable<Expression<Func<T, bool>>> BuildFilter(TSpecs specs);
-    }
+    IEnumerable<Expression<Func<T, bool>>> BuildFilter(ProductQuerySpecs specs);
 }

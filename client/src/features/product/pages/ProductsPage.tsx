@@ -1,11 +1,14 @@
 import { Paper, Box, Alert, Grid } from "@mui/material";
 import ProductList from "../components/ProductList";
-import { useFetchFiltersQuery, useFetchProductsQuery } from "../services/product.api";
+import { useFetchFiltersQuery, useFetchProductsQuery } from "../api/product.api";
 import { useAppDispatch, useAppSelector } from "../../../app/store/store";
-import Filters from "../components/Filters";
+import Filters, { type FilterOptionDto } from "../components/Filters";
 import AppPagination from "../../../components/ui/AppPagination";
-import { setPageNumber } from "../services/productSlice";
+import { resetParams, setBrands, setOrderBy, setTypes, setPageNumber, setSearchTerm } from "../api/productSlice";
 import ProductSkeleton from "../components/ProductsSkeleton";
+import { useBasket } from "../../../hooks/useBasket";
+import type { ProductResponse } from "../models/product.types";
+import type { ProductCardDto } from "../components/ProductCard";
 
 export default function ProductsPage() {
     const params = useAppSelector((state) => state.products);
@@ -13,13 +16,26 @@ export default function ProductsPage() {
     const { data: filtersData, isLoading: isFiltersLoading } = useFetchFiltersQuery();
     const dispatch = useAppDispatch();
 
-    // Loading skeleton
-    if (isProductsLoading || isFiltersLoading) return <ProductSkeleton />;
+    // basket I/O stays in the page (not in cards)
+    const { isAdding, addItemEnsuringBasket } = useBasket();
+    const handleAddToCart = (productId: number) => addItemEnsuringBasket(productId, 1);
 
-    // Error loading products
+    if (isProductsLoading || isFiltersLoading) return <ProductSkeleton />;
     if (!data || !filtersData) return <Alert severity="error">Failed to load products or filters.</Alert>;
 
-    // Products content
+    // map API → OptionDto
+    const brandOptions: FilterOptionDto[] = filtersData.brands.map((b) => ({ value: b.id, label: b.name }));
+    const typeOptions: FilterOptionDto[] = filtersData.productTypes.map((t) => ({ value: t.id, label: t.name }));
+
+    // map API products → ProductCardDto for the dumb list/cards
+    const toCardDto = (p: ProductResponse): ProductCardDto => ({
+        id: p.id,
+        name: p.name,
+        unitPrice: p.unitPrice,
+        photoUrl: p.photo?.publicUrl,
+    });
+    const cardProducts: ProductCardDto[] = (data.response ?? []).map(toCardDto);
+
     return (
         <Grid container spacing={{ xs: 2, md: 4 }} sx={{ pt: 4 }}>
             {/* Sidebar */}
@@ -36,19 +52,26 @@ export default function ProductsPage() {
                     }}
                 >
                     <Filters
-                        filtersData={{
-                            brands: filtersData.brands,
-                            types: filtersData.productTypes,
-                        }}
+                        brandOptions={brandOptions}
+                        typeOptions={typeOptions}
+                        selectedBrandIds={params.brandIds ?? []}
+                        selectedTypeIds={params.productTypeIds ?? []}
+                        orderBy={params.orderBy}
+                        searchTerm={params.searchTerm ?? ""}
+                        onOrderByChange={(value) => dispatch(setOrderBy(value))}
+                        onBrandsChange={(ids) => dispatch(setBrands(ids))}
+                        onTypesChange={(ids) => dispatch(setTypes(ids))}
+                        onSearchChange={(value) => dispatch(setSearchTerm(value))}
+                        onReset={() => dispatch(resetParams())}
                     />
                 </Paper>
             </Grid>
 
             {/* Product grid + pagination */}
             <Grid size={{ xs: 12, md: 8, lg: 9 }}>
-                {data.response?.length ? (
+                {cardProducts.length ? (
                     <>
-                        <ProductList products={data.response} />
+                        <ProductList products={cardProducts} isAdding={isAdding} onAddToCart={handleAddToCart} />
                         <Box
                             sx={{
                                 mt: { xs: 3, md: 4 },

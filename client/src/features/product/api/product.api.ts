@@ -1,6 +1,6 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import { createFormData } from "../../../lib/utils";
-import type { PaginatedProductsData, ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../types/product.types";
+import type { PaginatedProductsData, ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../models/product.types";
 import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 

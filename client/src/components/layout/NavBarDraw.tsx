@@ -2,7 +2,7 @@ import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Typ
 import DarkLogo from "../../assets/dark-logo.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import type { NavBarLink } from "./NavBar";
-import type { UserResponse } from "../../features/authentication/types/user.type";
+import type { UserResponse } from "../../features/authentication/models/user.type";
 
 interface NavBarDrawProps {
     links: NavBarLink[];

@@ -1,8 +1,8 @@
-import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation, useDeleteBasketMutation } from "../features/basket/services/basket.api";
-import type { BasketItemResponse } from "../features/basket/types/basket.type";
+import { useClearBasketMutation, useFetchBasketQuery, useAddBasketItemMutation, useRemoveBasketItemMutation, useDeleteBasketMutation } from "../features/basket/api/basket.api";
+import type { BasketItemResponse } from "../features/basket/models/basket.type";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useAppDispatch, useAppSelector } from "../app/store/store";
-import { setBasketId } from "../features/basket/services/basketSlice";
+import { setBasketId } from "../features/basket/api/basketSlice";
 
 export const useBasket = () => {
     const [addBasketItem, { isLoading: isAdding }] = useAddBasketItemMutation();

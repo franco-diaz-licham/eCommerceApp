@@ -2,7 +2,15 @@
 
 public class OrderServiceIntegrationTests : SqlDbTestBase
 {
-    private OrderService Service(DataContext context) => new(context, Mapper);
+    private readonly Mock<ICurrentUser> _currentUser;
+
+    private OrderServiceIntegrationTests()
+    {
+        _currentUser = new Mock<ICurrentUser>();
+        _currentUser.Setup(x => x.UserId).Returns("test1234");
+    }
+
+    private OrderService Service(DataContext context) => new(context, Mapper, _currentUser.Object);
 
     [Fact]
     public async Task GetAsync_ShouldReturnDto_WhenIdAndEmailMatch()
@@ -14,8 +22,8 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
         var product = await CreateProductAsync();
         var order = new OrderEntity(
-            userFullName: "user@example.com",
-            shipping: new ShippingAddress("L1", "L2", "City", "State", "2000", "AU"),
+            userId: "test1234",
+            shipping: new ShippingAddress("Test", "L1", "L2", "City", "State", "2000", "AU"),
             paymentIntentId: "piX",
             deliveryFee: 5m,
             subtotal: 50m,
@@ -27,12 +35,12 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         await SeedAsync(order);
 
         // Act
-        var result = await service.GetAsync(order.Id, "user@example.com");
+        var result = await service.GetAsync(order.Id);
         
         // Assert
         result.Value.Should().NotBeNull();
         result.Value.Id.Should().Be(order.Id);
-        result.Value.UserEmail.Should().Be("user@example.com");
+        result.Value.UserId.Should().Be("test1234");
         result.Value.OrderItems.Should().HaveCount(1);
     }
 
@@ -44,7 +52,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var service = Service(context);
 
         // Act
-        var result = await service.GetAsync(999, "user@example.com");
+        var result = await service.GetAsync(999);
 
         // Assert
         result.Value.Should().BeNull();
@@ -62,9 +70,9 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var orderStatus = new OrderStatusEntity("Pending");
         await SeedAsync(orderStatus);
 
-        var address1 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
-        var address2 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
-        var address3 = new ShippingAddress("Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var address1 = new ShippingAddress("Test", "Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var address2 = new ShippingAddress("Test", "Line1", "Line2", "Test", "Test", "Tes", "AU");
+        var address3 = new ShippingAddress("Test", "Line1", "Line2", "Test", "Test", "Tes", "AU");
         var payment1 = new PaymentSummary { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 };
         var payment2 = new PaymentSummary { Last4 = 1224, Brand = "Puma", ExpMonth = 1, ExpYear = 2026 };
         var payment3 = new PaymentSummary { Last4 = 1134, Brand = "Puma", ExpMonth = 1, ExpYear = 2027 };
@@ -111,8 +119,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var orderCreateDto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserFullName = "user@x.com",
-            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            ShippingAddress = new ShippingAddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
 
@@ -136,8 +143,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserFullName = "user@x.com",
-            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            ShippingAddress = new ShippingAddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
 
@@ -164,8 +170,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserFullName = "user@x.com",
-            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            ShippingAddress = new ShippingAddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
 
@@ -199,8 +204,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var orderCreateDto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserFullName = "user@x.com",
-            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            ShippingAddress = new ShippingAddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
 
@@ -241,8 +245,7 @@ public class OrderServiceIntegrationTests : SqlDbTestBase
         var dto = new OrderCreateDto
         {
             BasketId = basket.Id,
-            UserFullName = "user@x.com",
-            ShippingAddress = new AddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
+            ShippingAddress = new ShippingAddressDto { Line1 = "L1", Line2 = "", City = "City", State = "State", PostalCode = "2000", Country = "AU" },
             PaymentSummary = new PaymentSummaryDto { Last4 = 1233, Brand = "Puma", ExpMonth = 1, ExpYear = 2025 }
         };
 

@@ -1,6 +1,6 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
-import type { OrderCreateDto, OrderResponse, PaginatedOrdersData } from "../types/order.type";
+import type { OrderCreateDto, OrderResponse, PaginatedOrdersData } from "../models/order.type";
 import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
 
 export const orderApi = createApi({

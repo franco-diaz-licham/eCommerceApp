@@ -14,6 +14,5 @@ public class ProductEntityConfig : IEntityTypeConfiguration<ProductEntity>
         builder.HasOne(p => p.ProductType).WithMany().HasForeignKey(p => p.ProductTypeId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Brand).WithMany().HasForeignKey(p => p.BrandId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Photo).WithMany().HasForeignKey(p => p.PhotoId).OnDelete(DeleteBehavior.NoAction);
-
     }
 } 

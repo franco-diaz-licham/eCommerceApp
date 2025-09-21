@@ -55,5 +55,6 @@ global using Microsoft.AspNetCore.Authorization;
 global using AccountService = Backend.Src.Application.Services.AccountService;
 global using Backend.Src.Infrastructure.Repositories;
 global using Swashbuckle.AspNetCore.SwaggerGen;
+global using Backend.Src.Infrastructure.Persistence;
 
 
