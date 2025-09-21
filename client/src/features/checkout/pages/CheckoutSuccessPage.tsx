@@ -9,7 +9,7 @@ import type { OrderResponse } from "../../order/models/order.type";
 function useOrderFromLocation(): OrderResponse | undefined {
     const { state } = useLocation();
     const s = state as unknown;
-
+    
     if (s && typeof s === "object") {
         if ("id" in (s as Record<string, unknown>) && "shippingAddress" in (s as Record<string, unknown>)) {
             return s as OrderResponse;
@@ -94,11 +94,11 @@ export default function CheckoutSuccessPage() {
                 }}
             >
                 <Stack spacing={2}>
-                    <Row label="Payment method" value={formatPaymentString(order.paymentSummary)} />
+                    <Row label="Payment method" value={formatPaymentString(order.paymentSummary.brand, String(order.paymentSummary.last4), order.paymentSummary.expMonth, order.paymentSummary.expYear)} />
                     <Divider />
                     <Row label="Recipient" value={order.shippingAddress.recipientName} />
                     <Divider />
-                    <Row label="Shipping address" value={formatAddressString(order.shippingAddress)} />
+                    <Row label="Shipping address" value={formatAddressString(order.shippingAddress.line1, order.shippingAddress.city, order.shippingAddress.state, order.shippingAddress.postalCode, order.shippingAddress.country)} />
                     <Divider />
                     <Row label="Amount paid" value={currencyFormat(order.total)} />
                 </Stack>

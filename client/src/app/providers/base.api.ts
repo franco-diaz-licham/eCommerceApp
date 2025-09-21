@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import { fetchBaseQuery, type BaseQueryApi, type FetchArgs } from "@reduxjs/toolkit/query/react";
 import { Routes } from "../routes/Routes";
 import { startLoading, stopLoading } from "../../components/layout/uiSlice";
-import { StatusCode } from "../../types/api.types";
+import { StatusCode, type ApiErrorResponse } from "../../types/api.types";
 
 /** Create custom base query */
 const customBaseQuery = fetchBaseQuery({
@@ -42,7 +42,7 @@ export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: 
     // Check error result
     if (result.error) {
         const originalStatus = result.error.status === "PARSING_ERROR" && result.error.originalStatus ? result.error.originalStatus : result.error.status;
-        const responseData = result.error.data as ErrorApiResponse;
+        const responseData = result.error.data as ApiErrorResponse;
 
         switch (originalStatus) {
             case StatusCode.Unauthorized:

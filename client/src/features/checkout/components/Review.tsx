@@ -1,6 +1,6 @@
 import { Box, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import { useBasket } from "../../../hooks/useBasket";
-import { currencyFormat } from "../../../lib/utils";
+import { currencyFormat, formatAddressString, formatPaymentString } from "../../../lib/utils";
 import { type ConfirmationToken } from "@stripe/stripe-js";
 
 interface ReviewProps {
@@ -10,19 +10,19 @@ interface ReviewProps {
 export default function Review({ confirmationToken }: ReviewProps) {
     const { basket } = useBasket();
 
+    /** Format address for diplaying */
     const addressString = () => {
         if (!confirmationToken?.shipping) return "";
         const { name, address } = confirmationToken.shipping;
-        return `${name}, ${address?.line1}, ${address?.city}, ${address?.state}, 
-            ${address?.postal_code}, ${address?.country}`;
+        if (!address) return "Problem displaying address";
+        return formatAddressString(address.line1, address.city, address.state, address.postal_code, address.country, name);
     };
 
+    /** Get payment string hiding sensitive details. */
     const paymentString = () => {
         if (!confirmationToken?.payment_method_preview.card) return "";
         const { card } = confirmationToken.payment_method_preview;
-
-        return `${card.brand.toUpperCase()}, **** **** **** ${card.last4}, 
-            Exp: ${card.exp_month}/${card.exp_year}`;
+        return formatPaymentString(card.brand, card.last4, card.exp_month, card.exp_year)
     };
 
     return (

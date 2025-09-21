@@ -1,11 +1,11 @@
 import { Box, Grid } from "@mui/material";
 import { loadStripe, type StripeElementsOptions } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector } from "../../../app/store/store";
 import { useBasket } from "../../../hooks/useBasket";
 import OrderSummary from "../../order/components/OrderSummary";
-import { useCreateUserAddressMutation, useFetchAddressQuery, useUpdateUserAddressMutation, useUserInfoQuery } from "../../authentication/api/account.api";
+import { useCreateUserAddressMutation, useFetchAddressQuery, useUpdateUserAddressMutation } from "../../authentication/api/account.api";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAddCouponMutation, useRemoveCouponMutation } from "../../basket/api/basket.api";
@@ -24,21 +24,16 @@ export default function CheckoutPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const inCheckout = location.pathname.includes("checkout");
-
     const { darkMode } = useAppSelector((s) => s.ui);
-    const { data: user } = useUserInfoQuery();
     const { basket, subtotal, deliveryFee, discount, total, deleteBasket } = useBasket();
-
-    const { data: addrData, isLoading: addrLoading } = useFetchAddressQuery();
-    const defaultAddress: AddressDefaults | undefined = addrData ? { name: "", address: addrData } : undefined;
-
+    const { data: userAddress, isLoading: addrLoading } = useFetchAddressQuery();
+    const [defaultAddress, setDefaultAddress] = useState<AddressDefaults | undefined>();
     const [createPaymentIntent, { isLoading: creatingPI }] = useCreatePaymentIntentMutation();
     const [createOrder] = useCreateOrderMutation();
     const [updateAddress] = useUpdateUserAddressMutation();
     const [createAddress] = useCreateUserAddressMutation();
     const [addCoupon] = useAddCouponMutation();
     const [removeCoupon] = useRemoveCouponMutation();
-
     const created = useRef(false);
 
     useEffect(() => {
@@ -46,6 +41,20 @@ export default function CheckoutPage() {
         if (!created.current) createPaymentIntent(basket.id);
         created.current = true;
     }, [basket, createPaymentIntent]);
+
+    useEffect(() => {
+        setDefaultAddress({
+            name: "",
+            address: {
+                line1: userAddress?.line1,
+                line2: userAddress?.line2,
+                city: userAddress?.city,
+                state: userAddress?.state,
+                postal_code: userAddress?.postalCode,
+                country: userAddress?.country ?? "Australia",
+            },
+        });
+    }, [userAddress]);
 
     const options: StripeElementsOptions | undefined = useMemo(() => {
         if (!basket?.clientSecret) return undefined;
@@ -59,8 +68,8 @@ export default function CheckoutPage() {
     const handleSaveAddress = async (model: ShippingAddressModel) => {
         const address = mapToAddressCreateDto(model);
         try {
-            if (!user?.AddressId) await createAddress(address).unwrap();
-            else await updateAddress({ id: user.AddressId, ...address }).unwrap();
+            if (!userAddress?.id) await createAddress(address).unwrap();
+            else await updateAddress({ id: userAddress.id, ...address }).unwrap();
         } catch (e: unknown) {
             toast.error(getErrorMessage(e, "Failed to save address"));
         }
@@ -78,7 +87,6 @@ export default function CheckoutPage() {
             };
 
             const orderResult = await createOrder(orderInput).unwrap();
-
             const stripe = await stripePromise;
             if (!stripe) throw new Error("Stripe not initialized");
 

@@ -1,20 +1,18 @@
-import type { PaymentSummaryDto, ShippingAddressDto } from "../features/order/models/order.type";
 import type { ApiError, ApiValidationError } from "../types/api.types";
-
 
 /** Formats currency. */
 export function currencyFormat(amount: number) {
     return "$" + amount.toFixed(2);
 }
 
-export const formatAddressString = (address: ShippingAddressDto) => {
-    return `${address?.line1}, ${address?.city}, ${address?.state}, 
-            ${address?.postalCode}, ${address?.country}`;
+export const formatAddressString = (line1: string | null, city: string | null, state: string | null, code: string | null, country: string | null, name?: string | null) => {
+    const address = `${line1}, ${city}, ${state}, ${code}, ${country}`;
+    if (name) return `${name}, ` + address;
+    return address;
 };
 
-export const formatPaymentString = (card: PaymentSummaryDto) => {
-    return `${card?.brand?.toUpperCase()}, **** **** **** ${card?.last4}, 
-            Exp: ${card?.expMonth}/${card?.expYear}`;
+export const formatPaymentString = (brand: string, last4: string, expMonth: number, expYear: number) => {
+    return `${brand.toUpperCase()}, **** **** **** ${last4}, Exp: ${expMonth}/${expYear}`;
 };
 
 export function formatDate(date: string): string {
@@ -36,7 +34,7 @@ export function createFormData<T extends object>(data: T) {
 
 /** Handle validation errors and returns a message. */
 export function getErrorMessage(error: unknown, fallback = "Operation failed") {
-    if(error === null) return fallback;
+    if (error === null) return fallback;
     if (typeof error === "string") return error;
     if (error && typeof error === "object") {
         if ("validationErrors" in error) {

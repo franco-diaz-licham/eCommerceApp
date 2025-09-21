@@ -18,61 +18,53 @@ export type AddressDefaults = {
     };
 };
 
-// ------------------------------------------------
-
 const steps = ["Address", "Payment", "Review"];
 
-type Props = {
+type CheckoutStepperProps = {
     /** Display-only */
     total: number;
-
     /** Address defaults for Stripe AddressElement */
     defaultAddress?: AddressDefaults;
-
     /** Called when user toggles “save address” on Address step */
     onSaveAddress?: (address: ShippingAddressModel) => Promise<void> | void;
-
     /** Called when user confirms the final step; parent builds OrderCreateDto */
     onConfirm: (args: ConfirmationModel) => Promise<void>;
-
     /** Guard for last step */
     clientSecret?: string;
 };
 
-export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, onConfirm, clientSecret }: Props) {
+export default function CheckoutStepper(props: CheckoutStepperProps) {
     const [activeStep, setActiveStep] = useState(0);
     const [saveAddressChecked, setSaveAddressChecked] = useState(false);
     const [addressComplete, setAddressComplete] = useState(false);
     const [paymentComplete, setPaymentComplete] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [confirmationToken, setConfirmationToken] = useState<ConfirmationToken | null>(null);
-
     const elements = useElements();
     const stripe = useStripe();
 
     const handleBack = () => setActiveStep((s) => Math.max(0, s - 1));
-
     const handleAddressChange = (event: StripeAddressElementChangeEvent) => setAddressComplete(event.complete);
     const handlePaymentChange = (event: StripePaymentElementChangeEvent) => setPaymentComplete(event.complete);
 
+    /** Get Address information from stripe address element. */
     const getStripeAddress = async (): Promise<ShippingAddressModel | null> => {
         const addressElement = elements?.getElement("address");
         if (!addressElement) return null;
-        const {
-            value: { name, address },
-        } = await addressElement.getValue();
-        if (!name || !address) return null;
+        const valueAddress = await addressElement.getValue();
+        if (!valueAddress.value.name || !valueAddress.value.address) return null;
         return {
-            name: name,
-            line1: address.line1!,
-            line2: address.line2 ?? undefined,
-            city: address.city!,
-            state: address.state ?? undefined,
-            postalCode: address.postal_code!,
-            country: address.country!,
+            name: valueAddress.value.name,
+            line1: valueAddress.value.address.line1!,
+            line2: valueAddress.value.address.line2 ?? undefined,
+            city: valueAddress.value.address.city!,
+            state: valueAddress.value.address.state ?? undefined,
+            postalCode: valueAddress.value.address.postal_code!,
+            country: valueAddress.value.address.country!,
         };
     };
 
+    /** Get card payment information from stripe result.c */
     const getPaymentSummary = (): PaymentSummaryModel | null => {
         const pm = confirmationToken?.payment_method_preview?.card;
         if (!pm) return null;
@@ -84,6 +76,7 @@ export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, 
         };
     };
 
+    /** Instantiates a token fro stripe payment confirmation.  */
     const createConfirmationToken = async () => {
         if (!elements || !stripe) return null;
         const result = await elements.submit();
@@ -93,17 +86,20 @@ export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, 
         return res.confirmationToken;
     };
 
+    /** Handles movement through the stepper. */
     const handleNext = async () => {
         try {
+            // Save address
             if (activeStep === 0) {
-                if (saveAddressChecked && onSaveAddress) {
+                if (saveAddressChecked && props.onSaveAddress) {
                     const addr = await getStripeAddress();
-                    if (addr) await onSaveAddress(addr);
+                    if (addr) await props.onSaveAddress(addr);
                 }
                 setActiveStep(1);
                 return;
             }
 
+            // Create confirmation token
             if (activeStep === 1) {
                 const token = await createConfirmationToken();
                 if (!token) return;
@@ -112,14 +108,15 @@ export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, 
                 return;
             }
 
+            // Submit and confirm payment.
             if (activeStep === 2) {
-                if (!clientSecret) throw new Error("Missing client secret");
+                if (!props.clientSecret) throw new Error("Missing client secret");
                 const shippingAddress = await getStripeAddress();
                 const paymentSummary = getPaymentSummary();
                 if (!shippingAddress || !paymentSummary || !confirmationToken) throw new Error("Missing payment or address details");
 
                 setSubmitting(true);
-                await onConfirm({
+                await props.onConfirm({
                     shippingAddress,
                     paymentSummary,
                     confirmationToken: confirmationToken!,
@@ -146,7 +143,7 @@ export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, 
             <Box sx={{ mt: 2 }}>
                 {/* Address */}
                 <Box sx={{ display: activeStep === 0 ? "block" : "none" }}>
-                    <AddressElement options={{ mode: "shipping", defaultValues: defaultAddress }} onChange={handleAddressChange} />
+                    <AddressElement options={{ mode: "shipping", defaultValues: props.defaultAddress }} onChange={handleAddressChange} />
                     <FormControlLabel sx={{ display: "flex", justifyContent: "end" }} control={<Checkbox checked={saveAddressChecked} onChange={(e) => setSaveAddressChecked(e.target.checked)} />} label="Save as default address" />
                 </Box>
 
@@ -166,7 +163,7 @@ export default function CheckoutStepper({ total, defaultAddress, onSaveAddress, 
                     Back
                 </Button>
                 <Button onClick={handleNext} disabled={(activeStep === 0 && !addressComplete) || (activeStep === 1 && !paymentComplete) || submitting} loading={submitting}>
-                    {activeStep === steps.length - 1 ? `Pay ${currencyFormat(total)}` : "Next"}
+                    {activeStep === steps.length - 1 ? `Pay ${currencyFormat(props.total)}` : "Next"}
                 </Button>
             </Box>
         </Paper>

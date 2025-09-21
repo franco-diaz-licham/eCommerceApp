@@ -73,11 +73,14 @@ export const accountApi = createApi({
                 }
             },
         }),
+        // GET Address for user.
         fetchAddress: builder.query<AddressResponse, void>({
             query: () => ({
                 url: "account/address",
             }),
+            transformResponse: (response: ApiSingleResponse<AddressResponse>) => response.data,
         }),
+        // UPDATE address information for user.
         updateUserAddress: builder.mutation<AddressResponse, AddressUpdateDto>({
             query: (address) => ({
                 url: "account/address",
@@ -98,6 +101,7 @@ export const accountApi = createApi({
                 }
             },
         }),
+        // CREATE new address for user.
         createUserAddress: builder.mutation<AddressResponse, AddressCreateDto>({
             query: (address) => ({
                 url: "account/address",

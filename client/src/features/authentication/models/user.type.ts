@@ -8,6 +8,7 @@ export type UserResponse = {
 };
 
 export type AddressResponse = {
+    id: number;
     line1: string;
     line2?: string | null;
     city: string;
