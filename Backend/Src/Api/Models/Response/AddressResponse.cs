@@ -2,6 +2,7 @@
 
 public class AddressResponse
 {
+    public int Id { get; set; }
     public string Line1 { get; set; } = null!;
     public string? Line2 { get; set; } = null!;
     public string City { get; set; } = null!;

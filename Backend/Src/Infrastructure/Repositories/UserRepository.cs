@@ -2,7 +2,7 @@
 
 public sealed class UserRepository(SignInManager<UserEntity> signInManager) : IUserRepository
 {
-    public async Task<UserEntity?> FindByIdAsync(string userId) => await signInManager.UserManager.Users.Where(x => x.Id == userId).Include(x => x.Address).FirstOrDefaultAsync();
+    public async Task<UserEntity?> FindByIdAsync(string userId) => await signInManager.UserManager.Users.FirstAsync(x => x.Id == userId);
 
     public async Task<IReadOnlyCollection<string>> GetRolesAsync(UserEntity user) => (await signInManager.UserManager.GetRolesAsync(user)).ToList();
 
@@ -17,12 +17,6 @@ public sealed class UserRepository(SignInManager<UserEntity> signInManager) : IU
         if (!result.Succeeded) throw new Exception("Problem adding user.");
 
         await signInManager.UserManager.AddToRoleAsync(user, "Member");
-        return user;
-    }
-
-    public async Task<UserEntity?> ReadUserProfileAsync(UserDto dto)
-    {
-        var user = await signInManager.UserManager.Users.Where(x => x.UserName == dto.UserName).Include(x => x.Address).FirstOrDefaultAsync();
         return user;
     }
 

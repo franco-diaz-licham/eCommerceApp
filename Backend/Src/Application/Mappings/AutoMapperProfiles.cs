@@ -119,6 +119,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserEntity, UserDto>()
             .ForMember(x => x.IsAuthenticated, opt => opt.Ignore())
             .ForMember(x => x.Roles, opt => opt.Ignore())
+            .ForMember(x => x.Address, opt => opt.Ignore())
+            .ForMember(x => x.AddressId, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
         CreateMap<UserRegisterRequest, UserRegisterDto>();
         CreateMap<UserDto, UserResponse>();

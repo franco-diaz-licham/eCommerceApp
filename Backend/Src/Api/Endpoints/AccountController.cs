@@ -34,11 +34,11 @@ public class AccountController(IAccountService accountService, IMapper mapper) :
 
 
     [HttpPost("address")]
-    public async Task<ActionResult> CreateAddressAsync(CreateAddressRequest request)
+    public async Task<ActionResult<AddressResponse>> CreateAddressAsync(CreateAddressRequest request)
     {
         var dto = _mapper.Map<AddressCreateDto>(request);
         var userDto = await _accountService.CreateAddressAsync(dto);
-        var output = _mapper.Map<Result<UserResponse>>(userDto);
+        var output = _mapper.Map<Result<AddressResponse>>(userDto);
         return output.ToActionResult();
     }
 
@@ -48,6 +48,14 @@ public class AccountController(IAccountService accountService, IMapper mapper) :
         var dto = _mapper.Map<AddressUpdateDto>(request);
         var userDto = await _accountService.UpdateAddressAysnc(dto);
         var output = _mapper.Map<Result<bool>>(userDto);
+        return output.ToActionResult();
+    }
+
+    [HttpGet("address")]
+    public async Task<ActionResult<AddressResponse>> GetAddressAsync()
+    {
+        var userDto = await _accountService.GetUserAddressAsync();
+        var output = _mapper.Map<Result<AddressResponse>>(userDto);
         return output.ToActionResult();
     }
 }

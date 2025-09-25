@@ -1,9 +1,9 @@
-﻿
-namespace Backend.Src.Application.Services;
+﻿namespace Backend.Src.Application.Services;
 
 public interface IAccountService
 {
-    Task<Result<UserDto>> CreateAddressAsync(AddressCreateDto dto);
+    Task<Result<AddressDto>> CreateAddressAsync(AddressCreateDto dto);
+    Task<Result<AddressDto>> GetUserAddressAsync();
     Task<Result<UserDto>> GetUserInfoAsync();
     Task<Result<UserDto>> RegisterUser(UserRegisterDto dto);
     Task<Result<bool>> SignoutAsync();
