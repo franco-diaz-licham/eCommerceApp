@@ -16,20 +16,6 @@ export function mapToProductFormData(data: ProductResponse) {
     };
 }
 
-/** MAprs product form data to Product response. */
-// export function mapToProductResponse(data: ProductFormData): ProductResponse {
-//     return {
-//         id: data.id!,
-//         name: data.name,
-//         description: data.description,
-//         unitPrice: data.unitPrice,
-//         productTypeId: data.productTypeId,
-//         brandId: data.brandId,
-//         photo: data.photo!,
-//         quantityInStock: data.quantityInStock,
-//     };
-// }
-
 /** Maps prodcut form data DTO to product create DTO. */
 export function mapToProductCreate(data: ProductFormData): ProductCreate {
     return {
@@ -57,7 +43,7 @@ export function mapToProductUpdate(data: ProductFormData): ProductUpdate {
     };
 }
 
-// Map Zod output -> your form DTO
+/** Map Zod output to form DTO. */
 export function toProductFormData(input: CreateProductSchema, id?: number): ProductFormData {
     return {
         id,

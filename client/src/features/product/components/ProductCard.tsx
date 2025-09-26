@@ -2,7 +2,8 @@ import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@
 import { Link } from "react-router-dom";
 import { currencyFormat } from "../../../lib/utils";
 
-export type ProductCardDto = {
+/** Model used to display product resilts */
+export type ProductCardModel = {
     id: number;
     name: string;
     unitPrice: number;
@@ -10,7 +11,7 @@ export type ProductCardDto = {
 };
 
 type ProductCardProps = {
-    product: ProductCardDto;
+    product: ProductCardModel;
     isAdding?: boolean;
     onAddToCart: (productId: number) => void;
 };

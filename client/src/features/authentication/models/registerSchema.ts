@@ -1,7 +1,9 @@
 import { z } from "zod";
 
+/** REGEX expression for password. */
 const passwordValidation = new RegExp(/(?=^.{6,10}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?/&gt;.&lt;,])(?!.*\s).*$/);
 
+/** Zod registration schema. */
 export const registerSchema = z.object({
     email: z.string().email(),
     password: z.string().regex(passwordValidation, {

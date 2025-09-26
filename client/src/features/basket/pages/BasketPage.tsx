@@ -10,10 +10,12 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 export default function BasketPage() {
     const { basket, subtotal, discount, deliveryFee, total, isLoading, clearBasket, removeItemEnsuringBasket, addItemEnsuringBasket } = useBasket();
 
+    /** Add selected item to the curernt basket. */
     const handleAddItem = async (itemId: number, numb: number): Promise<void> => {
         await addItemEnsuringBasket(itemId, numb);
     };
 
+    /** Remove selected item from the current basket. */
     const handleRemoveItem = async (itemId: number, numb: number): Promise<void> => {
         removeItemEnsuringBasket(itemId, numb);
     };

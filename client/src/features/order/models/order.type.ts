@@ -1,5 +1,6 @@
 import type { Pagination } from "../../../types/pagination.type";
 
+/** Main response model for orders. */
 export interface OrderResponse {
     id: number;
     userId: string;
@@ -14,12 +15,14 @@ export interface OrderResponse {
     orderStatus: string;
 }
 
+/** Order dto for creation. */
 export interface OrderCreateDto {
     basketId: number;
     shippingAddress: ShippingAddressDto;
     paymentSummary: PaymentSummaryDto;
 }
 
+/** Shipping address dto. */
 export interface ShippingAddressDto {
     recipientName: string;
     line1: string;
@@ -30,6 +33,7 @@ export interface ShippingAddressDto {
     country: string;
 }
 
+/** Payment summary dto. */
 export interface PaymentSummaryDto {
     last4: number | string;
     brand: string;
@@ -37,6 +41,7 @@ export interface PaymentSummaryDto {
     expYear: number;
 }
 
+/** Order item model. */
 export interface OrderItem {
     productId: number;
     name: string;

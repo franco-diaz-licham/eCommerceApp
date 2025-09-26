@@ -8,7 +8,6 @@ export default function OrdersPage() {
     const navigate = useNavigate();
 
     if (isLoading) return <Typography variant="h5">Loading orders...</Typography>;
-
     if (!orders) return <Typography variant="h5">No orders available</Typography>;
 
     return (

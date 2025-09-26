@@ -1,3 +1,4 @@
+/** Coupon response dto. */
 export type CouponResponse = {
     id: number;
     amountOff?: number;

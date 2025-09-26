@@ -1,3 +1,4 @@
+/** User Dto response. */
 export type UserResponse = {
     id: string;
     userName: string;
@@ -7,6 +8,7 @@ export type UserResponse = {
     roles: string[];
 };
 
+/** Address Dto response. */
 export type AddressResponse = {
     id: number;
     line1: string;
@@ -17,6 +19,7 @@ export type AddressResponse = {
     country: string;
 };
 
+/** Address Dto for creation. */
 export interface AddressCreateDto {
     line1: string;
     line2?: string | null;
@@ -26,6 +29,7 @@ export interface AddressCreateDto {
     country: string;
 }
 
+/** Address Dto for updates. */
 export interface AddressUpdateDto extends AddressCreateDto {
     id: number;
 }

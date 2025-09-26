@@ -13,10 +13,10 @@ import { useCreatePaymentIntentMutation } from "../api/checkout.api";
 import { useCreateOrderMutation } from "../../order/api/orderApi";
 import type { OrderCreateDto } from "../../order/models/order.type";
 import { mapToAddressCreateDto, mapToShippingAddressDto } from "../api/checkoutMapper";
-import type { ConfirmationModel, ShippingAddressModel } from "../models/ui";
 import CheckoutStepper, { type AddressDefaults } from "../components/CheckoutStepper";
 import Header from "../../../components/ui/Header";
 import { getErrorMessage } from "../../../lib/utils";
+import type { ConfirmationModel, ShippingAddressModel } from "../models/checkout.type";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 

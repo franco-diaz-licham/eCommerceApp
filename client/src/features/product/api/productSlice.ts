@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { ProductQueryParams } from "../models/product.types";
 
+/** Pageginated intial state. */
 const initialState: ProductQueryParams = {
     pageNumber: 1,
     pageSize: 12,

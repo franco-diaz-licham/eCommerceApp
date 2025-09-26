@@ -24,11 +24,13 @@ export default function InventoryPage() {
     const [updateProduct] = useUpdateProductMutation();
     const [formValid, setFormValid] = useState(false);
 
+    /** Handles selected product changed. */
     const handleSelectProduct = (product: ProductResponse) => {
         setSelectedProduct(product);
         setEditMode(true);
     };
 
+    /** Deletes selected product. */
     const handleDeleteProduct = async (id: number) => {
         try {
             await deleteProduct(id);
@@ -38,6 +40,7 @@ export default function InventoryPage() {
         }
     };
 
+    /** Creates or updates a new product. */
     const handleOnSubmit = async (data: ProductFormData) => {
         try {
             if (data?.id) {
@@ -56,6 +59,7 @@ export default function InventoryPage() {
         }
     };
 
+    /** Cancel editted product. */
     const handleCancel = () => {
         setSelectedProduct(null);
         setEditMode(false);

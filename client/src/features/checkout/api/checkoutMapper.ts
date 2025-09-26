@@ -14,6 +14,7 @@ export function mapToAddressCreateDto(data: ShippingAddressModel): AddressCreate
     };
 }
 
+/** Maps shipping address model to the equivalent Dto. */
 export function mapToShippingAddressDto(data: ShippingAddressModel): ShippingAddressDto {
     return {
         recipientName: data.name,

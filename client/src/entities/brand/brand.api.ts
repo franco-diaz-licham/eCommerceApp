@@ -2,7 +2,6 @@ import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react
 import type { BrandResponse } from "./brand.types";
 import type { Pagination } from "../../types/pagination.type";
 import type { BaseQueryParams } from "../../types/baseQueryParams.type";
-import { filterEmptyValues } from "../../lib/utils";
 import type { ApiResponse } from "../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../app/providers/base.api";
 
@@ -17,7 +16,7 @@ interface mainBrandsData {
 const getBrands = (BrandParams: BaseQueryParams) => {
     return {
         url: baseUrl,
-        params: filterEmptyValues(BrandParams),
+        params: BrandParams,
     };
 };
 

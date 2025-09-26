@@ -1,3 +1,4 @@
+/** Queries for all query models. */
 export interface BaseQueryParams {
     orderBy?: string;
     searchTerm?: string;

@@ -31,6 +31,7 @@ export interface ApiSingleResponse<T> {
     data: T;
 }
 
+/** common status response codes. */
 export const StatusCode = {
   Okay: 200,
   Accepted: 201,

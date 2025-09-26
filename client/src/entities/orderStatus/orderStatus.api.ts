@@ -1,7 +1,6 @@
 import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { Pagination } from "../../types/pagination.type";
 import type { BaseQueryParams } from "../../types/baseQueryParams.type";
-import { filterEmptyValues } from "../../lib/utils";
 import type { ApiResponse } from "../../types/api.types";
 import type { OrderStatusResponse } from "./orderStatus.type";
 import { baseQueryWithErrorHandling } from "../../app/providers/base.api";
@@ -17,7 +16,7 @@ interface mainOrderStatussData {
 const getOrderStatuss = (OrderStatusParams: BaseQueryParams) => {
     return {
         url: baseUrl,
-        params: filterEmptyValues(OrderStatusParams),
+        params: OrderStatusParams,
     };
 };
 

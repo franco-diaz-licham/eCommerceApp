@@ -4,8 +4,10 @@ import { useState } from "react";
 import Review from "./Review";
 import type { ConfirmationToken, StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { currencyFormat } from "../../../lib/utils";
-import type { ConfirmationModel, PaymentSummaryModel, ShippingAddressModel } from "../models/ui";
+import type { ConfirmationModel, PaymentSummaryModel, ShippingAddressModel } from "../models/checkout.type";
 
+
+/** Internal address defaults model. */
 export type AddressDefaults = {
     name?: string | null;
     address?: {
@@ -18,6 +20,7 @@ export type AddressDefaults = {
     };
 };
 
+/** Stepper defined steps. */
 const steps = ["Address", "Payment", "Review"];
 
 type CheckoutStepperProps = {
@@ -42,7 +45,6 @@ export default function CheckoutStepper(props: CheckoutStepperProps) {
     const [confirmationToken, setConfirmationToken] = useState<ConfirmationToken | null>(null);
     const elements = useElements();
     const stripe = useStripe();
-
     const handleBack = () => setActiveStep((s) => Math.max(0, s - 1));
     const handleAddressChange = (event: StripeAddressElementChangeEvent) => setAddressComplete(event.complete);
     const handlePaymentChange = (event: StripePaymentElementChangeEvent) => setPaymentComplete(event.complete);

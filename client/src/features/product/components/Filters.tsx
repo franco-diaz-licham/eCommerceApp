@@ -3,11 +3,13 @@ import RadioButtonGroup from "../../../components/ui/RadioButtonGroup";
 import CheckboxButtons from "../../../components/ui/CheckboxButtons";
 import SearchField from "./SearchField";
 
-export type FilterOptionDto = {
+/** Generic filter option dto. */
+export type FilterOptionModel = {
     value: number;
     label: string;
 };
 
+/** Options for sorting products. */
 const sortOptions = [
     { value: "nameAsc", label: "Alphabetical" },
     { value: "priceDesc", label: "Price: High to low" },
@@ -15,8 +17,8 @@ const sortOptions = [
 ];
 
 export type FiltersProps = {
-    brandOptions: FilterOptionDto[];
-    typeOptions: FilterOptionDto[];
+    brandOptions: FilterOptionModel[];
+    typeOptions: FilterOptionModel[];
     selectedBrandIds: number[];
     selectedTypeIds: number[];
     orderBy: string | null | undefined;

@@ -5,7 +5,6 @@ import { useFetchOrderDetailedQuery } from "../api/orderApi";
 
 export default function OrderDetailedPage() {
     const { id } = useParams();
-
     const { data: order, isLoading } = useFetchOrderDetailedQuery(+id!);
 
     if (isLoading) return <Typography variant="h5">Loading order...</Typography>;
@@ -34,7 +33,7 @@ export default function OrderDetailedPage() {
                         Shipping address
                     </Typography>
                     <Typography component="dd" variant="body2" fontWeight="300">
-                        {formatAddressString(order.shippingAddress)}
+                        {formatAddressString(order.shippingAddress.line1, order.shippingAddress.city, order.shippingAddress.state, order.shippingAddress.postalCode, order.shippingAddress.country)}
                     </Typography>
                 </Box>
                 <Box component="dl">
@@ -42,7 +41,7 @@ export default function OrderDetailedPage() {
                         Payment info
                     </Typography>
                     <Typography component="dd" variant="body2" fontWeight="300">
-                        {formatPaymentString(order.paymentSummary)}
+                        {formatPaymentString(order.paymentSummary.brand, String(order.paymentSummary.last4), order.paymentSummary.expMonth, order.paymentSummary.expYear)}
                     </Typography>
                 </Box>
             </Box>

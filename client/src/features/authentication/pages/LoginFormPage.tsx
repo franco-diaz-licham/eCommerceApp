@@ -23,6 +23,7 @@ export default function LoginFormPage() {
     });
     const navigate = useNavigate();
 
+    /** Handle on submit. */
     const onSubmit = async (data: LoginSchema) => {
         await login(data);
         await fetchUserInfo();

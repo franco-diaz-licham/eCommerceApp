@@ -1,7 +1,6 @@
 import { debounce, TextField } from "@mui/material";
 import { useMemo, useState, type ChangeEvent } from "react";
 
-
 export type SearchFieldProps = {
     value: string;
     onSearchChange: (value: string) => void;

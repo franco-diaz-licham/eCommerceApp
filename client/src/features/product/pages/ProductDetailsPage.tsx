@@ -43,10 +43,10 @@ export default function ProductDetailsPage() {
         if (value >= 0) setQuantity(value);
     };
 
-    // --- Skeleton while loading ---
+    // Show skeleton while loading
     if (isLoading || !product) return <ProductDetailsSkeleton />;
 
-    // --- Data ready ---
+    /** Data ready  */
     const productDetails = [
         { label: "Name", value: product.name },
         { label: "Description", value: product.description },

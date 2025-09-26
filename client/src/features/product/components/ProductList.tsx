@@ -1,8 +1,8 @@
 import { Grid } from "@mui/material";
-import ProductCard, { type ProductCardDto } from "./ProductCard";
+import ProductCard, { type ProductCardModel } from "./ProductCard";
 
 type ProductListProps = {
-    products: ProductCardDto[];
+    products: ProductCardModel[];
     isAdding?: boolean;
     onAddToCart: (productId: number) => void;
 };
