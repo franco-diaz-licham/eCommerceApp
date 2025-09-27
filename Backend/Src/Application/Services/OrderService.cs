@@ -30,7 +30,11 @@ public class OrderService(DataContext db, IMapper mapper, ICurrentUser currentUs
     public async Task<Result<OrderDto>> CreateOrderAsync(OrderCreateDto dto)
     {
         // Validate
-        var basket = await _db.Baskets.Where(b => b.Id == dto.BasketId).Include(b => b.BasketItems).ThenInclude(i => i.Product).Include(i => i.Coupon).FirstOrDefaultAsync();
+        var basket = await _db.Baskets
+                        .Where(b => b.Id == dto.BasketId)
+                        .Include(b => b.BasketItems).ThenInclude(i => i.Product).ThenInclude(x => x.Photo)
+                        .Include(i => i.Coupon)
+                        .FirstOrDefaultAsync();
         if (basket is null || basket.BasketItems.Count == 0) return Result<OrderDto>.Fail("Basket is empty.", ResultTypeEnum.Invalid);
         if (string.IsNullOrEmpty(basket.PaymentIntentId)) return Result<OrderDto>.Fail("Invalid basket payment intent.", ResultTypeEnum.Invalid);
         if(_currentUser.UserId is null) return Result<OrderDto>.Fail("User not found.", ResultTypeEnum.Invalid);

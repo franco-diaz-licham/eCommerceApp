@@ -82,7 +82,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<CreateOrderRequest, OrderCreateDto>();
 
         // Order Item
-        CreateMap<OrderItemEntity, OrderItemDto>();
+        CreateMap<OrderItemEntity, OrderItemDto>().ForMember(d => d.PictureUrl, opt => opt.MapFrom(src => src.Product!.Photo!.PublicUrl));
         CreateMap<OrderItemDto, OrderItemResponse>();
 
         // Coupon
