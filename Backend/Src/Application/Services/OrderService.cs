@@ -14,7 +14,7 @@ public class OrderService(DataContext db, IMapper mapper, ICurrentUser currentUs
             new SortEvaluatorStrategy<OrderEntity>(specs.OrderBy, new OrderSortProvider()),
             new SelectEvaluatorStrategy<OrderEntity>(specs.PageNumber, specs.PageSize)
         );
-        var filtered = queryContext.ApplyQuery(query);
+        var filtered = queryContext.ApplyQuery(query).Where(x => x.UserId == _currentUser.UserId);
         var projected = await filtered.ProjectTo<OrderDto>(_mapper.ConfigurationProvider).ToListAsync();
         if (!projected.Any()) return Result<List<OrderDto>>.Fail("Orders not found...", ResultTypeEnum.NotFound);
         return Result<List<OrderDto>>.Success(projected, ResultTypeEnum.Success, query.Count());
