@@ -1,44 +1,46 @@
-import { Container, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Button, Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import { useFetchOrdersQuery } from "../api/orderApi";
-import { currencyFormat, formatDate } from "../../../lib/utils";
 import { useAppSelector } from "../../../app/store/store";
+import Header from "../../../components/ui/Header";
+import OrdersTable from "../components/OrdersTable";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 export default function OrdersPage() {
     const params = useAppSelector((state) => state.orders);
     const { data: orders, isLoading } = useFetchOrdersQuery(params);
     const navigate = useNavigate();
 
-    if (isLoading) return <Typography variant="h5">Loading orders...</Typography>;
-    if (!orders) return <Typography variant="h5">No orders available</Typography>;
+    if (isLoading) return;
+    if (!orders || orders.response.length === 0) {
+        return (
+            <Box
+                sx={{
+                    height: "calc(100vh - 300px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <WarningAmberIcon sx={{ fontSize: 100 }} color="primary" />
+                <Typography gutterBottom variant="h3">
+                    There are no orders
+                </Typography>
+                <Button component={Link} to="/products" size="large" variant="contained">
+                    Go back to shop
+                </Button>
+            </Box>
+        );
+    }
 
     return (
-        <Container maxWidth="md">
-            <Typography variant="h5" align="center" gutterBottom>
-                My orders
-            </Typography>
-            <Paper sx={{ borderRadius: 3 }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">Order</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Total</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {orders.response.map((order) => (
-                            <TableRow key={order.id} hover onClick={() => navigate(`/orders/${order.id}`)} style={{ cursor: "pointer" }}>
-                                <TableCell align="center"># {order.id}</TableCell>
-                                <TableCell>{formatDate(order.orderDate)}</TableCell>
-                                <TableCell>{currencyFormat(order.total)}</TableCell>
-                                <TableCell>{order.orderStatus.name}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Paper>
-        </Container>
+        <Box sx={{ pt: 4 }}>
+            {/* Header */}
+            <Header title="My Orders" />
+
+            {/* Table */}
+            <OrdersTable orders={orders} OnOrderClicked={(id) => navigate(`/orders/${id}`)} />
+        </Box>
     );
 }

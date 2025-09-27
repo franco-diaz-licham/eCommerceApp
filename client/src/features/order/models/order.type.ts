@@ -44,9 +44,9 @@ export interface PaymentSummaryDto {
 /** Order item model. */
 export interface OrderItem {
     productId: number;
-    name: string;
+    productName: string;
     pictureUrl: string;
-    price: number;
+    unitPrice: number;
     quantity: number;
 }
 

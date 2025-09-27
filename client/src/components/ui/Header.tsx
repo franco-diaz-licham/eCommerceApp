@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 interface HeaderProps {
     title: string;
-    children: ReactNode;
+    children?: ReactNode;
 }
 
 export default function Header(props: HeaderProps) {

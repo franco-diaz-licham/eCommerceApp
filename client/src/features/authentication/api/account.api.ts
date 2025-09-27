@@ -57,7 +57,7 @@ export const accountApi = createApi({
             transformResponse: (response: ApiSingleResponse<UserResponse>) => response.data,
             providesTags: ["UserInfo"],
         }),
-        // SIGNOUT currenly logged in user.
+        // SIGNOUT currently logged in user.
         signOut: builder.mutation({
             query: () => ({
                 url: "account/signout",

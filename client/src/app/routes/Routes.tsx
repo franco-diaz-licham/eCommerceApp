@@ -16,6 +16,7 @@ import OrdersPage from "../../features/order/pages/OrdersPage";
 import OrderDetailedPage from "../../features/order/pages/OrderDetailsPage";
 import LoginFormPage from "../../features/authentication/pages/LoginFormPage";
 import RegisterFormPage from "../../features/authentication/pages/RegisterFormPage";
+import ProfilePage from "../../features/authentication/pages/ProfilePage";
 
 export const Routes = createBrowserRouter([
     {
@@ -30,6 +31,7 @@ export const Routes = createBrowserRouter([
                     { path: "orders", element: <OrdersPage /> },
                     { path: "orders/:id", element: <OrderDetailedPage /> },
                     { path: "inventory", element: <InventoryPage /> },
+                    { path: "profile", element: <ProfilePage /> },
                 ],
             },
             { path: "", element: <HomePage /> },

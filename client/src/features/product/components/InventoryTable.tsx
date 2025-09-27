@@ -23,7 +23,7 @@ export default function InventoryTable(props: InventoryPropsTable) {
                         <TableCell align="center">Type</TableCell>
                         <TableCell align="center">Brand</TableCell>
                         <TableCell align="center">Quantity</TableCell>
-                        <TableCell align="right">Actions</TableCell>
+                        <TableCell align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -51,7 +51,7 @@ export default function InventoryTable(props: InventoryPropsTable) {
                             <TableCell align="center">{product.productType?.name}</TableCell>
                             <TableCell align="center">{product.brand?.name}</TableCell>
                             <TableCell align="center">{product.quantityInStock}</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
                                 <IconButton onClick={() => props.onProductSelected(product)} color="primary">
                                     <Edit />
                                 </IconButton>
