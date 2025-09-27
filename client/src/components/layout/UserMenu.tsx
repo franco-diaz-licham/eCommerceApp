@@ -1,4 +1,4 @@
-import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider, IconButton, Avatar } from "@mui/material";
+import { Menu, MenuItem, ListItemIcon, ListItemText, Divider, IconButton } from "@mui/material";
 import { useState } from "react";
 import { History, Inventory, Logout, Person } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -26,13 +26,13 @@ export default function UserMenu({ user }: UserMenuProps) {
                 <Person />
             </IconButton>
             <Menu id="fade-menu" anchorEl={anchorEl} open={open} onClose={handleClose} disableScrollLock>
-                <MenuItem>
+                <MenuItem component={Link} to="/profile">
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
                     <ListItemText>My profile</ListItemText>
                 </MenuItem>
-                <MenuItem component={Link} to="">
+                <MenuItem component={Link} to="/orders">
                     <ListItemIcon>
                         <History />
                     </ListItemIcon>

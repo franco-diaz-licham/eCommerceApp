@@ -2,9 +2,11 @@ import { Container, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typ
 import { useNavigate } from "react-router-dom";
 import { useFetchOrdersQuery } from "../api/orderApi";
 import { currencyFormat, formatDate } from "../../../lib/utils";
+import { useAppSelector } from "../../../app/store/store";
 
 export default function OrdersPage() {
-    const { data: orders, isLoading } = useFetchOrdersQuery();
+    const params = useAppSelector((state) => state.orders);
+    const { data: orders, isLoading } = useFetchOrdersQuery(params);
     const navigate = useNavigate();
 
     if (isLoading) return <Typography variant="h5">Loading orders...</Typography>;
@@ -31,7 +33,7 @@ export default function OrdersPage() {
                                 <TableCell align="center"># {order.id}</TableCell>
                                 <TableCell>{formatDate(order.orderDate)}</TableCell>
                                 <TableCell>{currencyFormat(order.total)}</TableCell>
-                                <TableCell>{order.orderStatus}</TableCell>
+                                <TableCell>{order.orderStatus.name}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

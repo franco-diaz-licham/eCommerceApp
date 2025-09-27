@@ -1,9 +1,9 @@
-import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { BrandResponse } from "./brand.types";
 import type { Pagination } from "../../types/pagination.type";
 import type { BaseQueryParams } from "../../types/baseQueryParams.type";
-import type { ApiResponse } from "../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../app/providers/base.api";
+import { transformPaginatedResponse } from "../../lib/utils";
 
 /** Base url resource endpoint. */
 const baseUrl: string = "Brands";
@@ -12,29 +12,18 @@ interface mainBrandsData {
     pagination: Pagination;
 }
 
-/** Get Brands handler. */
-const getBrands = (BrandParams: BaseQueryParams) => {
-    return {
-        url: baseUrl,
-        params: BrandParams,
-    };
-};
-
-/** Response list handler. */
-const transformPaginatedResponse = (response: ApiResponse<BrandResponse>, meta: FetchBaseQueryMeta) => {
-    const paginationHeader = meta?.response?.headers.get("Pagination");
-    const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
-    const data = response.data;
-    return { response: data, pagination };
-};
-
 /** Brand redux configuration */
 export const BrandApi = createApi({
     reducerPath: "BrandApi",
     baseQuery: baseQueryWithErrorHandling,
     endpoints: (builder) => ({
         fetchBrands: builder.query<mainBrandsData, BaseQueryParams>({
-            query: getBrands,
+            query: (BrandParams: BaseQueryParams) => {
+                return {
+                    url: baseUrl,
+                    params: BrandParams,
+                };
+            },
             transformResponse: transformPaginatedResponse,
         }),
     }),

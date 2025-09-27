@@ -6,9 +6,7 @@ import { useFetchOrderDetailedQuery } from "../api/orderApi";
 export default function OrderDetailedPage() {
     const { id } = useParams();
     const { data: order, isLoading } = useFetchOrderDetailedQuery(+id!);
-
     if (isLoading) return <Typography variant="h5">Loading order...</Typography>;
-
     if (!order) return <Typography variant="h5">Order not found</Typography>;
 
     return (
@@ -56,16 +54,13 @@ export default function OrderDetailedPage() {
                     <Typography component="dt" variant="subtitle1" fontWeight="500">
                         Email address
                     </Typography>
-                    <Typography component="dd" variant="body2" fontWeight="300">
-                        {order.userId}
-                    </Typography>
                 </Box>
                 <Box component="dl">
                     <Typography component="dt" variant="subtitle1" fontWeight="500">
                         Order status
                     </Typography>
                     <Typography component="dd" variant="body2" fontWeight="300">
-                        {order.orderStatus}
+                        {order.orderStatus.name}
                     </Typography>
                 </Box>
                 <Box component="dl">

@@ -1,9 +1,9 @@
+import type { OrderStatusResponse } from "../../../entities/orderStatus/orderStatus.type";
 import type { Pagination } from "../../../types/pagination.type";
 
 /** Main response model for orders. */
 export interface OrderResponse {
     id: number;
-    userId: string;
     shippingAddress: ShippingAddressDto;
     paymentSummary: PaymentSummaryDto;
     orderDate: string;
@@ -12,7 +12,7 @@ export interface OrderResponse {
     deliveryFee: number;
     discount: number;
     total: number;
-    orderStatus: string;
+    orderStatus: OrderStatusResponse;
 }
 
 /** Order dto for creation. */

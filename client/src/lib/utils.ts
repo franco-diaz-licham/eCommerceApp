@@ -1,22 +1,30 @@
-import type { ApiError, ApiValidationError } from "../types/api.types";
+import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query";
+import type { ApiError, ApiResponse, ApiSingleResponse, ApiValidationError } from "../types/api.types";
 
 /** Formats currency. */
 export function currencyFormat(amount: number) {
     return "$" + amount.toFixed(2);
 }
 
+/** Format the display of address information. */
 export const formatAddressString = (line1: string | null, city: string | null, state: string | null, code: string | null, country: string | null, name?: string | null) => {
     const address = `${line1}, ${city}, ${state}, ${code}, ${country}`;
     if (name) return `${name}, ` + address;
     return address;
 };
 
+/** Format the display of payment information. */
 export const formatPaymentString = (brand: string, last4: string, expMonth: number, expYear: number) => {
     return `${brand.toUpperCase()}, **** **** **** ${last4}, Exp: ${expMonth}/${expYear}`;
 };
 
+/** format date to dd-MM-yy. */
 export function formatDate(date: string): string {
-    return "dd MMM yyyy";
+    const newDate = new Date(date);
+    const year = newDate.getFullYear();
+    const month = (newDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = newDate.getDate().toString().padStart(2, "0");
+    return `${day}/${month}/${year}`;
 }
 
 /** Receives an object and return the formData equivalent. */
@@ -47,4 +55,18 @@ export function getErrorMessage(error: unknown, fallback = "Operation failed") {
     }
 
     return fallback;
+}
+
+/** Response list handler. */
+export function transformPaginatedResponse<T>(response: ApiResponse<T>, meta: FetchBaseQueryMeta) {
+    const paginationHeader = meta?.response?.headers.get("Pagination");
+    const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
+    const data = response.data;
+    return { response: data, pagination };
+}
+
+/** Handles HTTP request reponses as well as upsertion from other reducers. */
+export function transformSingleResponse<T>(response: ApiSingleResponse<T>) {
+    if (response && typeof response === "object" && "data" in response) return response.data;
+    else return response;
 }

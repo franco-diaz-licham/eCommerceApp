@@ -1,14 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 import type { BasketCouponDto, BasketItemDto, BasketResponse } from "../models/basket.type";
-import type { ApiSingleResponse } from "../../../types/api.types";
 import { nothing } from "immer";
+import { transformSingleResponse } from "../../../lib/utils";
 
 /** Base url resource endpoint. */
 const baseUrl: string = "basket";
-
-/** Hanldes HTTP request reponses as well as upsertion from other reducers. */
-const transformSingleResponse = (response: ApiSingleResponse<BasketResponse>) => (response && typeof response === "object" && "data" in response ? (response as { data: BasketResponse }).data : (response as BasketResponse));
 
 export const basketApi = createApi({
     reducerPath: "basketApi",

@@ -1,19 +1,11 @@
-import { createApi, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
-import { createFormData } from "../../../lib/utils";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { createFormData, transformPaginatedResponse } from "../../../lib/utils";
 import type { PaginatedProductsData, ProductCreate, ProductFilters, ProductQueryParams, ProductResponse, ProductUpdate } from "../models/product.types";
-import type { ApiResponse, ApiSingleResponse } from "../../../types/api.types";
+import type { ApiSingleResponse } from "../../../types/api.types";
 import { baseQueryWithErrorHandling } from "../../../app/providers/base.api";
 
 /** Base url resource endpoint. */
 const baseUrl: string = "products";
-
-/** Response list handler. */
-const transformPaginatedResponse = (response: ApiResponse<ProductResponse>, meta: FetchBaseQueryMeta) => {
-    const paginationHeader = meta?.response?.headers.get("Pagination");
-    const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
-    const data = response.data;
-    return { response: data, pagination };
-};
 
 /** Product reducer configuration. */
 export const productApi = createApi({

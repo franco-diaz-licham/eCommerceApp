@@ -25,7 +25,7 @@ export default function ProductsPage() {
     if (isProductsLoading || isFiltersLoading) return <ProductSkeleton />;
     if (!data || !filtersData) return <Alert severity="error">Failed to load products or filters.</Alert>;
 
-    // map API → OptionDto
+    // map API to OptionDto
     const brandOptions: FilterOptionModel[] = filtersData.brands.map((b) => ({ value: b.id, label: b.name }));
     const typeOptions: FilterOptionModel[] = filtersData.productTypes.map((t) => ({ value: t.id, label: t.name }));
 
