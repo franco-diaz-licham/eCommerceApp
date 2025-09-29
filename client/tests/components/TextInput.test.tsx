@@ -80,7 +80,7 @@ describe("<TextInput />", () => {
         const input = screen.getByRole("textbox", { name: /title/i });
 
         // Assert
-        expect(input).toHaveValue(""); // your component does value={field.value ?? ''}
+        expect(input).toHaveValue(""); 
     });
 
     it("should render the preset value when defaultValues provides it", () => {
