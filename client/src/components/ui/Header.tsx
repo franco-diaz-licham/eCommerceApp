@@ -24,7 +24,7 @@ export default function Header(props: HeaderProps) {
                 <Typography variant="h4" sx={{ fontWeight: 800 }}>
                     {props.title}
                 </Typography>
-                <Box
+                <Box data-testid="underline"
                     sx={{
                         position: "absolute",
                         bottom: -4,

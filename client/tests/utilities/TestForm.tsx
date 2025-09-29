@@ -7,7 +7,7 @@ type TestFormProps = {
     submitLabel?: string;
 };
 
-/** Dummy React form to render any field and test fo user actions. Useful when validating submit behvaiour.*/
+/** Dummy React component to render any field inside a Form component and test for user actions. Useful when validating submit behaviour.*/
 export function TestForm({ onSubmit, children, submitLabel = "Submit" }: TestFormProps) {
     const { handleSubmit } = useFormContext();
     return (

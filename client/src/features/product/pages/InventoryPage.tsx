@@ -78,7 +78,7 @@ export default function InventoryPage() {
                         </Button>
                     </Box>
                 </Header>
-                <ProductForm onFormCancel={handleCancel} product={selectedProduct ? mapToProductFormData(selectedProduct) : null} onFormSubmit={handleOnSubmit} onDisabledChanged={setFormValid} />
+                <ProductForm onFormCancel={handleCancel} model={selectedProduct ? mapToProductFormData(selectedProduct) : null} onFormSubmit={handleOnSubmit} onDisabledChanged={setFormValid} />
             </Box>
         );
     }

@@ -40,16 +40,17 @@ export function createFormData<T extends object>(data: T) {
     return formData;
 }
 
-/** Handle validation errors and returns a message. */
+/** Handle general errors and validation errors and returns the error message. */
 export function getErrorMessage(error: unknown, fallback = "Operation failed") {
     if (error === null) return fallback;
     if (typeof error === "string") return error;
-    if (error && typeof error === "object") {
-        if ("validationErrors" in error) {
-            const e = error as ApiValidationError;
+    // get either message or validation error.
+    if (error && typeof error === "object" && "data" in error && error.data && typeof error.data === "object") {
+        if ("validationErrors" in error.data) {
+            const e = error.data as ApiValidationError;
             return e.validationErrors!.flat().join(" ") ?? fallback;
-        } else if ("message" in error) {
-            const e = error as ApiError;
+        } else if ("message" in error.data) {
+            const e = error.data as ApiError;
             return e.message ?? e.details ?? fallback;
         }
     }

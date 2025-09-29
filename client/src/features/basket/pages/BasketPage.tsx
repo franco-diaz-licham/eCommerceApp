@@ -21,7 +21,7 @@ export default function BasketPage() {
     };
 
     if (isLoading) return;
-
+    
     if (!basket || basket.basketItems.length === 0) {
         return (
             <Box

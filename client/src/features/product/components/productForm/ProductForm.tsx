@@ -14,7 +14,7 @@ import ProductFormSkeleton from "../ProductFormSkeleton";
 
 /** Functional props. */
 type ProductFormProps = {
-    product: ProductFormData | null;
+    model: ProductFormData | null;
     onFormCancel: () => void;
     onFormSubmit: (data: ProductFormData) => void;
     onDisabledChanged: (disabled: boolean) => void;
@@ -68,20 +68,19 @@ export default function ProductForm(props: ProductFormProps) {
     });
 
     const { control, handleSubmit, watch, reset } = methods;
-    const { isSubmitting, isValid } = useFormState({ control });
+    const { isSubmitting, isValid, isDirty } = useFormState({ control });
     const initialized = useRef(false);
     const watchFile = watch("photo") as FileWithPreview | undefined;
     const { data, isLoading } = useFetchFiltersQuery();
 
     useEffect(() => {
-        props.onDisabledChanged(isSubmitting || !isValid);
-    }, [isSubmitting, isValid, props]);
+        props.onDisabledChanged(isSubmitting || !isValid || !isDirty);
+    }, [isSubmitting, isValid, isDirty, props]);
 
-    // On edit, reset form with product values
+    // On edit, reset form with product values when data is ready
     useEffect(() => {
         if (initialized.current) return;
-
-        const p = props.product;
+        const p = props.model;
         const brandsReady = !!data?.brands?.length;
         const typesReady = !!data?.productTypes?.length;
         if (!p || !brandsReady || !typesReady) return;
@@ -101,7 +100,7 @@ export default function ProductForm(props: ProductFormProps) {
         );
 
         initialized.current = true;
-    }, [data, props.product, reset]);
+    }, [data, props.model, reset]);
 
     // Revoke preview URL
     useEffect(() => {
@@ -112,14 +111,14 @@ export default function ProductForm(props: ProductFormProps) {
     }, [watchFile?.preview]);
 
     const handleOnSubmit = (form: CreateProductSchema) => {
-        props.onFormSubmit(toProductFormData(form, props.product?.id));
+        props.onFormSubmit(toProductFormData(form, props.model?.id));
     };
 
-    // --- Layout-accurate Skeleton while filters load ---
+    // Layout-accurate Skeleton while filters load
     if (isLoading || !data) return <ProductFormSkeleton />;
 
-    // --- Form ready ---
-    const previewSrc = watchFile?.preview || props.product?.pictureUrl;
+    // Form ready
+    const previewSrc = watchFile?.preview || props.model?.pictureUrl;
 
     return (
         <Box component={Paper} sx={{ p: 4 }}>

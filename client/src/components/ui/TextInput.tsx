@@ -2,9 +2,9 @@ import { TextField, type TextFieldProps } from "@mui/material";
 import type { ChangeEvent } from "react";
 import { type FieldValues, useController, type UseControllerProps } from "react-hook-form";
 
-type Props<T extends FieldValues> = UseControllerProps<T> & TextFieldProps;
+type TextInputProps<T extends FieldValues> = UseControllerProps<T> & TextFieldProps;
 
-export default function TextInput<T extends FieldValues>(props: Props<T>) {
+export default function TextInput<T extends FieldValues>(props: TextInputProps<T>) {
     const { fieldState, field } = useController(props);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

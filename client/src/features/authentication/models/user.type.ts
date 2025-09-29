@@ -33,3 +33,14 @@ export interface AddressCreateDto {
 export interface AddressUpdateDto extends AddressCreateDto {
     id: number;
 }
+
+/** DTO for the form to create a product. */
+export interface ProfileFormData {
+    id?: number;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}

@@ -1,23 +1,21 @@
-import { Alert, AlertTitle, Button, ButtonGroup, Container, List, ListItem, Typography } from "@mui/material";
-import { useState } from "react";
+import { Button, ButtonGroup, Container, Typography } from "@mui/material";
 import { useLazyGet400ErrorQuery, useLazyGet401ErrorQuery, useLazyGet404ErrorQuery, useLazyGet500ErrorQuery, usePostValidationErrorMutation } from "../api/error.api";
+import { getErrorMessage } from "../../../lib/utils";
+import { toast } from "react-toastify";
 
 export default function ErrorPage() {
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
     const [trigger400Error] = useLazyGet400ErrorQuery();
     const [trigger401Error] = useLazyGet401ErrorQuery();
     const [trigger404Error] = useLazyGet404ErrorQuery();
     const [trigger500Error] = useLazyGet500ErrorQuery();
     const [triggerValidationError] = usePostValidationErrorMutation();
 
-    const getValidatonError = async () => {
+    const getError = async (data: "bad-request" | "validation-error") => {
         try {
-            await triggerValidationError().unwrap();
-        } catch (error: unknown) {
-            if (error && typeof error === "object" && "message" in error && typeof (error as { message: unknown }).message === "string") {
-                const errorArray = (error as { message: string }).message.split(", ");
-                setValidationErrors(errorArray);
-            }
+            if (data === "bad-request") await trigger400Error().unwrap();
+            else await triggerValidationError().unwrap();
+        } catch (e: unknown) {
+            toast.error(getErrorMessage(e, "There was an error"));
         }
     };
 
@@ -27,7 +25,7 @@ export default function ErrorPage() {
                 Errors for testing
             </Typography>
             <ButtonGroup fullWidth>
-                <Button variant="contained" onClick={() => trigger400Error().catch((err) => console.log(err))}>
+                <Button variant="contained" onClick={() => getError("bad-request")}>
                     Test 400 Error
                 </Button>
                 <Button variant="contained" onClick={() => trigger401Error().catch((err) => console.log(err))}>
@@ -39,20 +37,10 @@ export default function ErrorPage() {
                 <Button variant="contained" onClick={() => trigger500Error().catch((err) => console.log(err))}>
                     Test 500 Error
                 </Button>
-                <Button variant="contained" onClick={getValidatonError}>
+                <Button variant="contained" onClick={() => getError("validation-error")}>
                     Test Validation Error
                 </Button>
             </ButtonGroup>
-            {validationErrors.length > 0 && (
-                <Alert severity="error">
-                    <AlertTitle>Validation errors</AlertTitle>
-                    <List>
-                        {validationErrors.map((err) => (
-                            <ListItem key={err}>{err}</ListItem>
-                        ))}
-                    </List>
-                </Alert>
-            )}
         </Container>
     );
 }

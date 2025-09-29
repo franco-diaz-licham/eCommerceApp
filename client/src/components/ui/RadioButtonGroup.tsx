@@ -17,7 +17,7 @@ export default function RadioButtonGroup<T extends FieldValues>(props: RadioButt
         <FormControl>
             <RadioGroup onChange={props.onChange} value={props.selectedValue} sx={{ my: 0 }} id={radioId}>
                 {props.options.map(({ value, label }) => (
-                    <FormControlLabel key={label} control={<Radio color="secondary" sx={{ py: 0.7 }} />} label={label} value={value} />
+                    <FormControlLabel key={label} control={<Radio {...props} color="secondary" sx={{ py: 0.7 }} />} label={label} value={value} />
                 ))}
             </RadioGroup>
         </FormControl>

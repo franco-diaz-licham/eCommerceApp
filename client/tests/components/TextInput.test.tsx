@@ -125,7 +125,7 @@ describe("<TextInput />", () => {
         // Act
         await user.type(screen.getByRole("textbox", { name: /title/i }), "Ok");
         await user.click(screen.getByRole("button", { name: /submit/i }));
-        
+
         // Assert
         expect(screen.queryByText(/title is required/i)).not.toBeInTheDocument();
         expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ title: "Ok" }), expect.anything());

@@ -1,4 +1,4 @@
-import { UploadFile, WidthFull, WidthWide } from "@mui/icons-material";
+import { UploadFile } from "@mui/icons-material";
 import { FormControl, FormHelperText, Typography } from "@mui/material";
 import { useCallback } from "react";
 import { useDropzone, type DropzoneProps } from "react-dropzone";

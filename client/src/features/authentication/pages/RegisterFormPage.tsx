@@ -11,7 +11,6 @@ import WhiteLogo from "../../../assets/white-logo.png";
 export default function RegisterFormPage() {
     const { darkMode } = useAppSelector((state) => state.ui);
     const [registerUser] = useRegisterMutation();
-
     const {
         register,
         handleSubmit,
